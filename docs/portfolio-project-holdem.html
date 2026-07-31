@@ -166,17 +166,17 @@ ul.kv b{font-weight:760}
 <header class="cover">
   <div class="cover-row">
     <div>
-      <div class="doc-kicker">Solo Android Product · Released on Google Play</div>
+      <div class="doc-kicker">Solo Android Product · Released on Google Play outside Korea</div>
       <div class="doc-title">Wonder Holdem</div>
       <div class="doc-sub">
-        서버 개발 17년의 도메인 설계 경험을 바탕으로 <strong>제품 정의·UX·Android 구현·<span class="nowrap">홀덤 엔진</span>·규칙 기반 봇 AI·수익화·Google Play 배포</strong>를 1인이 수행한 싱글플레이 홀덤 연습 앱<br>
+        서버 개발 17년의 도메인 설계 경험을 바탕으로 <strong>제품 정의·UX·Android 구현·<span class="nowrap">홀덤 엔진</span>·규칙 기반 봇 AI·수익화·한국 제외 해외 Google Play 배포</strong>를 1인이 수행한 싱글플레이 홀덤 연습 앱<br>
         <strong>박근혁</strong> · Backend Engineer · 2025.11 ~ 진행 중
       </div>
     </div>
-    <a class="store-link" href="https://play.google.com/store/apps/details?id=com.endside.holdem" target="_blank" rel="noopener">Google Play 공개 페이지</a>
+    <a class="store-link" href="https://play.google.com/store/apps/details?id=com.endside.holdem" target="_blank" rel="noopener">Google Play 해외 공개 페이지</a>
   </div>
   <div class="badges">
-    <span class="badge gold">Google Play 출시</span>
+    <span class="badge gold">해외 Google Play 출시</span>
     <span class="badge">Kotlin · Jetpack Compose</span>
     <span class="badge">Clean Architecture · MVVM</span>
     <span class="badge">2~7인 싱글플레이</span>
@@ -198,7 +198,7 @@ ul.kv b{font-weight:760}
 <h2 id="c1">1. 한눈에 보기</h2>
 
 <div class="stats">
-  <div class="stat"><div class="v">Google Play</div><div class="k">실제 공개 배포</div></div>
+  <div class="stat"><div class="v">Google Play</div><div class="k">한국 제외 해외 공개 배포</div></div>
   <div class="stat"><div class="v">1인</div><div class="k">기획 · 개발 · 출시</div></div>
   <div class="stat"><div class="v">2~7인</div><div class="k">오프라인 싱글플레이</div></div>
   <div class="stat"><div class="v">9종 · 12개</div><div class="k">성격 유형 · 행동 조정 변수</div></div>
@@ -214,7 +214,7 @@ ul.kv b{font-weight:760}
 <tr><td><b>앱 기술</b></td><td>Kotlin · Jetpack Compose · Material 3 · Hilt · Coroutines/Flow · Navigation Compose · Room · DataStore</td></tr>
 <tr><td><b>제품화 기술</b></td><td>Google Play Billing · AdMob · Firebase Crashlytics/Analytics · R8/리소스 축소 · release signing · 개인정보처리방침</td></tr>
 <tr><td><b>코드 규모</b></td><td>메인 Kotlin 약 7.6만 LOC · 테스트 Kotlin 약 3.0만 LOC · 453개 <code>@Composable</code> 선언 · 117커밋</td></tr>
-<tr><td><b>현재 버전</b></td><td>Google Play 공개 버전 v0.9.2 · 현재 소스 v0.9.3</td></tr>
+<tr><td><b>현재 버전</b></td><td>한국 제외 해외 Google Play 공개 버전 v0.9.2 · 현재 소스 v0.9.3</td></tr>
 </tbody>
 </table></div>
 
@@ -265,11 +265,11 @@ ul.kv b{font-weight:760}
   </figure>
 </div>
 
-<h3>Google Play 출시 및 운영 기반</h3>
+<h3>Google Play 해외 출시 및 운영 기반</h3>
 <div class="tw"><table>
 <thead><tr><th>출시 항목</th><th>구현 근거</th><th>의미</th></tr></thead>
 <tbody>
-<tr><td><b>Google Play 공개 배포</b></td><td><a href="https://play.google.com/store/apps/details?id=com.endside.holdem">Wonder Holdem 스토어 페이지</a></td><td>패키지 <code>com.endside.holdem</code>으로 실제 사용자 설치 가능</td></tr>
+<tr><td><b>Google Play 해외 공개 배포</b></td><td><a href="https://play.google.com/store/apps/details?id=com.endside.holdem">Wonder Holdem 스토어 페이지</a></td><td>한국을 제외한 출시 국가에서 패키지 <code>com.endside.holdem</code>으로 실제 사용자 설치 가능</td></tr>
 <tr><td><b>Release 빌드</b></td><td>서명 설정 · R8 minify · resource shrink · native debug symbol</td><td>디버그 앱이 아니라 배포 가능한 산출물 관리</td></tr>
 <tr><td><b>수익화</b></td><td>Google Play Billing 7.1.1 · AdMob</td><td>PRO 기능과 광고가 연결된 실제 제품 모델</td></tr>
 <tr><td><b>운영 가시성</b></td><td>Firebase Crashlytics · Analytics</td><td>출시 후 크래시와 이용 흐름을 관찰할 기반</td></tr>
@@ -410,8 +410,8 @@ ul.kv b{font-weight:760}
 </ul>
 
 <div class="tagline">
-  <div class="big">서버에서 쌓은 설계력을 제품 정의·화면·Android 구현·게임 엔진으로 확장해,<br>실제 스토어 출시까지 마무리했습니다.</div>
-  <div class="sub">Wonder Holdem은 실행 가능한 앱, 공개 스토어, 코드와 테스트로 그 범위를 보여주는 프로젝트입니다.</div>
+  <div class="big">서버에서 쌓은 설계력을 제품 정의·화면·Android 구현·게임 엔진으로 확장해,<br>한국 제외 해외 스토어 출시까지 마무리했습니다.</div>
+  <div class="sub">Wonder Holdem은 실행 가능한 앱, 해외 공개 스토어, 코드와 테스트로 그 범위를 보여주는 프로젝트입니다.</div>
 </div>
 
 <div class="foot">
