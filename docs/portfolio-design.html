@@ -1,0 +1,1427 @@
+<meta charset="utf-8">
+<title>백엔드 설계 포트폴리오 — 박근혁</title>
+<style>
+:root{
+  --bg:#ffffff; --fg:#16181d; --muted:#6b7280; --line:#e2e5ea;
+  --accent:#2563eb; --accent-soft:#eff4ff;
+  --pub:#059669; --pub-bg:#ecfdf5;
+  --app:#2563eb; --app-bg:#eff6ff;
+  --db:#7c3aed;  --db-bg:#f5f1ff;
+  --ext:#6b7280; --ext-bg:#f4f5f7;
+  --warn:#b45309; --warn-bg:#fffbeb;
+  --code:#f6f7f9;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--fg);
+  font-family:-apple-system,BlinkMacSystemFont,"Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;
+  font-size:14px; line-height:1.7; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1080px;margin:0 auto;padding:48px 32px 96px}
+
+/* ---------- typography ---------- */
+h1,h2,h3,h4{line-height:1.35;margin:0}
+.doc-title{font-size:40px;font-weight:800;letter-spacing:-.02em}
+.doc-sub{color:var(--muted);font-size:15px;margin-top:10px}
+h2{font-size:26px;font-weight:750;letter-spacing:-.015em;margin:64px 0 6px;padding-bottom:12px;border-bottom:2px solid var(--fg)}
+h3{font-size:19px;font-weight:700;margin:40px 0 10px}
+h4{font-size:15px;font-weight:700;margin:26px 0 8px;color:var(--accent)}
+p{margin:10px 0}
+.lead{color:var(--muted);margin:6px 0 18px}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.87em;background:var(--code);padding:1px 5px;border-radius:4px}
+strong{font-weight:700}
+small{font-size:12px;color:var(--muted)}
+
+/* ---------- header ---------- */
+.cover{border-bottom:3px solid var(--fg);padding-bottom:28px;margin-bottom:8px}
+.badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:18px}
+.badge{font-size:11.5px;font-weight:600;padding:4px 10px;border-radius:99px;background:var(--accent-soft);color:var(--accent);border:1px solid #dbe6ff}
+
+/* ---------- section index ---------- */
+.toc{background:#fafbfc;border:1px solid var(--line);border-radius:12px;padding:20px 24px;margin-top:28px}
+.toc ol{margin:8px 0 0;padding-left:20px}
+.toc li{margin:3px 0}
+.toc a{color:var(--fg);text-decoration:none}
+.toc a:hover{color:var(--accent)}
+
+/* ---------- meta strip ---------- */
+.meta{display:flex;flex-wrap:wrap;gap:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:16px 0 24px}
+.meta div{flex:1 1 150px;padding:11px 14px;border-right:1px solid var(--line)}
+.meta div:last-child{border-right:none}
+.meta dt{font-size:11px;color:var(--muted);font-weight:600;letter-spacing:.03em;text-transform:uppercase}
+.meta dd{margin:2px 0 0;font-size:13.5px;font-weight:650}
+
+/* ---------- tables ---------- */
+.tw{overflow-x:auto;margin:14px 0}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top}
+th{background:#f7f8fa;font-weight:700;font-size:12.5px;white-space:nowrap}
+td code{white-space:nowrap}
+tbody tr:nth-child(even){background:#fcfcfd}
+.t-num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+
+/* ---------- diagram ---------- */
+.diagram{border:1px solid var(--line);border-radius:14px;padding:22px;background:#fcfcfd;margin:18px 0}
+.diagram .cap{font-size:12px;color:var(--muted);margin-bottom:16px;font-weight:600;letter-spacing:.02em}
+.tier{border:1.5px dashed var(--ext);border-radius:11px;padding:16px 14px 13px;margin:0 0 8px;position:relative;background:#fff}
+.tier>.tl{position:absolute;top:-9px;left:14px;background:#fcfcfd;padding:0 8px;font-size:10.5px;font-weight:750;letter-spacing:.06em;text-transform:uppercase;color:var(--ext)}
+.tier.pub{border-color:var(--pub);background:var(--pub-bg)} .tier.pub>.tl{color:var(--pub)}
+.tier.app{border-color:var(--app);background:var(--app-bg)} .tier.app>.tl{color:var(--app)}
+.tier.db{border-color:var(--db);background:var(--db-bg)}   .tier.db>.tl{color:var(--db)}
+.tier.ext{border-style:solid;border-color:var(--line);background:#fff}
+.nodes{display:flex;gap:9px;flex-wrap:wrap}
+.node{flex:1 1 145px;min-width:130px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:9px 11px}
+.node .nt{font-size:12.8px;font-weight:700;line-height:1.4}
+.node .ns{font-size:11px;color:var(--muted);line-height:1.5;margin-top:2px}
+.node.solo{flex:1 1 100%}
+.arw{text-align:center;color:var(--muted);font-size:15px;line-height:1;margin:6px 0 8px;font-weight:700}
+.arw span{background:#fcfcfd;padding:0 10px}
+.arw.line{border-top:1px solid var(--line);height:0;margin:14px 0;position:relative}
+
+/* chain */
+.chain{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin:12px 0}
+.chip{background:#fff;border:1px solid var(--line);border-radius:7px;padding:6px 11px;font-size:12.5px;font-weight:650}
+.chip.a{border-color:#c7d9ff;background:var(--app-bg);color:#1d4ed8}
+.chip.p{border-color:#a7e8cf;background:var(--pub-bg);color:#047857}
+.chip.d{border-color:#d9cdf8;background:var(--db-bg);color:#6d28d9}
+.ar{color:var(--muted);font-weight:700;font-size:13px}
+
+/* callouts */
+.note{border-left:3px solid var(--accent);background:var(--accent-soft);padding:12px 16px;border-radius:0 8px 8px 0;margin:16px 0;font-size:13.2px}
+.note.w{border-color:var(--warn);background:var(--warn-bg)}
+.note .h{font-weight:750;display:block;margin-bottom:3px}
+
+/* key-value list */
+ul.kv{list-style:none;padding:0;margin:10px 0}
+ul.kv li{padding:7px 0 7px 18px;border-bottom:1px solid var(--line);position:relative;font-size:13.3px}
+ul.kv li:before{content:"";position:absolute;left:2px;top:15px;width:5px;height:5px;border-radius:50%;background:var(--accent)}
+ul.kv li:last-child{border-bottom:none}
+ul.kv b{font-weight:700}
+
+/* stat cards */
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}
+.stat{flex:1 1 150px;border:1px solid var(--line);border-radius:11px;padding:14px 16px;background:#fff}
+.stat .v{font-size:23px;font-weight:800;letter-spacing:-.02em;line-height:1.2}
+.stat .k{font-size:11.5px;color:var(--muted);font-weight:600;margin-top:3px}
+
+/* env pills */
+.envrow{display:flex;gap:9px;flex-wrap:wrap;margin:16px 0}
+.env{flex:1 1 200px;border:1px solid var(--line);border-radius:11px;overflow:hidden;background:#fff}
+.env .eh{padding:8px 13px;font-size:12.5px;font-weight:750;color:#fff}
+.env .eb{padding:11px 13px;font-size:12.3px;line-height:1.65}
+.env.e1 .eh{background:#6b7280}.env.e2 .eh{background:#059669}
+.env.e3 .eh{background:#2563eb}.env.e4 .eh{background:#7c3aed}
+
+.fig{margin:20px 0;border:1px solid #e2e5ea;border-radius:14px;padding:18px 18px 6px;background:#fcfcfd}
+.fig svg{width:100%;height:auto;display:block}
+.fig figcaption{font-size:12px;color:#6b7280;line-height:1.6;padding:12px 4px 10px;border-top:1px solid #eef0f3;margin-top:12px}
+svg text{font-family:-apple-system,BlinkMacSystemFont,"Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif}
+svg .t{font-size:11.5px;font-weight:650;fill:#16181d}
+svg .ts{font-size:10px;fill:#6b7280}
+svg .tm{font-size:11px;font-family:ui-monospace,Menlo,monospace;fill:#16181d}
+svg .tz{font-size:10px;font-weight:750;letter-spacing:.06em;fill:#6b7280}
+svg .taz{font-size:10.5px;font-weight:700;fill:#2563eb}
+svg .tsg{font-size:9.5px;font-weight:650;fill:#dc2626}
+svg .tasg{font-size:10px;font-weight:700;fill:#c2410c}
+svg .ln{stroke:#5b6472;stroke-width:1.5;fill:none}
+svg .ln.d{stroke-dasharray:5 3}
+svg .ln.g{stroke:#059669}svg .ln.b{stroke:#2563eb}svg .ln.r{stroke:#dc2626}svg .ln.p{stroke:#7c3aed}svg .ln.o{stroke:#c2410c}
+svg .bdg{fill:#1d4ed8;stroke:#fff;stroke-width:1.6}
+svg .tbdg{font-size:10px;font-weight:800;fill:#fff}
+svg .area-region{fill:#fbfbfc;stroke:#94a3b8;stroke-width:1.4;stroke-dasharray:7 4}
+svg .area-cloud{fill:#fbfbfc;stroke:#232F3E;stroke-width:1.5}
+svg .area-vpc{fill:#fdfcff;stroke:#8C4FFF;stroke-width:1.6}
+svg .area-az{fill:none;stroke:#2563eb;stroke-width:1.2;stroke-dasharray:6 4}
+svg .area-dash{fill:#fff;stroke:#94a3b8;stroke-width:1.3;stroke-dasharray:6 4}
+svg .area-ec2{fill:#fff9f3;stroke:#ED7100;stroke-width:1.6}
+svg .sn-pub{fill:#ecfdf5;stroke:#059669;stroke-width:1.3}
+svg .sn-app{fill:#eff6ff;stroke:#2563eb;stroke-width:1.3}
+svg .sn-db{fill:#f7f3ff;stroke:#7c3aed;stroke-width:1.3}
+svg .sg{fill:none;stroke:#dc2626;stroke-width:1.2;stroke-dasharray:5 3}
+svg .asg{fill:#fffaf5;stroke:#ED7100;stroke-width:1.2;stroke-dasharray:5 3}
+svg .rtb{fill:#fff;stroke:#cbd5e1;stroke-width:1.2}
+svg .callout{fill:#fff;stroke:#cbd5e1;stroke-width:1.2}
+
+
+/* ---------- 시퀀스 다이어그램 ---------- */
+svg .lifeline{stroke:#c3c9d2;stroke-width:1.1;stroke-dasharray:4 4}
+svg .head{fill:#eef2f7;stroke:#c3c9d2;stroke-width:1.1}
+svg .msg{stroke:#4b5563;stroke-width:1.4;fill:none}
+svg .msg.msgd{stroke-dasharray:5 3;stroke:#7c8493}
+svg .frag{fill:#f6f7f9;stroke:#aeb6c2;stroke-width:1;stroke-dasharray:4 3}
+svg .snote{fill:#fffbeb;stroke:#e6c877;stroke-width:1}
+svg .ta{font-size:11.5px;font-weight:700;fill:#16181d}
+svg .tmsg{font-size:10.5px;fill:#16181d}
+svg .tnote{font-size:10px;fill:#7c5e10}
+svg .tfrag{font-size:10px;font-weight:750;letter-spacing:.04em;fill:#5b6472}
+svg .cell{stroke:#c3c9d2;stroke-width:.8;fill:#fff}
+svg .cellA{fill:#dbeafe}svg .cellB{fill:#fed7aa}svg .cellC{fill:#fde68a}
+svg .state{fill:#eff6ff;stroke:#2563eb;stroke-width:1.3}
+svg .state.warn{fill:#fff7ed;stroke:#ea580c}
+svg .state.end{fill:#ecfdf5;stroke:#059669}
+svg .tst{font-size:11px;font-weight:700;fill:#16181d}
+ol.legend{list-style:none;counter-reset:lg;padding:0;margin:14px 0 6px}
+ol.legend li{counter-increment:lg;position:relative;padding:9px 0 9px 34px;border-bottom:1px solid var(--line);font-size:13.2px;line-height:1.65}
+ol.legend li:last-child{border-bottom:none}
+ol.legend li:before{content:counter(lg);position:absolute;left:0;top:10px;width:21px;height:21px;line-height:21px;text-align:center;border-radius:50%;background:#1d4ed8;color:#fff;font-size:11px;font-weight:800}
+ol.legend .r{display:block;color:var(--muted);font-size:12.3px;margin-top:3px}
+h5{font-size:13.5px;font-weight:750;margin:22px 0 2px;color:var(--fg)}
+hr.sep{border:none;border-top:1px solid var(--line);margin:34px 0}
+.foot{margin-top:64px;padding-top:20px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}
+
+/* ---------- print ---------- */
+@page{size:A4;margin:13mm 12mm}
+@media print{
+  body{font-size:10.2pt;line-height:1.6}
+  .wrap{max-width:none;padding:0}
+  h2{font-size:17pt;margin:22pt 0 4pt;break-after:avoid}
+  h3{font-size:13pt;margin:15pt 0 4pt;break-after:avoid}
+  h4{font-size:11pt;break-after:avoid}
+  .doc-title{font-size:28pt}
+  .diagram,.tw,table,.note,.stats,.envrow,.meta{break-inside:avoid}
+  .node,.stat,.env,.tier{break-inside:avoid}
+  tr{break-inside:avoid}
+  /* 인쇄 시 표가 지면 밖으로 밀려 잘리는 것 방지 */
+  .tw{overflow:visible}
+  table{table-layout:fixed;width:100%}
+  th,td{white-space:normal;overflow-wrap:anywhere;word-break:keep-all;padding:6px 8px}
+  td code{white-space:normal}
+  .pb{break-before:page}
+  .fig{break-inside:avoid}
+  .fig svg{max-height:none}
+  .toc{break-after:page}
+  a{color:inherit;text-decoration:none}
+}
+@media (max-width:640px){
+  .wrap{padding:28px 16px 60px}
+  .doc-title{font-size:29px}
+  h2{font-size:21px}
+}
+</style>
+
+<!-- AWS 아이콘 심볼 라이브러리 + 화살표 마커 (문서 최상단 1회 삽입) -->
+<svg xmlns="http://www.w3.org/2000/svg" style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
+<defs>
+  <marker id="ah"   viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#5b6472"/></marker>
+  <marker id="ah-g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#059669"/></marker>
+  <marker id="ah-b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#2563eb"/></marker>
+  <marker id="ah-r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#dc2626"/></marker>
+  <marker id="ah-p" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#7c3aed"/></marker>
+  <marker id="ah-o" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#c2410c"/></marker>
+</defs>
+
+<!-- ============ 사용자 / 클라이언트 ============ -->
+<symbol id="i-user" viewBox="0 0 48 48">
+  <circle cx="24" cy="16" r="8" fill="#232F3E"/>
+  <path d="M8 44c0-9 7.2-15 16-15s16 6 16 15z" fill="#232F3E"/>
+</symbol>
+<symbol id="i-admin" viewBox="0 0 48 48">
+  <circle cx="19" cy="15" r="7.5" fill="#B0084D"/>
+  <path d="M4 42c0-8.5 6.8-14 15-14s15 5.5 15 14z" fill="#B0084D"/>
+  <circle cx="37" cy="12" r="8" fill="none" stroke="#B0084D" stroke-width="3"/>
+  <path d="M37 4v-3M37 23v-3M45 12h3M26 12h3" stroke="#B0084D" stroke-width="2.6" stroke-linecap="round"/>
+</symbol>
+<symbol id="i-client" viewBox="0 0 48 48">
+  <rect x="3" y="8" width="30" height="24" rx="2.5" fill="#D13212"/>
+  <rect x="7" y="12" width="22" height="16" rx="1" fill="#fff"/>
+  <rect x="12" y="35" width="12" height="3" rx="1.5" fill="#D13212"/>
+  <rect x="33" y="18" width="13" height="24" rx="2.5" fill="#D13212"/>
+  <rect x="36" y="22" width="7" height="14" rx="1" fill="#fff"/>
+</symbol>
+<symbol id="i-game" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#232F3E"/>
+  <path d="M13 20h22a7 7 0 0 1 7 7v1a6 6 0 0 1-11 3.5l-1.6-2H18.6L17 32A6 6 0 0 1 6 28.5v-1a7 7 0 0 1 7-7z" fill="#fff"/>
+  <path d="M14 25v5M11.5 27.5h5" stroke="#232F3E" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="33" cy="26" r="2" fill="#232F3E"/><circle cx="37" cy="30" r="2" fill="#232F3E"/>
+</symbol>
+
+<!-- ============ 네트워킹 (보라) ============ -->
+<symbol id="i-r53" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#8C4FFF"/>
+  <text x="24" y="32" text-anchor="middle" font-family="Helvetica,Arial" font-size="19" font-weight="700" fill="#fff">53</text>
+</symbol>
+<symbol id="i-cf" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#8C4FFF"/>
+  <circle cx="24" cy="24" r="13" fill="none" stroke="#fff" stroke-width="2.2"/>
+  <ellipse cx="24" cy="24" rx="6" ry="13" fill="none" stroke="#fff" stroke-width="2.2"/>
+  <path d="M11 24h26M13.5 17h21M13.5 31h21" stroke="#fff" stroke-width="2.2"/>
+</symbol>
+<symbol id="i-vpc" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#8C4FFF"/>
+  <path d="M24 9l13 7v16l-13 7-13-7V16z" fill="none" stroke="#fff" stroke-width="2.4"/>
+  <circle cx="24" cy="24" r="4" fill="#fff"/>
+</symbol>
+<symbol id="i-router" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#8C4FFF"/>
+  <circle cx="24" cy="24" r="6" fill="#fff"/>
+  <path d="M24 8v8M24 32v8M8 24h8M32 24h8" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/>
+</symbol>
+<symbol id="i-otel" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#8C4FFF"/>
+  <circle cx="24" cy="24" r="9" fill="none" stroke="#fff" stroke-width="2.4"/>
+  <circle cx="24" cy="24" r="3" fill="#fff"/>
+  <path d="M24 6v6M24 36v6M6 24h6M36 24h6" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>
+</symbol>
+
+<!-- ============ 컴퓨팅 / 컨테이너 (주황) ============ -->
+<symbol id="i-alb" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#ED7100"/>
+  <circle cx="24" cy="11" r="4" fill="#fff"/>
+  <circle cx="11" cy="38" r="4" fill="#fff"/><circle cx="24" cy="38" r="4" fill="#fff"/><circle cx="37" cy="38" r="4" fill="#fff"/>
+  <path d="M24 15v9M11 34v-5h26v5M24 29v-5" stroke="#fff" stroke-width="2.3" fill="none"/>
+</symbol>
+<symbol id="i-nlb" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#ED7100"/>
+  <circle cx="11" cy="11" r="4" fill="#fff"/><circle cx="37" cy="11" r="4" fill="#fff"/>
+  <circle cx="11" cy="37" r="4" fill="#fff"/><circle cx="37" cy="37" r="4" fill="#fff"/>
+  <circle cx="24" cy="24" r="5" fill="#fff"/>
+  <path d="M14.5 14.5 20 20M33.5 14.5 28 20M14.5 33.5 20 28M33.5 33.5 28 28" stroke="#fff" stroke-width="2.2"/>
+</symbol>
+<symbol id="i-ec2" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#ED7100"/>
+  <rect x="12" y="12" width="24" height="24" rx="2.5" fill="none" stroke="#fff" stroke-width="2.4"/>
+  <rect x="18" y="18" width="12" height="12" rx="1.5" fill="#fff"/>
+  <path d="M17 8v4M24 8v4M31 8v4M17 36v4M24 36v4M31 36v4M8 17h4M8 24h4M8 31h4M36 17h4M36 24h4M36 31h4" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>
+</symbol>
+<symbol id="i-eks" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#ED7100"/>
+  <path d="M24 8 38 15.5v17L24 40 10 32.5v-17z" fill="none" stroke="#fff" stroke-width="2.4"/>
+  <circle cx="24" cy="24" r="4" fill="#fff"/>
+  <path d="M24 12v8M24 28v8M14.5 18.5 20.5 22M33.5 18.5 27.5 22M14.5 29.5 20.5 26M33.5 29.5 27.5 26" stroke="#fff" stroke-width="1.9"/>
+</symbol>
+<symbol id="i-pod" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#fff" stroke="#ED7100" stroke-width="2.4"/>
+  <path d="M24 10 37 17v14l-13 7-13-7V17z" fill="none" stroke="#ED7100" stroke-width="2.4"/>
+  <path d="M24 10v14l13-7M24 24v14M24 24 11 17" stroke="#ED7100" stroke-width="2"/>
+</symbol>
+<symbol id="i-igw" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#ED7100"/>
+  <path d="M9 24h30M31 16l8 8-8 8" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="7" y="12" width="5" height="24" rx="2" fill="#fff"/>
+</symbol>
+<symbol id="i-nat" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#ED7100"/>
+  <path d="M10 18h20M24 12l6 6-6 6" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M38 30H18M24 36l-6-6 6-6" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+</symbol>
+<symbol id="i-ecr" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#ED7100"/>
+  <rect x="10" y="20" width="12" height="9" rx="1.5" fill="#fff"/>
+  <rect x="26" y="20" width="12" height="9" rx="1.5" fill="#fff"/>
+  <rect x="18" y="31" width="12" height="9" rx="1.5" fill="#fff"/>
+  <rect x="18" y="9" width="12" height="9" rx="1.5" fill="#fff"/>
+</symbol>
+<symbol id="i-bastion" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#4D5A6B"/>
+  <rect x="9" y="12" width="30" height="24" rx="2.5" fill="#fff"/>
+  <path d="M14 20l5 4-5 4M23 28h11" stroke="#4D5A6B" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+</symbol>
+
+<!-- ============ 스토리지 / 빌드 (초록) ============ -->
+<symbol id="i-s3" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#7AA116"/>
+  <path d="M13 12h22l-3 25H16z" fill="#fff"/>
+  <path d="M13 18h22M15 26h18" stroke="#7AA116" stroke-width="2"/>
+</symbol>
+<symbol id="i-glacier" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#3F8624"/>
+  <path d="M24 9v30M11 16.5l26 15M37 16.5l-26 15" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/>
+</symbol>
+<symbol id="i-build" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#7AA116"/>
+  <path d="M28 10a8 8 0 0 0-10.5 10.5L10 28v8h8l7.5-7.5A8 8 0 0 0 36 18z" fill="#fff"/>
+</symbol>
+<symbol id="i-git" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#4D5A6B"/>
+  <circle cx="16" cy="13" r="4.5" fill="#fff"/><circle cx="16" cy="35" r="4.5" fill="#fff"/><circle cx="33" cy="20" r="4.5" fill="#fff"/>
+  <path d="M16 17.5v13M16 24h10a4 4 0 0 0 4-4" stroke="#fff" stroke-width="2.4" fill="none"/>
+</symbol>
+<symbol id="i-jenkins" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#D24939"/>
+  <circle cx="24" cy="17" r="7" fill="#fff"/>
+  <path d="M13 40c0-7 5-11 11-11s11 4 11 11z" fill="#fff"/>
+</symbol>
+
+<!-- ============ 데이터베이스 ============ -->
+<symbol id="i-rds" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#3B48CC"/>
+  <ellipse cx="24" cy="15" rx="12" ry="5" fill="#fff"/>
+  <path d="M12 15v18c0 2.8 5.4 5 12 5s12-2.2 12-5V15" fill="none" stroke="#fff" stroke-width="2.6"/>
+  <path d="M12 24c0 2.8 5.4 5 12 5s12-2.2 12-5" fill="none" stroke="#fff" stroke-width="2.2"/>
+</symbol>
+<symbol id="i-mysql" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#00618A"/>
+  <ellipse cx="24" cy="15" rx="12" ry="5" fill="#fff"/>
+  <path d="M12 15v18c0 2.8 5.4 5 12 5s12-2.2 12-5V15" fill="none" stroke="#fff" stroke-width="2.6"/>
+  <path d="M12 24c0 2.8 5.4 5 12 5s12-2.2 12-5" fill="none" stroke="#fff" stroke-width="2.2"/>
+</symbol>
+<symbol id="i-cass" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#2E27AD"/>
+  <ellipse cx="24" cy="14" rx="11" ry="4.5" fill="#fff"/>
+  <path d="M13 14v20c0 2.5 5 4.5 11 4.5s11-2 11-4.5V14" fill="none" stroke="#fff" stroke-width="2.4"/>
+  <path d="M13 21c0 2.5 5 4.5 11 4.5S35 23.5 35 21M13 28c0 2.5 5 4.5 11 4.5S35 30.5 35 28" fill="none" stroke="#fff" stroke-width="1.9"/>
+</symbol>
+<symbol id="i-redis" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#C7131F"/>
+  <path d="M9 15l15-6 15 6-15 6z" fill="#fff"/>
+  <path d="M9 24l15 6 15-6" fill="none" stroke="#fff" stroke-width="2.6" stroke-linejoin="round"/>
+  <path d="M9 32l15 6 15-6" fill="none" stroke="#fff" stroke-width="2.6" stroke-linejoin="round"/>
+</symbol>
+
+<!-- ============ 메시징 / 알림 (핑크) ============ -->
+<symbol id="i-mq" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#E7157B"/>
+  <circle cx="24" cy="24" r="5" fill="#fff"/>
+  <circle cx="11" cy="13" r="3.5" fill="#fff"/><circle cx="37" cy="13" r="3.5" fill="#fff"/>
+  <circle cx="11" cy="35" r="3.5" fill="#fff"/><circle cx="37" cy="35" r="3.5" fill="#fff"/>
+  <path d="M13.5 15.5 20 21M34.5 15.5 28 21M13.5 32.5 20 27M34.5 32.5 28 27" stroke="#fff" stroke-width="2"/>
+</symbol>
+<symbol id="i-sns" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#E7157B"/>
+  <path d="M12 20h7l10-7v22l-10-7h-7z" fill="#fff"/>
+  <path d="M33 18a8 8 0 0 1 0 12" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+</symbol>
+<symbol id="i-ses" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#E7157B"/>
+  <rect x="9" y="14" width="30" height="20" rx="2.5" fill="#fff"/>
+  <path d="M9 16l15 11 15-11" fill="none" stroke="#E7157B" stroke-width="2.4"/>
+</symbol>
+<symbol id="i-socket" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#0E8A78"/>
+  <circle cx="24" cy="24" r="13" fill="none" stroke="#fff" stroke-width="2.4"/>
+  <path d="M17 24a7 14 0 0 1 14 0a7 14 0 0 1-14 0" fill="none" stroke="#fff" stroke-width="2"/>
+  <circle cx="24" cy="24" r="3.5" fill="#fff"/>
+</symbol>
+
+<!-- ============ 보안 ============ -->
+<symbol id="i-lock" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#3F8624"/>
+  <rect x="13" y="22" width="22" height="17" rx="2.5" fill="#fff"/>
+  <path d="M18 22v-5a6 6 0 0 1 12 0v5" fill="none" stroke="#fff" stroke-width="2.8"/>
+</symbol>
+<symbol id="i-acm" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#DD344C"/>
+  <rect x="9" y="11" width="30" height="20" rx="2.5" fill="#fff"/>
+  <path d="M14 17h20M14 22h13" stroke="#DD344C" stroke-width="2.2" stroke-linecap="round"/>
+  <path d="M24 31l-5 8 5-2 5 2z" fill="#fff"/>
+</symbol>
+<symbol id="i-secrets" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#DD344C"/>
+  <circle cx="18" cy="24" r="7" fill="none" stroke="#fff" stroke-width="2.8"/>
+  <path d="M25 24h14M34 24v6M39 24v5" stroke="#fff" stroke-width="2.8" stroke-linecap="round"/>
+</symbol>
+<symbol id="i-jwt" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#4D5A6B"/>
+  <circle cx="18" cy="24" r="6.5" fill="none" stroke="#fff" stroke-width="2.6"/>
+  <path d="M24.5 24H39M35 24v5.5M39 24v4" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/>
+</symbol>
+
+<!-- ============ 기타 ============ -->
+<symbol id="i-nginx" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#009639"/>
+  <path d="M15 34V15l18 19V15" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+</symbol>
+<symbol id="i-docker" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#1D91D0"/>
+  <g fill="#fff">
+    <rect x="11" y="24" width="6" height="5.5" rx=".7"/><rect x="18" y="24" width="6" height="5.5" rx=".7"/>
+    <rect x="25" y="24" width="6" height="5.5" rx=".7"/><rect x="18" y="17.5" width="6" height="5.5" rx=".7"/>
+    <rect x="25" y="17.5" width="6" height="5.5" rx=".7"/><rect x="25" y="11" width="6" height="5.5" rx=".7"/>
+  </g>
+  <path d="M9 31c0 5 4 8 10 8 11 0 18-5 20-13 3 1.5 6 .5 7-1-2-1.5-4-1-5 0" fill="#fff"/>
+</symbol>
+<symbol id="i-batch" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#ED7100"/>
+  <circle cx="24" cy="24" r="13" fill="none" stroke="#fff" stroke-width="2.6"/>
+  <path d="M24 15v9l6 4" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+</symbol>
+<symbol id="i-ai" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#01A88D"/>
+  <circle cx="24" cy="24" r="4" fill="#fff"/>
+  <circle cx="12" cy="14" r="3" fill="#fff"/><circle cx="36" cy="14" r="3" fill="#fff"/>
+  <circle cx="12" cy="34" r="3" fill="#fff"/><circle cx="36" cy="34" r="3" fill="#fff"/>
+  <path d="M14.5 15.5 21 21M33.5 15.5 27 21M14.5 32.5 21 27M33.5 32.5 27 27" stroke="#fff" stroke-width="1.9"/>
+</symbol>
+<symbol id="i-pay" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#1A73E8"/>
+  <rect x="8" y="14" width="32" height="21" rx="3" fill="#fff"/>
+  <rect x="8" y="19" width="32" height="4" fill="#1A73E8"/>
+  <rect x="12" y="27" width="10" height="3" rx="1.5" fill="#1A73E8"/>
+</symbol>
+<symbol id="i-cloud" viewBox="0 0 48 48">
+  <path d="M13 36a8.5 8.5 0 0 1-.6-17A12 12 0 0 1 35 21.5a7.3 7.3 0 0 1-1 14.5z" fill="#ED7100"/>
+</symbol>
+</svg>
+
+
+<div class="wrap">
+<header class="cover">
+  <div class="doc-title">백엔드 설계 포트폴리오</div>
+  <div class="doc-sub">
+    메시지·인증·파일 보안 설계와, 설계를 검증하는 방법에 대한 기록<br>
+    <strong>박근혁</strong> · Backend Engineer / Backend Engineering 파트장 · 총 경력 17년
+  </div>
+  <div class="badges">
+    <span class="badge">JWT · JWKs(RSA)</span><span class="badge">OAuth2 · SSO</span><span class="badge">본인인증(CI)</span>
+    <span class="badge">OTP</span><span class="badge">Cassandra</span><span class="badge">Redis</span>
+    <span class="badge">ActiveMQ · MQTT</span><span class="badge">Presigned URL</span><span class="badge">분산 락</span>
+    <span class="badge">Spring Security</span>
+  </div>
+</header>
+
+<div class="note">
+  <span class="h">문서 성격</span>
+  별권 「인프라 아키텍처」가 <strong>무엇 위에서 돌아가는가</strong>를 다뤘다면, 이 문서는
+  <strong>그 안에서 데이터와 신원이 어떻게 흐르는가</strong>를 다룹니다.
+  회사·서비스를 특정할 수 있는 값은 제거했으며, 설계 구조와 의도는 실제와 동일합니다.
+</div>
+
+<div class="note w">
+  <span class="h">이 문서가 증명하는 것 — 세 가지</span>
+  ① <strong>실패 지점을 먼저 정의하고 구조로 막는 설계</strong> — 각 시퀀스는 "이 설계가 없으면 어디서 무엇이
+  깨지는가"를 함께 기록합니다. ② 인증·파일·메시징처럼 <strong>여러 회사에서 반복된 문제를 재사용 가능한
+  패턴으로</strong> 정리해 왔다는 것. ③ 도식과 데이터 전개로 설계를 구현 전에 검증하고, 같은 방법으로
+  <strong>AI 에이전트와 일하는 프로세스</strong>까지 만들었다는 것 (4장).
+</div>
+
+<nav class="toc">
+  <strong style="font-size:13px;letter-spacing:.04em">목차</strong>
+  <ol>
+    <li><a href="#d1">메시지 송수신 설계</a>
+      <ol style="list-style:lower-alpha">
+        <li><a href="#d1a">왜 메시지 프록시를 두었나</a></li>
+        <li><a href="#d1b">송수신 시퀀스 — 저장소를 역할별로 나누기</a></li>
+        <li><a href="#d1c">읽음 처리 — 안 읽은 개수를 조회 없이 구하기</a></li>
+      </ol></li>
+    <li><a href="#d2">인증 설계</a>
+      <ol style="list-style:lower-alpha">
+        <li><a href="#d2a">JWT 발급 · 검증 · 갱신</a></li>
+        <li><a href="#d2b">JWKs(RSA) — 비밀키를 공유하지 않는 검증</a></li>
+        <li><a href="#d2c">Refresh Token 주기 정책</a></li>
+        <li><a href="#d2d">소셜 로그인 + 본인인증(CI) 가입</a></li>
+        <li><a href="#d2e">OTP 기반 이메일 · SMS 인증</a></li>
+        <li><a href="#d2f">UGC 인증 — 외부 앱에 신원을 위임하는 법</a></li>
+        <li><a href="#d2g">앱 버전 강제 업데이트</a></li>
+      </ol></li>
+    <li><a href="#d3">파일 보안 설계</a></li>
+    <li><a href="#d4">설계 방법론</a>
+      <ol style="list-style:lower-alpha">
+        <li><a href="#d4a">도식화 — 비개발자를 설득하는 언어</a></li>
+        <li><a href="#d4b">데이터 나열 — 구현 전에 설계를 검증하기</a></li>
+        <li><a href="#d4c">문서 기반 AI 개발 프로세스</a></li>
+      </ol></li>
+  </ol>
+</nav>
+
+<h2 id="d1">1. 메시지 송수신 설계</h2>
+<p class="lead">메타버스 플랫폼과 모바일 메신저에서 사용한 메시지 파이프라인. 핵심은 <b>하나의 저장소에 모든 걸 맡기지 않는 것</b>이었습니다.</p>
+<h3 id="d1a">1-1. 왜 메시지 프록시를 두었나</h3>
+<p>클라이언트가 메시지 큐에 직접 붙거나 P2P로 주고받는 구조도 가능합니다. 그렇게 하지 않은 이유는 세 가지입니다.</p>
+<ul class="kv">
+  <li><b>인증을 큐에 맡길 수 없다</b> — 브로커의 인증 모델은 서비스의 권한 정책(차단·탈퇴·강제 로그아웃)을 표현하기에 부족합니다. 프록시를 두면 메시지 한 건마다 서비스 규칙으로 걸러낼 수 있습니다.</li>
+  <li><b>과거 메시지를 큐가 책임지지 않는다</b> — 큐는 "지금 연결된 사람에게 전달"이 본업입니다. 접속하지 않았던 구간의 메시지는 별도 저장소에서 다시 읽어와야 하고, 그 조회 창구가 필요합니다.</li>
+  <li><b>클라이언트를 단순하게 유지해야 한다</b> — 시퀀스 발급·저장·알림·조회가 각각 다른 저장소를 쓰는데, 이걸 클라이언트가 알게 하면 스펙 변경 때마다 앱을 다시 배포해야 합니다.</li>
+</ul>
+<h3 id="d1b">1-2. 송수신 시퀀스 — 저장소를 역할별로 나누기</h3>
+<figure class="fig">
+<svg viewBox="0 0 980 554" role="img" aria-label="메시지 송수신 시퀀스">
+<path class="lifeline" d="M102 54 L102 540"/>
+<path class="lifeline" d="M257 54 L257 540"/>
+<path class="lifeline" d="M412 54 L412 540"/>
+<path class="lifeline" d="M568 54 L568 540"/>
+<path class="lifeline" d="M723 54 L723 540"/>
+<path class="lifeline" d="M878 54 L878 540"/>
+<rect class="head" x="31" y="16" width="141" height="38" rx="6"/>
+<text class="ta" x="102" y="33" text-anchor="middle">보내는 사용자</text>
+<text class="ts" x="102" y="46" text-anchor="middle">앱</text>
+<rect class="head" x="186" y="16" width="141" height="38" rx="6"/>
+<text class="ta" x="257" y="33" text-anchor="middle">Msg Proxy</text>
+<text class="ts" x="257" y="46" text-anchor="middle">메시지 서버</text>
+<rect class="head" x="342" y="16" width="141" height="38" rx="6"/>
+<text class="ta" x="412" y="33" text-anchor="middle">Redis</text>
+<text class="ts" x="412" y="46" text-anchor="middle">시퀀스·읽음</text>
+<rect class="head" x="497" y="16" width="141" height="38" rx="6"/>
+<text class="ta" x="568" y="33" text-anchor="middle">Cassandra</text>
+<text class="ts" x="568" y="46" text-anchor="middle">메시지 본문</text>
+<rect class="head" x="652" y="16" width="141" height="38" rx="6"/>
+<text class="ta" x="723" y="33" text-anchor="middle">MQ</text>
+<text class="ts" x="723" y="46" text-anchor="middle">ActiveMQ</text>
+<rect class="head" x="808" y="16" width="141" height="38" rx="6"/>
+<text class="ta" x="878" y="33" text-anchor="middle">받는 사용자</text>
+<text class="ts" x="878" y="46" text-anchor="middle">앱</text>
+<path class="msg" d="M105 72 L253 72" marker-end="url(#ah)"/>
+<text class="tmsg" x="179" y="65" text-anchor="middle">① 메시지 전송 (REST)</text>
+<path class="msg" d="M260 106 L408 106" marker-end="url(#ah)"/>
+<text class="tmsg" x="335" y="99" text-anchor="middle">② 방 시퀀스 발급 (INCR)</text>
+<path class="msg msgd" d="M409 140 L261 140" marker-end="url(#ah)"/>
+<text class="tmsg" x="335" y="133" text-anchor="middle">msg_idx = 42</text>
+<path class="msg" d="M260 174 L564 174" marker-end="url(#ah)"/>
+<text class="tmsg" x="412" y="167" text-anchor="middle">③ 본문 저장 (room, msg_idx)</text>
+<path class="msg" d="M260 208 L719 208" marker-end="url(#ah)"/>
+<text class="tmsg" x="490" y="201" text-anchor="middle">④ 방 topic 으로 발행</text>
+<path class="msg" d="M726 242 L874 242" marker-end="url(#ah)"/>
+<text class="tmsg" x="801" y="235" text-anchor="middle">⑤ push { msg_idx, sender, ts }</text>
+<rect class="snote" x="64" y="261" width="852" height="26" rx="4"/>
+<text class="tnote" x="490" y="278" text-anchor="middle">본문이 아니라 인덱스만 실어 보낸다 — 알림 페이로드를 최소화하고 본문은 조회 시점에 가져온다</text>
+<path class="msg" d="M875 310 L261 310" marker-end="url(#ah)"/>
+<text class="tmsg" x="568" y="303" text-anchor="middle">⑥ 미수신 구간 조회 (start_msg_idx)</text>
+<path class="msg" d="M260 344 L564 344" marker-end="url(#ah)"/>
+<text class="tmsg" x="412" y="337" text-anchor="middle">⑦ 범위 조회</text>
+<path class="msg msgd" d="M565 378 L261 378" marker-end="url(#ah)"/>
+<text class="tmsg" x="412" y="371" text-anchor="middle">메시지 목록</text>
+<path class="msg msgd" d="M260 412 L874 412" marker-end="url(#ah)"/>
+<text class="tmsg" x="568" y="405" text-anchor="middle">⑧ 응답</text>
+<path class="msg" d="M875 446 L261 446" marker-end="url(#ah)"/>
+<text class="tmsg" x="568" y="439" text-anchor="middle">⑨ 읽음 위치 갱신 (read_idx = 42)</text>
+<path class="msg" d="M260 480 L408 480" marker-end="url(#ah)"/>
+<text class="tmsg" x="335" y="473" text-anchor="middle">SET read_idx</text>
+</svg>
+<figcaption>저장소를 역할로 나눴습니다. <b>Cassandra</b>는 계속 쌓이기만 하는 본문을, <b>Redis</b>는 자주 바뀌는 작은 숫자(시퀀스·읽음 위치)를, <b>MQ</b>는 전달만 담당합니다.</figcaption>
+</figure>
+<div class="tw"><table>
+<thead><tr><th style="width:16%">저장소</th><th style="width:30%">담당</th><th>선택 이유</th></tr></thead>
+<tbody>
+<tr><td><b>Cassandra</b></td><td>메시지 본문</td><td>메시지는 수정되지 않고 계속 쌓이기만 하는 데이터입니다. 쓰기가 대부분이고 방 단위 범위 조회만 필요하므로, 쓰기에 유리하고 수평 확장이 쉬운 쪽을 골랐습니다.</td></tr>
+<tr><td><b>Redis</b></td><td>방 시퀀스 · 사용자별 읽음 위치</td><td>메시지마다 원자적으로 증가하는 번호가 필요합니다. RDB의 시퀀스나 auto-increment는 방마다 만들 수 없고 경합도 큽니다.</td></tr>
+<tr><td><b>MQ</b></td><td>실시간 전달</td><td>구독 모델이 필요한 건 "지금 접속 중인 사람"뿐입니다. 전달 실패는 조회 경로가 보완하므로 브로커에 영속성을 요구하지 않았습니다.</td></tr>
+<tr><td><b>RDB</b></td><td>방 · 참여자 정보</td><td>관계와 권한이 필요한 메타데이터만 남겼습니다.</td></tr>
+</tbody></table></div>
+<h3 id="d1c">1-3. 읽음 처리 — 안 읽은 개수를 조회 없이 구하기</h3>
+<p>메신저에서 가장 자주 호출되는 값이 <b>"안 읽은 메시지 수"</b>입니다.
+방 목록을 열 때마다 모든 방에 대해 계산되기 때문에, 이걸 메시지 테이블 조회로 구하면 방이 늘어날수록 비용이 선형으로 커집니다.</p>
+
+<div class="diagram" style="padding:20px 24px">
+  <div style="text-align:center;font-family:ui-monospace,Menlo,monospace;font-size:14px;font-weight:700;padding:6px 0">
+    안 읽은 수 = 방의 최신 msg_idx − 내 read_idx
+  </div>
+  <div style="text-align:center;font-size:12.5px;color:var(--muted);margin-top:8px">
+    두 값 모두 Redis에 있는 정수라서, 방이 몇 개든 <b>조회 없이 뺄셈 한 번</b>으로 끝납니다.
+  </div>
+</div>
+
+<ul class="kv">
+  <li><b>단체방의 "n명 읽음"도 같은 원리</b> — 참여자별 <code>read_idx</code>를 모아 특정 <code>msg_idx</code>보다 큰 값의 개수를 세면 됩니다. 메시지마다 읽음 레코드를 남기지 않아도 됩니다.</li>
+  <li><b>클라이언트 로컬 DB와의 정합</b> — 앱은 마지막으로 받은 <code>msg_idx</code>만 기억하면 되고, 재접속 시 그 지점부터 요청합니다. 서버는 "누가 무엇을 받았는지" 추적할 필요가 없습니다.</li>
+  <li><b>순서 보장의 근거를 한 곳에 모았다</b> — 메시지 순서는 오직 방 시퀀스가 결정합니다. 클라이언트 시각이나 서버 수신 시각에 의존하지 않기 때문에, 서버가 여러 대여도 순서가 흔들리지 않습니다.</li>
+</ul><h2 id="d2" class="pb">2. 인증 설계</h2>
+<p class="lead">여러 회사에서 반복적으로 다시 만든 영역입니다. 매번 같은 질문이 나왔습니다 — <b>토큰을 얼마나 오래 살릴 것인가, 누가 검증할 것인가, 그리고 이 사람이 정말 본인인가.</b></p>
+<h3 id="d2a">2-1. JWT 발급 · 검증 · 갱신</h3>
+<figure class="fig">
+<svg viewBox="0 0 980 732" role="img" aria-label="JWT 발급 검증 갱신 시퀀스">
+<path class="lifeline" d="M140 54 L140 718"/>
+<path class="lifeline" d="M374 54 L374 718"/>
+<path class="lifeline" d="M606 54 L606 718"/>
+<path class="lifeline" d="M840 54 L840 718"/>
+<rect class="head" x="56" y="16" width="168" height="38" rx="6"/>
+<text class="ta" x="140" y="40" text-anchor="middle">앱</text>
+<rect class="head" x="290" y="16" width="168" height="38" rx="6"/>
+<text class="ta" x="374" y="33" text-anchor="middle">Auth</text>
+<text class="ts" x="374" y="46" text-anchor="middle">인증 서버</text>
+<rect class="head" x="522" y="16" width="168" height="38" rx="6"/>
+<text class="ta" x="606" y="33" text-anchor="middle">Redis</text>
+<text class="ts" x="606" y="46" text-anchor="middle">블랙리스트</text>
+<rect class="head" x="756" y="16" width="168" height="38" rx="6"/>
+<text class="ta" x="840" y="33" text-anchor="middle">API</text>
+<text class="ts" x="840" y="46" text-anchor="middle">업무 서버</text>
+<rect class="frag" x="24" y="58" width="932" height="24" rx="4"/>
+<text class="tfrag" x="36" y="74">① 로그인과 발급</text>
+<path class="msg" d="M144 102 L370 102" marker-end="url(#ah)"/>
+<text class="tmsg" x="257" y="95" text-anchor="middle">ID/PW 또는 소셜 자격증명</text>
+<path class="msg" d="M374 128 L418 128 L418 144 L380 144" marker-end="url(#ah)"/>
+<text class="tmsg" x="426" y="138">자격 검증 · 로그인 시도 제한</text>
+<path class="msg msgd" d="M370 178 L144 178" marker-end="url(#ah)"/>
+<text class="tmsg" x="257" y="171" text-anchor="middle">Access(3일) + Refresh(30일) — OS별 분리 발급</text>
+<rect class="frag" x="24" y="198" width="932" height="24" rx="4"/>
+<text class="tfrag" x="36" y="214">② 정상 호출</text>
+<path class="msg" d="M144 242 L836 242" marker-end="url(#ah)"/>
+<text class="tmsg" x="490" y="235" text-anchor="middle">Authorization: Bearer {access}</text>
+<path class="msg" d="M840 268 L884 268 L884 284 L846 284" marker-end="url(#ah)"/>
+<text class="tmsg" x="892" y="278">서명 · 만료 검증</text>
+<path class="msg msgd" d="M836 318 L144 318" marker-end="url(#ah)"/>
+<text class="tmsg" x="490" y="311" text-anchor="middle">200</text>
+<rect class="frag" x="24" y="338" width="932" height="24" rx="4"/>
+<text class="tfrag" x="36" y="354">③ Access 만료</text>
+<path class="msg" d="M144 382 L836 382" marker-end="url(#ah)"/>
+<text class="tmsg" x="490" y="375" text-anchor="middle">만료된 토큰으로 호출</text>
+<path class="msg msgd" d="M836 416 L144 416" marker-end="url(#ah)"/>
+<text class="tmsg" x="490" y="409" text-anchor="middle">401 Expired</text>
+<path class="msg" d="M144 450 L370 450" marker-end="url(#ah)"/>
+<text class="tmsg" x="257" y="443" text-anchor="middle">토큰 갱신 요청 (Authorization + ReAuthentication)</text>
+<path class="msg" d="M374 476 L418 476 L418 492 L380 492" marker-end="url(#ah)"/>
+<text class="tmsg" x="426" y="486">Refresh 유효성 검증</text>
+<path class="msg msgd" d="M370 526 L144 526" marker-end="url(#ah)"/>
+<text class="tmsg" x="257" y="519" text-anchor="middle">새 Access 발급</text>
+<rect class="frag" x="24" y="546" width="932" height="24" rx="4"/>
+<text class="tfrag" x="36" y="562">④ 로그아웃과 무효화</text>
+<path class="msg" d="M144 590 L370 590" marker-end="url(#ah)"/>
+<text class="tmsg" x="257" y="583" text-anchor="middle">로그아웃</text>
+<path class="msg" d="M376 624 L602 624" marker-end="url(#ah)"/>
+<text class="tmsg" x="490" y="617" text-anchor="middle">남은 만료시간만큼 블랙리스트 등록</text>
+<path class="msg" d="M836 658 L610 658" marker-end="url(#ah)"/>
+<text class="tmsg" x="723" y="651" text-anchor="middle">요청마다 블랙리스트 조회</text>
+</svg>
+<figcaption>만료(Expired)와 무효(Invalid)를 다른 코드로 내려보내는 게 중요합니다. 앱은 전자면 조용히 갱신하고, 후자면 즉시 로그아웃해야 하는데 이걸 구분하지 않으면 무한 갱신 루프에 빠집니다.</figcaption>
+</figure>
+<ul class="kv">
+  <li><b>OS별로 토큰을 분리 발급</b> — 같은 계정이라도 기기 종류별로 토큰을 나눠, 한쪽에서 로그아웃해도 다른 기기의 세션이 끊기지 않게 했습니다. 반대로 "다른 기기에서 로그인함" 정책이 필요할 때도 대상 토큰만 무효화하면 됩니다.</li>
+  <li><b>JWT는 서버가 회수할 수 없다</b> — 그래서 로그아웃·탈퇴·강제 차단은 Redis 블랙리스트로 처리하고, 등록 기간은 토큰의 남은 만료시간만큼만 둡니다. 만료된 뒤에는 어차피 검증에서 걸리므로 저장소가 무한정 커지지 않습니다.</li>
+  <li><b>에러 코드를 도메인별로 대역 분리</b> — JWT/인증 · 가입 · 로그인 · 소셜 · 본인인증을 각각 다른 번호 대역에 배치했습니다. 클라이언트가 코드 앞자리만 보고 분기할 수 있어, 새 에러가 늘어도 앱 수정이 필요 없습니다.</li>
+  <li><b>인증 서버를 별도 서비스로 분리</b> — 발급은 Auth 한 곳에서만 하고, 사용자 API와 관리자 API는 검증만 합니다. 인증 로직이 여러 서비스에 복제되지 않습니다.</li>
+</ul>
+<h3 id="d2b">2-2. JWKs(RSA) — 비밀키를 공유하지 않는 검증</h3>
+<figure class="fig">
+<svg viewBox="0 0 980 400" role="img" aria-label="JWKs RSA 공개키 검증 시퀀스">
+<path class="lifeline" d="M179 54 L179 386"/>
+<path class="lifeline" d="M490 54 L490 386"/>
+<path class="lifeline" d="M801 54 L801 386"/>
+<rect class="head" x="95" y="16" width="168" height="38" rx="6"/>
+<text class="ta" x="179" y="40" text-anchor="middle">앱</text>
+<rect class="head" x="406" y="16" width="168" height="38" rx="6"/>
+<text class="ta" x="490" y="33" text-anchor="middle">Auth</text>
+<text class="ts" x="490" y="46" text-anchor="middle">발급자 · 개인키 보유</text>
+<rect class="head" x="717" y="16" width="168" height="38" rx="6"/>
+<text class="ta" x="801" y="33" text-anchor="middle">API</text>
+<text class="ts" x="801" y="46" text-anchor="middle">검증자 · 공개키만</text>
+<path class="msg" d="M182 72 L486 72" marker-end="url(#ah)"/>
+<text class="tmsg" x="335" y="65" text-anchor="middle">로그인</text>
+<path class="msg" d="M490 98 L534 98 L534 114 L496 114" marker-end="url(#ah)"/>
+<text class="tmsg" x="542" y="108">개인키로 서명 (RS256)</text>
+<path class="msg msgd" d="M487 148 L183 148" marker-end="url(#ah)"/>
+<text class="tmsg" x="335" y="141" text-anchor="middle">JWT</text>
+<path class="msg" d="M182 182 L797 182" marker-end="url(#ah)"/>
+<text class="tmsg" x="490" y="175" text-anchor="middle">Authorization: Bearer {jwt}</text>
+<path class="msg" d="M798 216 L494 216" marker-end="url(#ah)"/>
+<text class="tmsg" x="645" y="209" text-anchor="middle">GET /.well-known/jwks.json</text>
+<path class="msg msgd" d="M493 250 L797 250" marker-end="url(#ah)"/>
+<text class="tmsg" x="645" y="243" text-anchor="middle">공개키 목록 (JWKS)</text>
+<path class="msg" d="M801 276 L845 276 L845 292 L807 292" marker-end="url(#ah)"/>
+<text class="tmsg" x="853" y="286">공개키로 서명 검증</text>
+<path class="msg msgd" d="M798 326 L183 326" marker-end="url(#ah)"/>
+<text class="tmsg" x="490" y="319" text-anchor="middle">응답</text>
+</svg>
+<figcaption>대칭키(HMAC)는 검증하려면 모든 서비스가 비밀키를 갖고 있어야 합니다. 서비스가 늘어날수록 유출 면적이 함께 커지는 구조입니다.</figcaption>
+</figure>
+<ul class="kv">
+  <li><b>검증자가 비밀키를 갖지 않는다</b> — 서비스가 6개든 10개든 개인키는 Auth 한 곳에만 있습니다. 다른 서비스가 침해돼도 토큰을 위조할 수 없습니다.</li>
+  <li><b>키 교체가 무중단으로 가능</b> — JWKS는 여러 키를 동시에 게시할 수 있어, 새 키로 발급을 시작하면서 기존 키로 서명된 토큰도 만료될 때까지 계속 검증됩니다. 대칭키였다면 전 서비스를 동시에 재배포해야 합니다.</li>
+  <li><b>공개키는 캐시한다</b> — 매 요청마다 JWKS를 가져오면 Auth가 병목이 되므로, 검증자는 키를 캐시하고 키 ID가 바뀔 때만 다시 조회합니다.</li>
+</ul>
+<h3 id="d2c">2-3. Refresh Token 주기 정책</h3>
+<p>토큰 수명은 <b>보안과 사용성이 정면으로 충돌하는 지점</b>입니다. 짧게 잡으면 자꾸 로그인을 요구하고, 길게 잡으면 탈취됐을 때 오래 살아남습니다.</p>
+<figure class="fig">
+<svg viewBox="0 0 980 340" role="img" aria-label="Refresh Token 재발급 주기 설계">
+  <path class="ln" d="M50 300 L940 300"/>
+  <text class="ts" x="50" y="320">로그인</text>
+  <text class="ts" x="930" y="320" text-anchor="end">시간 →</text>
+
+  <rect x="60" y="52" width="500" height="28" rx="4" fill="#fde68a" stroke="#d9a441"/>
+  <text class="t" x="300" y="71" text-anchor="middle">refresh token A — 유효기간 30일</text>
+  <rect x="470" y="52" width="90" height="28" rx="4" fill="#fca5a5" stroke="#dc2626"/>
+  <text class="tsg" x="515" y="71" text-anchor="middle">재발급 구간</text>
+
+  <rect x="490" y="196" width="430" height="28" rx="4" fill="#fde68a" stroke="#d9a441"/>
+  <text class="t" x="705" y="215" text-anchor="middle">refresh token B — 이어서 30일</text>
+
+  <path class="ln r d" d="M515 84 L515 192" marker-end="url(#ah-r)"/>
+  <text class="ts" x="524" y="140">A 만료 직전에 B를 함께 내려준다</text>
+
+  <rect x="60"  y="100" width="104" height="20" rx="3" fill="#bfdbfe" stroke="#2563eb"/>
+  <text class="ts" x="112" y="114" text-anchor="middle">access a-0</text>
+  <rect x="164" y="124" width="104" height="20" rx="3" fill="#bfdbfe" stroke="#2563eb"/>
+  <text class="ts" x="216" y="138" text-anchor="middle">access a-1</text>
+  <rect x="268" y="148" width="104" height="20" rx="3" fill="#bfdbfe" stroke="#2563eb"/>
+  <text class="ts" x="320" y="162" text-anchor="middle">access a-2</text>
+  <rect x="372" y="172" width="104" height="20" rx="3" fill="#bfdbfe" stroke="#2563eb"/>
+  <text class="ts" x="424" y="186" text-anchor="middle">access a-3</text>
+  <rect x="490" y="240" width="104" height="20" rx="3" fill="#bfdbfe" stroke="#2563eb"/>
+  <text class="ts" x="542" y="254" text-anchor="middle">access b-0</text>
+  <rect x="594" y="264" width="104" height="20" rx="3" fill="#bfdbfe" stroke="#2563eb"/>
+  <text class="ts" x="646" y="278" text-anchor="middle">access b-1</text>
+
+  <path class="ln b" d="M164 110 L164 130" marker-end="url(#ah-b)"/>
+  <path class="ln b" d="M268 134 L268 154" marker-end="url(#ah-b)"/>
+  <path class="ln b" d="M372 158 L372 178" marker-end="url(#ah-b)"/>
+  <path class="ln b" d="M594 250 L594 270" marker-end="url(#ah-b)"/>
+  <text class="ts" x="196" y="108">refresh</text>
+  <text class="ts" x="300" y="132">refresh</text>
+  <text class="ts" x="404" y="156">refresh</text>
+</svg>
+<figcaption>Access는 짧게 두고 자주 갱신하되, Refresh는 만료 직전에 새 Refresh를 함께 내려보냅니다. 사용자가 앱을 계속 쓰는 한 재로그인을 요구하지 않으면서도, 오래 쓰지 않은 계정은 자연히 만료됩니다.</figcaption>
+</figure>
+<ul class="kv">
+  <li><b>Refresh 만료 시점에 재로그인을 강요하지 않는다</b> — 갱신 응답에 새 Refresh를 함께 담아, 활성 사용자는 끊김 없이 이어집니다.</li>
+  <li><b>대신 미사용 계정은 확실히 만료시킨다</b> — 갱신이 일어나지 않으면 Refresh도 갱신되지 않으므로, 방치된 세션은 30일 뒤 자동으로 끊깁니다.</li>
+  <li><b>재발급 구간을 명시적으로 정의했다</b> — "만료 며칠 전부터 새 Refresh를 내려줄지"를 정책 값으로 두어, 운영 중에 정책만 바꿀 수 있게 했습니다.</li>
+</ul><h3 id="d2d" class="pb">2-4. 소셜 로그인 + 본인인증(CI) 가입</h3>
+<p>소셜 로그인은 <b>"이 사람이 그 소셜 계정의 주인"</b>임을 증명할 뿐, 실명을 보증하지는 않습니다. 실명 확인이 필요한 서비스에서는 소셜 인증과 본인인증을 <b>같은 사람의 행위로 묶는 절차</b>가 별도로 필요합니다.</p>
+<figure class="fig">
+<svg viewBox="0 0 980 774" role="img" aria-label="소셜 로그인과 본인인증 결합 가입 시퀀스">
+<path class="lifeline" d="M140 54 L140 760"/>
+<path class="lifeline" d="M374 54 L374 760"/>
+<path class="lifeline" d="M606 54 L606 760"/>
+<path class="lifeline" d="M840 54 L840 760"/>
+<rect class="head" x="56" y="16" width="168" height="38" rx="6"/>
+<text class="ta" x="140" y="40" text-anchor="middle">앱</text>
+<rect class="head" x="290" y="16" width="168" height="38" rx="6"/>
+<text class="ta" x="374" y="33" text-anchor="middle">Auth</text>
+<text class="ts" x="374" y="46" text-anchor="middle">인증 서버</text>
+<rect class="head" x="522" y="16" width="168" height="38" rx="6"/>
+<text class="ta" x="606" y="33" text-anchor="middle">SSO</text>
+<text class="ts" x="606" y="46" text-anchor="middle">소셜 제공자</text>
+<rect class="head" x="756" y="16" width="168" height="38" rx="6"/>
+<text class="ta" x="840" y="33" text-anchor="middle">본인인증</text>
+<text class="ts" x="840" y="46" text-anchor="middle">CI 제공자</text>
+<path class="msg" d="M144 72 L602 72" marker-end="url(#ah)"/>
+<text class="tmsg" x="374" y="65" text-anchor="middle">소셜 로그인</text>
+<path class="msg msgd" d="M604 106 L144 106" marker-end="url(#ah)"/>
+<text class="tmsg" x="374" y="99" text-anchor="middle">자격증명 (고유 ID)</text>
+<path class="msg" d="M144 140 L370 140" marker-end="url(#ah)"/>
+<text class="tmsg" x="257" y="133" text-anchor="middle">자격증명으로 인증 요청</text>
+<path class="msg" d="M376 174 L602 174" marker-end="url(#ah)"/>
+<text class="tmsg" x="490" y="167" text-anchor="middle">자격증명 유효성 검증</text>
+<path class="msg" d="M374 200 L418 200 L418 216 L380 216" marker-end="url(#ah)"/>
+<text class="tmsg" x="426" y="210">가입 여부 조회</text>
+<rect class="frag" x="24" y="236" width="932" height="24" rx="4"/>
+<text class="tfrag" x="36" y="252">CASE 1 — 이미 가입된 사용자</text>
+<path class="msg msgd" d="M370 280 L144 280" marker-end="url(#ah)"/>
+<text class="tmsg" x="257" y="273" text-anchor="middle">Auth Token 발급 → 로그인 완료</text>
+<rect class="frag" x="24" y="300" width="932" height="24" rx="4"/>
+<text class="tfrag" x="36" y="316">CASE 2 — 미가입 사용자</text>
+<path class="msg" d="M376 344 L836 344" marker-end="url(#ah)"/>
+<text class="tmsg" x="606" y="337" text-anchor="middle">본인인증 트랜잭션 요청</text>
+<path class="msg msgd" d="M836 378 L378 378" marker-end="url(#ah)"/>
+<text class="tmsg" x="606" y="371" text-anchor="middle">txId + 인증 URL</text>
+<path class="msg" d="M374 404 L418 404 L418 420 L380 420" marker-end="url(#ah)"/>
+<text class="tmsg" x="426" y="414">소셜 자격증명 저장 + 유효코드 발행</text>
+<path class="msg msgd" d="M370 454 L144 454" marker-end="url(#ah)"/>
+<text class="tmsg" x="257" y="447" text-anchor="middle">txId · 인증 URL · 유효코드</text>
+<path class="msg" d="M144 488 L836 488" marker-end="url(#ah)"/>
+<text class="tmsg" x="490" y="481" text-anchor="middle">본인인증 진행 (제공자 화면)</text>
+<path class="msg msgd" d="M836 522 L144 522" marker-end="url(#ah)"/>
+<text class="tmsg" x="490" y="515" text-anchor="middle">인증 완료</text>
+<path class="msg" d="M144 556 L370 556" marker-end="url(#ah)"/>
+<text class="tmsg" x="257" y="549" text-anchor="middle">가입 요청 (txId + 유효코드 + 회원정보)</text>
+<path class="msg" d="M376 590 L836 590" marker-end="url(#ah)"/>
+<text class="tmsg" x="606" y="583" text-anchor="middle">txId 로 인증 결과 조회</text>
+<path class="msg msgd" d="M836 624 L378 624" marker-end="url(#ah)"/>
+<text class="tmsg" x="606" y="617" text-anchor="middle">CI (본인 식별값)</text>
+<path class="msg" d="M374 650 L418 650 L418 666 L380 666" marker-end="url(#ah)"/>
+<text class="tmsg" x="426" y="660">유효코드로 동일인 확인 → CI · 소셜정보 저장</text>
+<path class="msg msgd" d="M370 700 L144 700" marker-end="url(#ah)"/>
+<text class="tmsg" x="257" y="693" text-anchor="middle">가입 완료 + Auth Token</text>
+</svg>
+<figcaption><b>유효코드</b>가 이 설계의 핵심입니다. 소셜 인증을 마친 사람과 본인인증을 마친 사람이 동일인인지를 서버가 확인할 수 있게 해 주는 유일한 연결고리입니다.</figcaption>
+</figure>
+<ul class="kv">
+  <li><b>본인인증은 앱이 제공자와 직접 진행한다</b> — 인증 화면은 제공자가 소유하므로 서버가 중간에 낄 수 없습니다. 서버는 트랜잭션 ID만 들고 있다가 <b>끝난 뒤 결과를 조회</b>합니다.</li>
+  <li><b>그 사이에 사람이 바뀔 수 있다</b> — 소셜 인증과 가입 요청 사이에 시간이 벌어지기 때문에, 서버는 소셜 자격증명을 보관하고 유효코드를 발행해 <b>같은 세션의 연속</b>임을 확인합니다.</li>
+  <li><b>CI를 중복 가입 판별 기준으로 삼는다</b> — 소셜 계정은 얼마든지 새로 만들 수 있지만 CI는 사람당 하나입니다. 탈퇴 후 재가입 정책·중복 계정 제한이 모두 이 값 위에서 성립합니다.</li>
+  <li><b>제공자별 차이는 Verifier로 흡수</b> — Google·Kakao·Naver는 토큰 검증 방식이 제각각입니다. 제공자마다 Verifier 구현을 두고 상위 흐름은 동일하게 유지해, 제공자 추가가 코드 한 개 추가로 끝나게 했습니다.</li>
+</ul>
+<h3 id="d2e">2-5. OTP 기반 이메일 · SMS 인증</h3>
+<figure class="fig">
+<svg viewBox="0 0 980 646" role="img" aria-label="OTP 기반 이메일 SMS 인증 및 가입 시퀀스">
+<path class="lifeline" d="M140 54 L140 632"/>
+<path class="lifeline" d="M374 54 L374 632"/>
+<path class="lifeline" d="M606 54 L606 632"/>
+<path class="lifeline" d="M840 54 L840 632"/>
+<rect class="head" x="56" y="16" width="168" height="38" rx="6"/>
+<text class="ta" x="140" y="40" text-anchor="middle">사용자</text>
+<rect class="head" x="290" y="16" width="168" height="38" rx="6"/>
+<text class="ta" x="374" y="33" text-anchor="middle">Auth</text>
+<text class="ts" x="374" y="46" text-anchor="middle">인증 서버</text>
+<rect class="head" x="522" y="16" width="168" height="38" rx="6"/>
+<text class="ta" x="606" y="33" text-anchor="middle">Redis</text>
+<text class="ts" x="606" y="46" text-anchor="middle">OTP · 시도횟수</text>
+<rect class="head" x="756" y="16" width="168" height="38" rx="6"/>
+<text class="ta" x="840" y="33" text-anchor="middle">SES / SNS</text>
+<text class="ts" x="840" y="46" text-anchor="middle">메일 · 문자</text>
+<path class="msg" d="M144 72 L370 72" marker-end="url(#ah)"/>
+<text class="tmsg" x="257" y="65" text-anchor="middle">① OTP 발송 요청 (이메일/번호)</text>
+<path class="msg" d="M376 106 L602 106" marker-end="url(#ah)"/>
+<text class="tmsg" x="490" y="99" text-anchor="middle">발송 시도 횟수 조회</text>
+<path class="msg" d="M374 132 L418 132 L418 148 L380 148" marker-end="url(#ah)"/>
+<text class="tmsg" x="426" y="142">횟수 확인 후 OTP 생성</text>
+<path class="msg" d="M376 182 L602 182" marker-end="url(#ah)"/>
+<text class="tmsg" x="490" y="175" text-anchor="middle">OTP + 시도횟수 저장 (TTL)</text>
+<path class="msg" d="M376 216 L836 216" marker-end="url(#ah)"/>
+<text class="tmsg" x="606" y="209" text-anchor="middle">OTP 발송</text>
+<path class="msg msgd" d="M836 250 L144 250" marker-end="url(#ah)"/>
+<text class="tmsg" x="490" y="243" text-anchor="middle">OTP 수신</text>
+<path class="msg" d="M144 284 L370 284" marker-end="url(#ah)"/>
+<text class="tmsg" x="257" y="277" text-anchor="middle">② OTP 확인</text>
+<path class="msg" d="M376 318 L602 318" marker-end="url(#ah)"/>
+<text class="tmsg" x="490" y="311" text-anchor="middle">OTP 조회 · 대조</text>
+<path class="msg" d="M374 344 L418 344 L418 360 L380 360" marker-end="url(#ah)"/>
+<text class="tmsg" x="426" y="354">인증 완료 상태값 발행</text>
+<path class="msg" d="M376 394 L602 394" marker-end="url(#ah)"/>
+<text class="tmsg" x="490" y="387" text-anchor="middle">인증 완료 상태 저장</text>
+<path class="msg msgd" d="M370 428 L144 428" marker-end="url(#ah)"/>
+<text class="tmsg" x="257" y="421" text-anchor="middle">확인 완료</text>
+<path class="msg" d="M144 462 L370 462" marker-end="url(#ah)"/>
+<text class="tmsg" x="257" y="455" text-anchor="middle">③ 가입 요청</text>
+<path class="msg" d="M376 496 L602 496" marker-end="url(#ah)"/>
+<text class="tmsg" x="490" y="489" text-anchor="middle">인증 완료 상태 확인</text>
+<path class="msg" d="M374 522 L418 522 L418 538 L380 538" marker-end="url(#ah)"/>
+<text class="tmsg" x="426" y="532">가입 처리</text>
+<path class="msg msgd" d="M370 572 L144 572" marker-end="url(#ah)"/>
+<text class="tmsg" x="257" y="565" text-anchor="middle">가입 완료</text>
+</svg>
+<figcaption>OTP 확인과 실제 가입을 <b>두 단계로 분리</b>했습니다. 확인이 끝나면 OTP 자체는 버리고 별도의 "인증 완료 상태값"만 남겨, 클라이언트가 값을 조작해 인증을 건너뛸 수 없게 했습니다.</figcaption>
+</figure>
+<ul class="kv">
+  <li><b>발송 횟수를 Redis에 함께 저장</b> — 같은 주소로 무제한 발송을 요청하는 것을 막습니다. TTL이 붙어 있어 별도의 정리 작업이 필요 없습니다.</li>
+  <li><b>같은 구조를 용도별로 재사용</b> — 가입 · 비밀번호 재설정 · 이메일 변경 · 소셜 계정 연결에 동일한 OTP 파이프라인을 쓰되, 용도를 키에 포함시켜 서로 섞이지 않게 했습니다.</li>
+  <li><b>로컬 개발에서는 발송을 우회</b> — 개발 프로파일에서는 메일을 실제로 보내지 않고 형식만 검증합니다. 다만 비밀번호 재설정처럼 보안이 중요한 용도는 우회 대상에서 제외했습니다.</li>
+</ul>
+<h3 id="d2f">2-6. UGC 인증 — 외부 앱에 신원을 위임하는 법</h3>
+<p>외주 개발사나 서드파티가 만든 앱이 우리 사용자 정보를 필요로 할 때, <b>우리 계정 토큰을 그대로 넘기는 것은 위험</b>합니다. 넘긴 순간 통제권이 사라지기 때문입니다.</p>
+<figure class="fig">
+<svg viewBox="0 0 980 418" role="img" aria-label="UGC 외부 앱 임시키 인증 시퀀스">
+<path class="lifeline" d="M117 54 L117 404"/>
+<path class="lifeline" d="M304 54 L304 404"/>
+<path class="lifeline" d="M490 54 L490 404"/>
+<path class="lifeline" d="M676 54 L676 404"/>
+<path class="lifeline" d="M863 54 L863 404"/>
+<rect class="head" x="33" y="16" width="168" height="38" rx="6"/>
+<text class="ta" x="117" y="33" text-anchor="middle">런처</text>
+<text class="ts" x="117" y="46" text-anchor="middle">자사 클라이언트</text>
+<rect class="head" x="220" y="16" width="168" height="38" rx="6"/>
+<text class="ta" x="304" y="33" text-anchor="middle">런처 API</text>
+<text class="ts" x="304" y="46" text-anchor="middle">자사</text>
+<rect class="head" x="406" y="16" width="168" height="38" rx="6"/>
+<text class="ta" x="490" y="33" text-anchor="middle">Redis</text>
+<text class="ts" x="490" y="46" text-anchor="middle">임시키</text>
+<rect class="head" x="592" y="16" width="168" height="38" rx="6"/>
+<text class="ta" x="676" y="33" text-anchor="middle">외부 앱</text>
+<text class="ts" x="676" y="46" text-anchor="middle">서드파티</text>
+<rect class="head" x="779" y="16" width="168" height="38" rx="6"/>
+<text class="ta" x="863" y="33" text-anchor="middle">외부 API</text>
+<text class="ts" x="863" y="46" text-anchor="middle">서드파티</text>
+<path class="msg" d="M120 72 L300 72" marker-end="url(#ah)"/>
+<text class="tmsg" x="210" y="65" text-anchor="middle">① 임시 인증키 발급 요청</text>
+<path class="msg" d="M307 106 L486 106" marker-end="url(#ah)"/>
+<text class="tmsg" x="397" y="99" text-anchor="middle">② 임시키 저장 (TTL)</text>
+<path class="msg msgd" d="M301 140 L121 140" marker-end="url(#ah)"/>
+<text class="tmsg" x="210" y="133" text-anchor="middle">③ 임시키</text>
+<path class="msg" d="M120 174 L672 174" marker-end="url(#ah)"/>
+<text class="tmsg" x="397" y="167" text-anchor="middle">④ 임시키를 넘기며 외부 앱 실행</text>
+<path class="msg" d="M679 208 L859 208" marker-end="url(#ah)"/>
+<text class="tmsg" x="770" y="201" text-anchor="middle">⑤ 임시키로 인가 요청</text>
+<path class="msg" d="M860 242 L308 242" marker-end="url(#ah)"/>
+<text class="tmsg" x="583" y="235" text-anchor="middle">⑥ 임시키 + 업체 시크릿으로 확인 요청</text>
+<path class="msg" d="M307 276 L486 276" marker-end="url(#ah)"/>
+<text class="tmsg" x="397" y="269" text-anchor="middle">⑦ 저장된 임시키 조회 · 대조</text>
+<path class="msg msgd" d="M307 310 L859 310" marker-end="url(#ah)"/>
+<text class="tmsg" x="583" y="303" text-anchor="middle">⑧ 유효하면 유저 정보 반환</text>
+<path class="msg msgd" d="M860 344 L680 344" marker-end="url(#ah)"/>
+<text class="tmsg" x="770" y="337" text-anchor="middle">⑨ 외부 앱 전용 인가 정보 발급</text>
+</svg>
+<figcaption>외부 앱이 받는 건 <b>1회용 임시키뿐</b>이고, 신원 확인은 서버 간 통신으로 이뤄집니다. 임시키가 유출돼도 TTL 안에서 한 번만 쓰이고, 업체 시크릿이 없으면 확인 요청 자체가 통과되지 않습니다.</figcaption>
+</figure>
+<h3 id="d2g">2-7. 앱 버전 강제 업데이트</h3>
+<p>모바일 앱은 사용자가 업데이트하지 않으면 구버전이 계속 서버를 호출합니다.
+API 스펙이 바뀌었는데 구버전이 붙으면 데이터가 깨지므로, <b>버전을 서버가 강제할 수 있어야</b> 합니다.</p>
+<ul class="kv">
+  <li><b>버전 정보를 토큰에 담았다</b> — 앱이 헤더로 보내는 버전 값은 클라이언트가 조작할 수 있습니다. 발급 시점의 버전을 토큰 클레임에 넣으면 서명으로 보호되므로 위조할 수 없습니다.</li>
+  <li><b>강제 업데이트는 전용 응답 코드로</b> — 서버가 정해진 코드를 내려보내면 앱은 업무 화면 대신 업데이트 안내로 전환합니다. 업무 로직을 타기 전에 걸러냅니다.</li>
+  <li><b>업데이트 후에는 토큰을 갱신해야 한다</b> — 앱 버전이 올라가도 토큰 안의 버전은 옛날 값이므로, 업데이트 직후 갱신을 한 번 태워 두 값을 맞춥니다. 이 단계를 빠뜨리면 업데이트를 했는데도 계속 안내 화면이 뜹니다.</li>
+</ul><h2 id="d3" class="pb">3. 파일 보안 설계</h2>
+<p class="lead">파일은 <b>전부 보호하면 비싸고, 전부 열면 위험한</b> 자원입니다. 그래서 보호 수준을 하나로 정하지 않고 콘텐츠 성격에 따라 경로를 나눴습니다.</p>
+<figure class="fig">
+<svg viewBox="0 0 980 360" role="img" aria-label="보안 등급에 따른 파일 전달 경로 이원화">
+  <use href="#i-client" x="50" y="150" width="42" height="42"/>
+  <text class="t" x="71" y="208" text-anchor="middle">클라이언트</text>
+
+  <rect class="area-dash" x="190" y="24" width="770" height="150" rx="10"/>
+  <text class="tz" x="210" y="46">공개 가능한 콘텐츠 — 직접 서빙</text>
+  <use href="#i-cf" x="330" y="70" width="40" height="40"/>
+  <circle class="bdg" cx="331" cy="71" r="8.5"/><text class="tbdg" x="331" y="74.5" text-anchor="middle">1</text>
+  <text class="t" x="350" y="126" text-anchor="middle">CloudFront</text>
+  <use href="#i-s3" x="620" y="70" width="40" height="40"/>
+  <circle class="bdg" cx="621" cy="71" r="8.5"/><text class="tbdg" x="621" y="74.5" text-anchor="middle">2</text>
+  <text class="t"  x="640" y="126" text-anchor="middle">S3 (OAC)</text>
+  <text class="ts" x="640" y="140" text-anchor="middle">Block Public Access</text>
+  <path class="ln p" d="M96 160 L326 106" marker-end="url(#ah-p)"/>
+  <path class="ln p" d="M374 90 L616 90" marker-end="url(#ah-p)"/>
+  <text class="ts" x="495" y="82" text-anchor="middle">CDN 캐시 — 서버 대역폭 소모 없음</text>
+
+  <rect class="area-dash" x="190" y="192" width="770" height="146" rx="10"/>
+  <text class="tz" x="210" y="214">보안이 필요한 파일 — 프록시 경유</text>
+  <use href="#i-pod" x="330" y="234" width="40" height="40"/>
+  <circle class="bdg" cx="331" cy="235" r="8.5"/><text class="tbdg" x="331" y="238.5" text-anchor="middle">3</text>
+  <text class="t"  x="350" y="290" text-anchor="middle">File 서버 (프록시)</text>
+  <text class="ts" x="350" y="304" text-anchor="middle">권한 확인 후 중계</text>
+  <use href="#i-s3" x="620" y="234" width="40" height="40"/>
+  <circle class="bdg" cx="621" cy="235" r="8.5"/><text class="tbdg" x="621" y="238.5" text-anchor="middle">4</text>
+  <text class="t"  x="640" y="290" text-anchor="middle">S3</text>
+  <path class="ln r" d="M96 184 L326 250" marker-end="url(#ah-r)"/>
+  <path class="ln r" d="M374 254 L616 254" marker-end="url(#ah-r)"/>
+  <use href="#i-glacier" x="800" y="234" width="40" height="40"/>
+  <circle class="bdg" cx="801" cy="235" r="8.5"/><text class="tbdg" x="801" y="238.5" text-anchor="middle">5</text>
+  <text class="t"  x="820" y="290" text-anchor="middle">Glacier</text>
+  <text class="ts" x="820" y="304" text-anchor="middle">수명주기 자동 전환</text>
+  <path class="ln g" d="M664 254 L796 254" marker-end="url(#ah-g)"/>
+</svg>
+<figcaption>강의 영상·이미지처럼 공개돼도 무방한 콘텐츠는 CDN에서 바로 내려주고, 개인 문서처럼 권한 확인이 필요한 파일만 File 서버를 통과시킵니다.</figcaption>
+</figure>
+
+<h5>각 구성 요소의 역할과 파일 흐름</h5>
+<ol class="legend">
+  <li><b>CloudFront</b> — 공개 콘텐츠 전송<span class="r">강의 영상·썸네일처럼 노출돼도 무방한 파일을 CDN 캐시에서 바로 내려준다. 애플리케이션 서버를 거치지 않으므로 트래픽이 늘어도 서버 부하가 증가하지 않는다.</span></li>
+  <li><b>S3 (OAC)</b> — 공개 콘텐츠 저장소<span class="r">버킷 자체는 Block Public Access 상태다. CloudFront의 OAC를 통해서만 읽을 수 있어, 버킷 주소가 알려져도 직접 받아갈 수 없다.</span></li>
+  <li><b>File 서버 (프록시)</b> — 보안 파일 중계<span class="r">요청자의 권한을 확인한 뒤 S3에서 읽어 스트리밍한다. 클라이언트는 S3 주소를 알지 못하며, 권한이 회수되면 즉시 차단된다.</span></li>
+  <li><b>S3</b> — 보안 파일 저장소<span class="r">File 서버만 접근할 수 있다. 업로드는 Presigned URL로 클라이언트가 직접 올리되, 다운로드는 반드시 프록시를 거친다.</span></li>
+  <li><b>Glacier</b> — 장기 보관<span class="r">접근 빈도가 떨어진 파일을 수명주기 정책에 따라 자동 전환한다. 삭제 대신 저비용 계층으로 옮겨 보관 의무와 비용을 함께 만족시킨다.</span></li>
+</ol>
+
+<figure class="fig">
+<svg viewBox="0 0 980 622" role="img" aria-label="파일 업로드 다운로드 시퀀스">
+<path class="lifeline" d="M140 54 L140 608"/>
+<path class="lifeline" d="M374 54 L374 608"/>
+<path class="lifeline" d="M606 54 L606 608"/>
+<path class="lifeline" d="M840 54 L840 608"/>
+<rect class="head" x="56" y="16" width="168" height="38" rx="6"/>
+<text class="ta" x="140" y="40" text-anchor="middle">클라이언트</text>
+<rect class="head" x="290" y="16" width="168" height="38" rx="6"/>
+<text class="ta" x="374" y="33" text-anchor="middle">File 서버</text>
+<text class="ts" x="374" y="46" text-anchor="middle">프록시</text>
+<rect class="head" x="522" y="16" width="168" height="38" rx="6"/>
+<text class="ta" x="606" y="40" text-anchor="middle">S3</text>
+<rect class="head" x="756" y="16" width="168" height="38" rx="6"/>
+<text class="ta" x="840" y="33" text-anchor="middle">API</text>
+<text class="ts" x="840" y="46" text-anchor="middle">업무 서버</text>
+<rect class="frag" x="24" y="58" width="932" height="24" rx="4"/>
+<text class="tfrag" x="36" y="74">업로드 — 메타 등록과 저장을 분리</text>
+<path class="msg" d="M144 102 L370 102" marker-end="url(#ah)"/>
+<text class="tmsg" x="257" y="95" text-anchor="middle">① 파일 업로드</text>
+<path class="msg" d="M376 136 L602 136" marker-end="url(#ah)"/>
+<text class="tmsg" x="490" y="129" text-anchor="middle">② S3 저장</text>
+<path class="msg msgd" d="M604 170 L378 170" marker-end="url(#ah)"/>
+<text class="tmsg" x="490" y="163" text-anchor="middle">저장 경로</text>
+<path class="msg msgd" d="M370 204 L144 204" marker-end="url(#ah)"/>
+<text class="tmsg" x="257" y="197" text-anchor="middle">③ 저장 경로 반환</text>
+<path class="msg" d="M144 238 L836 238" marker-end="url(#ah)"/>
+<text class="tmsg" x="490" y="231" text-anchor="middle">④ 경로 + 메타정보 등록</text>
+<path class="msg" d="M840 264 L884 264 L884 280 L846 280" marker-end="url(#ah)"/>
+<text class="tmsg" x="892" y="274">DB 저장</text>
+<path class="msg msgd" d="M836 314 L144 314" marker-end="url(#ah)"/>
+<text class="tmsg" x="490" y="307" text-anchor="middle">⑤ 저장 id</text>
+<rect class="frag" x="24" y="334" width="932" height="24" rx="4"/>
+<text class="tfrag" x="36" y="350">다운로드</text>
+<path class="msg" d="M144 378 L836 378" marker-end="url(#ah)"/>
+<text class="tmsg" x="490" y="371" text-anchor="middle">⑥ id 로 파일 정보 조회</text>
+<path class="msg msgd" d="M836 412 L144 412" marker-end="url(#ah)"/>
+<text class="tmsg" x="490" y="405" text-anchor="middle">저장 경로</text>
+<path class="msg" d="M144 446 L370 446" marker-end="url(#ah)"/>
+<text class="tmsg" x="257" y="439" text-anchor="middle">⑦ 보안 파일은 File 서버로 요청</text>
+<path class="msg" d="M376 480 L602 480" marker-end="url(#ah)"/>
+<text class="tmsg" x="490" y="473" text-anchor="middle">S3 조회</text>
+<path class="msg msgd" d="M604 514 L378 514" marker-end="url(#ah)"/>
+<text class="tmsg" x="490" y="507" text-anchor="middle">파일</text>
+<path class="msg msgd" d="M370 548 L144 548" marker-end="url(#ah)"/>
+<text class="tmsg" x="257" y="541" text-anchor="middle">다운로드</text>
+</svg>
+<figcaption>업로드와 메타 등록을 분리한 이유는 <b>실패 지점을 나누기 위해서</b>입니다. 파일은 올라갔는데 DB 등록이 실패하면 고아 파일이 남을 뿐이지만, 하나의 트랜잭션으로 묶으면 대용량 전송 시간만큼 DB 커넥션을 잡고 있게 됩니다.</figcaption>
+</figure>
+<ul class="kv">
+  <li><b>Presigned URL로 트래픽을 서버에서 걷어냈다</b> — 파일 서비스는 서명된 URL만 발급하고 실제 전송은 클라이언트와 S3가 직접 합니다. 애플리케이션 서버가 파일 크기만큼의 대역폭을 부담하지 않습니다.</li>
+  <li><b>대량 등록은 엑셀 기반 벌크 발급</b> — 운영자가 콘텐츠 수백 건을 올릴 때 URL을 한 번에 발급하고, 결과도 엑셀로 되돌려 어떤 행이 실패했는지 그대로 확인하게 했습니다.</li>
+  <li><b>버킷을 콘텐츠 종류별로 분리</b> — 종류마다 수명주기·접근 정책이 다르기 때문입니다. 접근 빈도가 낮아지는 파일은 저비용 스토리지로 자동 전환하거나 만료시킵니다.</li>
+  <li><b>버킷 자체는 열지 않는다</b> — 공개 콘텐츠라도 S3는 Block Public Access 상태로 두고 CDN(OAC)에서만 접근하게 했습니다. 버킷 주소가 유출돼도 직접 받아갈 수 없습니다.</li>
+</ul><h2 id="d4" class="pb">4. 설계 방법론</h2>
+<p class="lead">기술적으로 옳은 설계라도 <b>관련 부서가 이해하지 못하면 채택되지 않고</b>, 이해했더라도 <b>구현이 끝난 뒤에 발견된 오류는 되돌릴 수 없습니다.</b> 이 두 문제를 다루기 위해 쓰는 방법이 있습니다.</p>
+<h3 id="d4a">4-1. 도식화 — 비개발자를 설득하는 언어</h3>
+<p>DB 설계를 설명할 때 ERD만 내밀면 <b>초보 개발자·비서버 개발자·상급자는 데이터의 흐름을 읽어내지 못합니다.</b>
+테이블 관계는 "무엇이 있는가"를 말할 뿐, "언제 무엇이 생기고 무엇이 사라지는가"를 말해주지 않기 때문입니다.
+그래서 설계를 바꿔야 할 때는 아래처럼 <b>상태와 전이</b>로 다시 그립니다.</p>
+<figure class="fig">
+<svg viewBox="0 0 980 330" role="img" aria-label="정산 도메인 상태 흐름과 취소 경로 도식화">
+  <text class="tz" x="24" y="44">정상 흐름</text>
+  <rect class="state" x="21" y="72" width="128" height="50" rx="8"/>
+  <text class="tst" x="85" y="95" text-anchor="middle">접수</text>
+  <text class="ts" x="85" y="110" text-anchor="middle">공개 / 비공개</text>
+  <rect class="state" x="176" y="72" width="128" height="50" rx="8"/>
+  <text class="tst" x="240" y="102" text-anchor="middle">매칭 선택</text>
+  <path class="ln" d="M149 97 L172 97" marker-end="url(#ah)"/>
+  <rect class="state" x="331" y="72" width="128" height="50" rx="8"/>
+  <text class="tst" x="395" y="95" text-anchor="middle">보증금 요청</text>
+  <text class="ts" x="395" y="110" text-anchor="middle">· 완료</text>
+  <path class="ln" d="M304 97 L327 97" marker-end="url(#ah)"/>
+  <rect class="state" x="486" y="72" width="128" height="50" rx="8"/>
+  <text class="tst" x="550" y="102" text-anchor="middle">매칭 확정</text>
+  <path class="ln" d="M459 97 L482 97" marker-end="url(#ah)"/>
+  <rect class="state" x="641" y="72" width="128" height="50" rx="8"/>
+  <text class="tst" x="705" y="102" text-anchor="middle">파견 확정</text>
+  <path class="ln" d="M614 97 L637 97" marker-end="url(#ah)"/>
+  <rect class="state end" x="796" y="72" width="128" height="50" rx="8"/>
+  <text class="tst" x="860" y="102" text-anchor="middle">종료</text>
+  <path class="ln" d="M769 97 L792 97" marker-end="url(#ah)"/>
+  <rect class="state warn" x="176" y="228" width="128" height="46" rx="8"/>
+  <text class="tst" x="240" y="256" text-anchor="middle">스케줄 삭제</text>
+  <rect class="state warn" x="331" y="228" width="128" height="46" rx="8"/>
+  <text class="tst" x="395" y="256" text-anchor="middle">금액 삭제</text>
+  <rect class="state warn" x="486" y="228" width="128" height="46" rx="8"/>
+  <text class="tst" x="550" y="256" text-anchor="middle">결제 취소</text>
+  <rect class="state warn" x="641" y="228" width="128" height="46" rx="8"/>
+  <text class="tst" x="705" y="256" text-anchor="middle">정산 환불</text>
+  <path class="ln o" d="M641 251 L618 251" marker-end="url(#ah-o)"/>
+  <path class="ln o" d="M486 251 L463 251" marker-end="url(#ah-o)"/>
+  <path class="ln o" d="M331 251 L308 251" marker-end="url(#ah-o)"/>
+  <path class="ln o d" d="M240 122 L240 224" marker-end="url(#ah-o)"/>
+  <path class="ln o d" d="M395 122 L395 224" marker-end="url(#ah-o)"/>
+  <path class="ln o d" d="M550 122 L550 224" marker-end="url(#ah-o)"/>
+  <path class="ln o d" d="M705 122 L705 224" marker-end="url(#ah-o)"/>
+  <text class="tz" x="24" y="212">취소 · 되돌리기</text>
+  <rect class="state warn" x="20" y="228" width="128" height="46" rx="8"/>
+  <text class="tst" x="84" y="250" text-anchor="middle">취소 / 미납</text>
+  <text class="ts"  x="84" y="264" text-anchor="middle">시간 경과 포함</text>
+  <text class="ts" x="490" y="300" text-anchor="middle">되돌릴 때는 만들어진 역순으로 — 정산 → 결제 → 금액 → 스케줄</text>
+</svg>
+<figcaption>같은 도메인을 ERD로 보여주면 "테이블이 이렇게 생겼습니다"에서 대화가 끝납니다. 상태와 되돌리는 경로까지 그리면 기획·운영이 "이 경우엔 어떻게 되나요"를 직접 물을 수 있게 됩니다.</figcaption>
+</figure>
+<ul class="kv">
+  <li><b>정상 흐름과 취소 흐름을 같은 그림에 둔다</b> — 대부분의 설계 사고는 "취소하면 어떻게 되는가"에서 발생합니다. 정상 경로만 그리면 이 질문이 회의에서 나오지 않고, 구현 단계에서 뒤늦게 터집니다.</li>
+  <li><b>생성 순서와 삭제 순서를 명시한다</b> — 스케줄·금액·결제·정산은 만들어진 순서의 역순으로만 안전하게 되돌릴 수 있습니다. 이 규칙을 그림에 박아두면 이후 기능이 추가돼도 같은 원칙이 적용됩니다.</li>
+  <li><b>시간이 트리거인 전이를 빠뜨리지 않는다</b> — "보증금 미납 상태로 일정 시간 경과 시 자동 취소" 같은 전이는 사용자 행동이 없어 놓치기 쉽습니다.</li>
+  <li><b>시간은 더 들지만 회의 시간이 줄어든다</b> — 그리는 데 하루가 더 걸려도, 오해로 인한 재작업과 반복 설명이 사라져 전체로는 빨라집니다. 실제로 이 방식으로 5년간 잘못 복제돼 온 정산 설계를 바로잡고 기획서까지 수정한 적이 있습니다.</li>
+</ul>
+<h3 id="d4b">4-2. 데이터 나열 — 구현 전에 설계를 검증하기</h3>
+<p>설계가 끝나고 나면 보통 바로 구현에 들어갑니다. 그런데 <b>구현이 완료된 뒤에 발견된 설계 오류는 수정 비용이 극단적으로 큽니다.</b>
+그래서 복잡한 도메인에서는 구현 전에 <b>예상 데이터를 직접 나열해 보는 단계</b>를 넣습니다.</p>
+<figure class="fig">
+<svg viewBox="0 0 980 300" role="img" aria-label="데이터 나열을 통한 설계 사전 검증">
+  <text class="tz" x="70" y="98">변경 전 — 각 자원의 스케줄 구간</text>
+  <text class="ts" x="83" y="108" text-anchor="middle">1</text>
+  <text class="ts" x="109" y="108" text-anchor="middle">2</text>
+  <text class="ts" x="135" y="108" text-anchor="middle">3</text>
+  <text class="ts" x="161" y="108" text-anchor="middle">4</text>
+  <text class="ts" x="187" y="108" text-anchor="middle">5</text>
+  <text class="ts" x="213" y="108" text-anchor="middle">6</text>
+  <text class="ts" x="239" y="108" text-anchor="middle">7</text>
+  <text class="ts" x="265" y="108" text-anchor="middle">8</text>
+  <text class="ts" x="291" y="108" text-anchor="middle">9</text>
+  <text class="ts" x="317" y="108" text-anchor="middle">10</text>
+  <text class="ts" x="343" y="108" text-anchor="middle">11</text>
+  <text class="ts" x="369" y="108" text-anchor="middle">12</text>
+  <text class="ts" x="395" y="108" text-anchor="middle">13</text>
+  <text class="ts" x="60" y="125" text-anchor="end">a</text>
+  <rect class="cell cellA" x="70" y="110" width="26" height="22"/>
+  <rect class="cell cellA" x="96" y="110" width="26" height="22"/>
+  <rect class="cell cellA" x="122" y="110" width="26" height="22"/>
+  <rect class="cell cellA" x="148" y="110" width="26" height="22"/>
+  <rect class="cell cellA" x="174" y="110" width="26" height="22"/>
+  <rect class="cell" x="200" y="110" width="26" height="22"/>
+  <rect class="cell" x="226" y="110" width="26" height="22"/>
+  <rect class="cell" x="252" y="110" width="26" height="22"/>
+  <rect class="cell" x="278" y="110" width="26" height="22"/>
+  <rect class="cell" x="304" y="110" width="26" height="22"/>
+  <rect class="cell" x="330" y="110" width="26" height="22"/>
+  <rect class="cell" x="356" y="110" width="26" height="22"/>
+  <rect class="cell" x="382" y="110" width="26" height="22"/>
+  <text class="ts" x="60" y="147" text-anchor="end">b</text>
+  <rect class="cell" x="70" y="132" width="26" height="22"/>
+  <rect class="cell cellA" x="96" y="132" width="26" height="22"/>
+  <rect class="cell cellA" x="122" y="132" width="26" height="22"/>
+  <rect class="cell cellA" x="148" y="132" width="26" height="22"/>
+  <rect class="cell cellA" x="174" y="132" width="26" height="22"/>
+  <rect class="cell cellA" x="200" y="132" width="26" height="22"/>
+  <rect class="cell" x="226" y="132" width="26" height="22"/>
+  <rect class="cell" x="252" y="132" width="26" height="22"/>
+  <rect class="cell" x="278" y="132" width="26" height="22"/>
+  <rect class="cell" x="304" y="132" width="26" height="22"/>
+  <rect class="cell" x="330" y="132" width="26" height="22"/>
+  <rect class="cell" x="356" y="132" width="26" height="22"/>
+  <rect class="cell" x="382" y="132" width="26" height="22"/>
+  <text class="ts" x="60" y="169" text-anchor="end">c</text>
+  <rect class="cell" x="70" y="154" width="26" height="22"/>
+  <rect class="cell" x="96" y="154" width="26" height="22"/>
+  <rect class="cell cellA" x="122" y="154" width="26" height="22"/>
+  <rect class="cell cellA" x="148" y="154" width="26" height="22"/>
+  <rect class="cell cellA" x="174" y="154" width="26" height="22"/>
+  <rect class="cell cellA" x="200" y="154" width="26" height="22"/>
+  <rect class="cell cellA" x="226" y="154" width="26" height="22"/>
+  <rect class="cell" x="252" y="154" width="26" height="22"/>
+  <rect class="cell" x="278" y="154" width="26" height="22"/>
+  <rect class="cell" x="304" y="154" width="26" height="22"/>
+  <rect class="cell" x="330" y="154" width="26" height="22"/>
+  <rect class="cell" x="356" y="154" width="26" height="22"/>
+  <rect class="cell" x="382" y="154" width="26" height="22"/>
+  <text class="ts" x="60" y="191" text-anchor="end">d</text>
+  <rect class="cell" x="70" y="176" width="26" height="22"/>
+  <rect class="cell" x="96" y="176" width="26" height="22"/>
+  <rect class="cell" x="122" y="176" width="26" height="22"/>
+  <rect class="cell cellA" x="148" y="176" width="26" height="22"/>
+  <rect class="cell cellA" x="174" y="176" width="26" height="22"/>
+  <rect class="cell cellA" x="200" y="176" width="26" height="22"/>
+  <rect class="cell cellA" x="226" y="176" width="26" height="22"/>
+  <rect class="cell cellA" x="252" y="176" width="26" height="22"/>
+  <rect class="cell" x="278" y="176" width="26" height="22"/>
+  <rect class="cell" x="304" y="176" width="26" height="22"/>
+  <rect class="cell" x="330" y="176" width="26" height="22"/>
+  <rect class="cell" x="356" y="176" width="26" height="22"/>
+  <rect class="cell" x="382" y="176" width="26" height="22"/>
+  <text class="ts" x="60" y="213" text-anchor="end">e</text>
+  <rect class="cell" x="70" y="198" width="26" height="22"/>
+  <rect class="cell" x="96" y="198" width="26" height="22"/>
+  <rect class="cell" x="122" y="198" width="26" height="22"/>
+  <rect class="cell" x="148" y="198" width="26" height="22"/>
+  <rect class="cell cellA" x="174" y="198" width="26" height="22"/>
+  <rect class="cell cellA" x="200" y="198" width="26" height="22"/>
+  <rect class="cell cellA" x="226" y="198" width="26" height="22"/>
+  <rect class="cell cellA" x="252" y="198" width="26" height="22"/>
+  <rect class="cell cellA" x="278" y="198" width="26" height="22"/>
+  <rect class="cell" x="304" y="198" width="26" height="22"/>
+  <rect class="cell" x="330" y="198" width="26" height="22"/>
+  <rect class="cell" x="356" y="198" width="26" height="22"/>
+  <rect class="cell" x="382" y="198" width="26" height="22"/>
+  <text class="ts" x="60" y="235" text-anchor="end">f</text>
+  <rect class="cell" x="70" y="220" width="26" height="22"/>
+  <rect class="cell" x="96" y="220" width="26" height="22"/>
+  <rect class="cell" x="122" y="220" width="26" height="22"/>
+  <rect class="cell" x="148" y="220" width="26" height="22"/>
+  <rect class="cell" x="174" y="220" width="26" height="22"/>
+  <rect class="cell cellA" x="200" y="220" width="26" height="22"/>
+  <rect class="cell cellA" x="226" y="220" width="26" height="22"/>
+  <rect class="cell cellA" x="252" y="220" width="26" height="22"/>
+  <rect class="cell cellA" x="278" y="220" width="26" height="22"/>
+  <rect class="cell cellA" x="304" y="220" width="26" height="22"/>
+  <rect class="cell" x="330" y="220" width="26" height="22"/>
+  <rect class="cell" x="356" y="220" width="26" height="22"/>
+  <rect class="cell" x="382" y="220" width="26" height="22"/>
+  <text class="ts" x="60" y="257" text-anchor="end">g</text>
+  <rect class="cell" x="70" y="242" width="26" height="22"/>
+  <rect class="cell" x="96" y="242" width="26" height="22"/>
+  <rect class="cell" x="122" y="242" width="26" height="22"/>
+  <rect class="cell" x="148" y="242" width="26" height="22"/>
+  <rect class="cell" x="174" y="242" width="26" height="22"/>
+  <rect class="cell" x="200" y="242" width="26" height="22"/>
+  <rect class="cell cellA" x="226" y="242" width="26" height="22"/>
+  <rect class="cell cellA" x="252" y="242" width="26" height="22"/>
+  <rect class="cell cellA" x="278" y="242" width="26" height="22"/>
+  <rect class="cell cellA" x="304" y="242" width="26" height="22"/>
+  <rect class="cell cellA" x="330" y="242" width="26" height="22"/>
+  <rect class="cell" x="356" y="242" width="26" height="22"/>
+  <rect class="cell" x="382" y="242" width="26" height="22"/>
+  <text class="tz" x="540" y="98">변경 후 — 기간 연장이 뒤 일정으로 밀려나는 양상</text>
+  <text class="ts" x="553" y="108" text-anchor="middle">1</text>
+  <text class="ts" x="579" y="108" text-anchor="middle">2</text>
+  <text class="ts" x="605" y="108" text-anchor="middle">3</text>
+  <text class="ts" x="631" y="108" text-anchor="middle">4</text>
+  <text class="ts" x="657" y="108" text-anchor="middle">5</text>
+  <text class="ts" x="683" y="108" text-anchor="middle">6</text>
+  <text class="ts" x="709" y="108" text-anchor="middle">7</text>
+  <text class="ts" x="735" y="108" text-anchor="middle">8</text>
+  <text class="ts" x="761" y="108" text-anchor="middle">9</text>
+  <text class="ts" x="787" y="108" text-anchor="middle">10</text>
+  <text class="ts" x="813" y="108" text-anchor="middle">11</text>
+  <text class="ts" x="839" y="108" text-anchor="middle">12</text>
+  <text class="ts" x="865" y="108" text-anchor="middle">13</text>
+  <text class="ts" x="530" y="125" text-anchor="end">a</text>
+  <rect class="cell cellA" x="540" y="110" width="26" height="22"/>
+  <rect class="cell cellA" x="566" y="110" width="26" height="22"/>
+  <rect class="cell cellA" x="592" y="110" width="26" height="22"/>
+  <rect class="cell cellA" x="618" y="110" width="26" height="22"/>
+  <rect class="cell cellA" x="644" y="110" width="26" height="22"/>
+  <rect class="cell" x="670" y="110" width="26" height="22"/>
+  <rect class="cell" x="696" y="110" width="26" height="22"/>
+  <rect class="cell" x="722" y="110" width="26" height="22"/>
+  <rect class="cell" x="748" y="110" width="26" height="22"/>
+  <rect class="cell" x="774" y="110" width="26" height="22"/>
+  <rect class="cell" x="800" y="110" width="26" height="22"/>
+  <rect class="cell" x="826" y="110" width="26" height="22"/>
+  <rect class="cell" x="852" y="110" width="26" height="22"/>
+  <text class="ts" x="530" y="147" text-anchor="end">b</text>
+  <rect class="cell" x="540" y="132" width="26" height="22"/>
+  <rect class="cell cellA" x="566" y="132" width="26" height="22"/>
+  <rect class="cell cellA" x="592" y="132" width="26" height="22"/>
+  <rect class="cell cellA" x="618" y="132" width="26" height="22"/>
+  <rect class="cell cellA" x="644" y="132" width="26" height="22"/>
+  <rect class="cell cellA" x="670" y="132" width="26" height="22"/>
+  <rect class="cell" x="696" y="132" width="26" height="22"/>
+  <rect class="cell" x="722" y="132" width="26" height="22"/>
+  <rect class="cell" x="748" y="132" width="26" height="22"/>
+  <rect class="cell" x="774" y="132" width="26" height="22"/>
+  <rect class="cell" x="800" y="132" width="26" height="22"/>
+  <rect class="cell" x="826" y="132" width="26" height="22"/>
+  <rect class="cell" x="852" y="132" width="26" height="22"/>
+  <text class="ts" x="530" y="169" text-anchor="end">c</text>
+  <rect class="cell" x="540" y="154" width="26" height="22"/>
+  <rect class="cell" x="566" y="154" width="26" height="22"/>
+  <rect class="cell cellA" x="592" y="154" width="26" height="22"/>
+  <rect class="cell cellA" x="618" y="154" width="26" height="22"/>
+  <rect class="cell cellA" x="644" y="154" width="26" height="22"/>
+  <rect class="cell cellA" x="670" y="154" width="26" height="22"/>
+  <rect class="cell cellA" x="696" y="154" width="26" height="22"/>
+  <rect class="cell" x="722" y="154" width="26" height="22"/>
+  <rect class="cell" x="748" y="154" width="26" height="22"/>
+  <rect class="cell" x="774" y="154" width="26" height="22"/>
+  <rect class="cell" x="800" y="154" width="26" height="22"/>
+  <rect class="cell" x="826" y="154" width="26" height="22"/>
+  <rect class="cell" x="852" y="154" width="26" height="22"/>
+  <text class="ts" x="530" y="191" text-anchor="end">d</text>
+  <rect class="cell" x="540" y="176" width="26" height="22"/>
+  <rect class="cell" x="566" y="176" width="26" height="22"/>
+  <rect class="cell" x="592" y="176" width="26" height="22"/>
+  <rect class="cell" x="618" y="176" width="26" height="22"/>
+  <rect class="cell" x="644" y="176" width="26" height="22"/>
+  <rect class="cell" x="670" y="176" width="26" height="22"/>
+  <rect class="cell cellB" x="696" y="176" width="26" height="22"/>
+  <rect class="cell cellB" x="722" y="176" width="26" height="22"/>
+  <rect class="cell cellB" x="748" y="176" width="26" height="22"/>
+  <rect class="cell cellB" x="774" y="176" width="26" height="22"/>
+  <rect class="cell cellB" x="800" y="176" width="26" height="22"/>
+  <rect class="cell cellB" x="826" y="176" width="26" height="22"/>
+  <rect class="cell" x="852" y="176" width="26" height="22"/>
+  <text class="ts" x="530" y="213" text-anchor="end">e</text>
+  <rect class="cell" x="540" y="198" width="26" height="22"/>
+  <rect class="cell" x="566" y="198" width="26" height="22"/>
+  <rect class="cell" x="592" y="198" width="26" height="22"/>
+  <rect class="cell" x="618" y="198" width="26" height="22"/>
+  <rect class="cell" x="644" y="198" width="26" height="22"/>
+  <rect class="cell" x="670" y="198" width="26" height="22"/>
+  <rect class="cell" x="696" y="198" width="26" height="22"/>
+  <rect class="cell cellB" x="722" y="198" width="26" height="22"/>
+  <rect class="cell cellB" x="748" y="198" width="26" height="22"/>
+  <rect class="cell cellB" x="774" y="198" width="26" height="22"/>
+  <rect class="cell cellB" x="800" y="198" width="26" height="22"/>
+  <rect class="cell cellB" x="826" y="198" width="26" height="22"/>
+  <rect class="cell cellB" x="852" y="198" width="26" height="22"/>
+  <text class="ts" x="530" y="235" text-anchor="end">f</text>
+  <rect class="cell" x="540" y="220" width="26" height="22"/>
+  <rect class="cell" x="566" y="220" width="26" height="22"/>
+  <rect class="cell" x="592" y="220" width="26" height="22"/>
+  <rect class="cell" x="618" y="220" width="26" height="22"/>
+  <rect class="cell" x="644" y="220" width="26" height="22"/>
+  <rect class="cell" x="670" y="220" width="26" height="22"/>
+  <rect class="cell" x="696" y="220" width="26" height="22"/>
+  <rect class="cell" x="722" y="220" width="26" height="22"/>
+  <rect class="cell cellB" x="748" y="220" width="26" height="22"/>
+  <rect class="cell cellB" x="774" y="220" width="26" height="22"/>
+  <rect class="cell cellB" x="800" y="220" width="26" height="22"/>
+  <rect class="cell cellB" x="826" y="220" width="26" height="22"/>
+  <rect class="cell cellB" x="852" y="220" width="26" height="22"/>
+  <text class="ts" x="530" y="257" text-anchor="end">g</text>
+  <rect class="cell" x="540" y="242" width="26" height="22"/>
+  <rect class="cell" x="566" y="242" width="26" height="22"/>
+  <rect class="cell" x="592" y="242" width="26" height="22"/>
+  <rect class="cell" x="618" y="242" width="26" height="22"/>
+  <rect class="cell" x="644" y="242" width="26" height="22"/>
+  <rect class="cell" x="670" y="242" width="26" height="22"/>
+  <rect class="cell" x="696" y="242" width="26" height="22"/>
+  <rect class="cell" x="722" y="242" width="26" height="22"/>
+  <rect class="cell" x="748" y="242" width="26" height="22"/>
+  <rect class="cell cellB" x="774" y="242" width="26" height="22"/>
+  <rect class="cell cellB" x="800" y="242" width="26" height="22"/>
+  <rect class="cell cellB" x="826" y="242" width="26" height="22"/>
+  <rect class="cell cellB" x="852" y="242" width="26" height="22"/>
+  <path class="ln" d="M456 190 L520 190" marker-end="url(#ah)"/>
+  <text class="ts" x="488" y="182" text-anchor="middle">기간 변경</text>
+  <text class="ts" x="70"  y="272">각 행이 하나의 자원, 각 칸이 하루. 색칠된 구간이 배정된 일정입니다.</text>
+  <text class="ts" x="540" y="272">한 건을 늘렸을 때 뒤의 일정이 며칠씩 밀리는지를 칸 단위로 직접 적어 확인합니다.</text>
+</svg>
+<figcaption>복잡한 상황일수록 말로 검증하면 반드시 빠뜨립니다. 데이터를 직접 나열해 보면 경계 조건이 눈에 보이고, 그대로 테스트 케이스가 됩니다.</figcaption>
+</figure>
+<ul class="kv">
+  <li><b>정상 케이스만으로는 부족하다</b> — 예외 케이스까지 데이터를 늘어놓아야 구현 오류나 설계에서 놓친 부분이 드러납니다. 머릿속으로만 하면 반드시 편한 케이스만 검토하게 됩니다.</li>
+  <li><b>하루이틀이면 끝나는 작업이다</b> — 반면 구현이 완성된 뒤의 설계 수정은 며칠에서 몇 주가 듭니다. 비용 비교가 명확해서 복잡한 상황일수록 이 방법을 선택합니다.</li>
+  <li><b>그대로 테스트 케이스가 된다</b> — 나열한 데이터가 곧 기대값이므로, 검증에 쓴 표를 그대로 테스트 픽스처로 옮길 수 있습니다.</li>
+  <li><b>논쟁을 줄인다</b> — 팀원이나 타 부서와 의견이 갈릴 때, 데이터가 눈앞에 있으면 "이해한 척 넘어갔다가 구현 후 전혀 다른 결과가 나오는" 상황을 막을 수 있습니다.</li>
+</ul>
+<h3 id="d4c">4-3. 문서 기반 AI 개발 프로세스</h3>
+<p>AI 코딩 에이전트(Claude Code)를 실무에 넣었을 때 가장 큰 문제는 속도가 아니라 <b>"했다고 보고하지만 안 한 작업"</b>이었습니다.
+지적한 것만 고치고 같은 패턴의 나머지는 그대로 두는 식입니다.
+그래서 <b>규칙을 문서로 고정하고, 증거 없는 보고를 반려하는 절차</b>를 만들었습니다.</p>
+
+<figure class="fig">
+<svg viewBox="0 0 980 424" role="img" aria-label="문서 기반 AI 개발 프로세스 - 규칙 계층과 강제 검증 프로토콜">
+  <text class="tz" x="40" y="58">규칙 계층 — 위에서부터 우선 적용</text>
+  <rect class="state" x="40" y="72" width="380" height="56" rx="8"/>
+  <circle class="bdg" cx="62" cy="94" r="9"/><text class="tbdg" x="62" y="97.5" text-anchor="middle">1</text>
+  <text class="tst" x="80" y="93">rule/</text>
+  <text class="ts"  x="80" y="108">슬래시 커맨드 실행 시 반드시 선행 로드</text>
+  <text class="ts"  x="80" y="121">도메인 생성 · DDL 비교 · API 문서 · 리포지토리 테스트</text>
+
+  <rect class="state" x="40" y="138" width="380" height="48" rx="8"/>
+  <circle class="bdg" cx="62" cy="158" r="9"/><text class="tbdg" x="62" y="161.5" text-anchor="middle">2</text>
+  <text class="tst" x="80" y="157">.claude/rules/</text>
+  <text class="ts"  x="80" y="172">코드 스타일 · 테스트 · 검증 규칙</text>
+
+  <rect class="state" x="40" y="196" width="380" height="48" rx="8"/>
+  <circle class="bdg" cx="62" cy="216" r="9"/><text class="tbdg" x="62" y="219.5" text-anchor="middle">3</text>
+  <text class="tst" x="80" y="215">CLAUDE.md</text>
+  <text class="ts"  x="80" y="230">프로젝트 개요 · 빌드 · 금지 패턴</text>
+
+  <rect class="state" x="40" y="254" width="380" height="48" rx="8"/>
+  <circle class="bdg" cx="62" cy="274" r="9"/><text class="tbdg" x="62" y="277.5" text-anchor="middle">4</text>
+  <text class="tst" x="80" y="273">guide/</text>
+  <text class="ts"  x="80" y="288">참조 가이드 · 슬래시 커맨드 목록</text>
+
+  <rect class="snote" x="40" y="316" width="380" height="60" rx="6"/>
+  <text class="tnote" x="230" y="338" text-anchor="middle">사람이 읽는 문서와 에이전트가 지키는 규칙을</text>
+  <text class="tnote" x="230" y="354" text-anchor="middle">하나로 유지 — 문서가 곧 실행 규칙이 된다</text>
+
+  <text class="tz" x="470" y="58">강제 검증 프로토콜</text>
+  <rect class="state" x="470" y="72" width="440" height="38" rx="8"/>
+  <text class="tst" x="690" y="96" text-anchor="middle">① 작업 요청</text>
+  <path class="ln" d="M690 112 L690 126" marker-end="url(#ah)"/>
+  <rect class="state" x="470" y="128" width="440" height="38" rx="8"/>
+  <text class="tst" x="690" y="152" text-anchor="middle">② 규칙 로드 — rule/ 을 먼저 읽지 않으면 착수 금지</text>
+  <path class="ln" d="M690 168 L690 182" marker-end="url(#ah)"/>
+  <rect class="state" x="470" y="184" width="440" height="52" rx="8"/>
+  <text class="tst" x="690" y="206" text-anchor="middle">③ 전수 조사</text>
+  <text class="ts"  x="690" y="222" text-anchor="middle">심볼 검색으로 모든 인스턴스를 찾고 전체 파일 목록 작성</text>
+  <path class="ln" d="M690 238 L690 252" marker-end="url(#ah)"/>
+  <rect class="state" x="470" y="254" width="440" height="52" rx="8"/>
+  <text class="tst" x="690" y="276" text-anchor="middle">④ 증거 표 작성</text>
+  <text class="ts"  x="690" y="292" text-anchor="middle">참조 vs 대상 비교표 · 파일 경로+라인 · 문제 개수</text>
+  <path class="ln" d="M690 308 L690 322" marker-end="url(#ah)"/>
+  <rect class="state end" x="470" y="324" width="440" height="38" rx="8"/>
+  <text class="tst" x="690" y="348" text-anchor="middle">⑤ 발견한 문제 전부 수정 + 빌드 검증 후 완료 보고</text>
+
+  <path class="ln r d" d="M914 280 L944 280 L944 210 L914 210" marker-end="url(#ah-r)"/>
+  <text class="tsg" x="690" y="378" text-anchor="middle">증거 없는 보고("문제 없습니다")는 반려 → ③으로 되돌림</text>
+</svg>
+<figcaption>규칙을 문서로 고정하고 검증 절차를 강제하면, 에이전트가 바뀌어도 산출물의 품질 기준이 유지됩니다.</figcaption>
+</figure>
+
+<h5>이 프로세스가 막으려 한 것</h5>
+<ol class="legend">
+  <li><b>부분 점검</b> — 일부만 확인하고 "문제 없음"으로 보고<span class="r">해결: <b>전수 조사 강제</b>. 심볼 검색으로 모든 인스턴스를 찾고 전체 목록을 먼저 만들게 했습니다.</span></li>
+  <li><b>증상 치료</b> — 지적받은 항목만 고치고 같은 패턴의 나머지는 방치<span class="r">해결: <b>참조 구현과의 비교표</b>를 강제. 표를 채우려면 전체를 봐야 하므로 부분 수정이 성립하지 않습니다.</span></li>
+  <li><b>증거 없는 보고</b> — "대부분 괜찮습니다" 같은 검증 불가능한 결론<span class="r">해결: 파일 경로 + 라인 번호 + 문제 개수를 <b>필수 출력 형식</b>으로 규정. 없으면 반려합니다.</span></li>
+  <li><b>미완결</b> — 코드만 고치고 빌드는 확인하지 않음<span class="r">해결: <b>빌드 검증까지</b>를 완료 조건에 포함시켰습니다.</span></li>
+</ol>
+
+<h5>반복 작업의 도구화</h5>
+<p>규칙만으로 부족한 영역은 <b>절차 자체를 도구로 만들어</b> 사람이 순서를 기억하지 않아도 되게 했습니다.
+6개 저장소에 <b>커스텀 스킬 16종과 슬래시 커맨드 28종</b>을 두었습니다. 대표적인 것만 추리면:</p>
+
+<div class="tw"><table>
+<thead><tr><th style="width:24%">스킬</th><th style="width:36%">하는 일</th><th>도구화한 이유</th></tr></thead>
+<tbody>
+<tr><td><code>generate-domain</code></td><td>표준 패키지 구조로 도메인 일괄 생성</td><td>8개 계층을 손으로 만들면 매번 빠지는 게 생긴다</td></tr>
+<tr><td><code>flyway-update</code> · <code>flyway-merge</code></td><td>체크섬 계산 · DB 적용 · 프로젝트 간 동기화</td><td>체크섬을 수동 계산하면 틀린다 (알고리즘이 다름)</td></tr>
+<tr><td><code>compare-ddl</code></td><td>ERD 툴과 프로젝트 DDL 양방향 비교</td><td>스키마 드리프트는 눈으로 찾을 수 없다</td></tr>
+<tr><td><code>sync</code></td><td>사용자 API → 관리자 API 패턴 변환 반영</td><td>같은 도메인을 두 번 구현하는 비용 제거</td></tr>
+<tr><td><code>generate-repo-test</code></td><td>리포지토리 테스트와 QueryDSL 설정 생성</td><td>테스트 누락을 구조적으로 방지</td></tr>
+<tr><td><code>impact</code></td><td>변경의 영향 범위 전수 분석</td><td>MSA 6개에 걸친 파급을 사람이 추적하기 어렵다</td></tr>
+<tr><td><code>critical-review</code></td><td>구현 결과를 비판적으로 재검토</td><td>작성자와 검토자를 분리하기 위해</td></tr>
+<tr><td><code>pre-deploy</code> · <code>merge-to-dev</code></td><td>배포 전 점검 · 브랜치 병합 절차</td><td>배포 직전 실수가 가장 비싸다</td></tr>
+<tr><td><code>handover</code></td><td>작업 맥락을 문서로 남겨 다음 세션에 인계</td><td>세션이 끊겨도 진행 상황이 사라지지 않게</td></tr>
+</tbody></table></div>
+
+<ul class="kv">
+  <li><b>문서가 산출물이자 입력이다</b> — 인계 문서 83건 · 계획 문서 22건 · 설계 문서 36건을 남겼고, 이 문서들이 다음 작업의 컨텍스트로 다시 들어갑니다. 문서화가 부가 작업이 아니라 <b>파이프라인의 일부</b>가 됩니다.</li>
+  <li><b>공용 지식 저장소를 별도로 뒀다</b> — 프로젝트별 규칙과 별개로, 기술 스택 · 템플릿 · 서비스 간 API 레퍼런스 · 워크플로를 한곳에 모아 저장소를 넘나드는 작업에서도 같은 기준이 적용되게 했습니다.</li>
+  <li><b>코드 심볼 검색 도구를 연동</b> — 텍스트 grep이 아니라 심볼 단위로 참조를 찾게 해, "전수 조사"가 실제로 전수가 되도록 보장했습니다.</li>
+  <li><b>결론</b> — AI를 쓰느냐 마느냐가 아니라, <b>AI가 만든 결과를 무엇으로 검증하느냐</b>가 실제 생산성을 갈랐습니다. 검증 규칙이 없을 때는 리뷰 비용이 작성 비용을 넘어섰습니다.</li>
+</ul>
+
+<div class="foot">
+  <b>박근혁</b> · Backend Engineer<br>
+  본 문서의 모든 설계는 본인이 직접 수행한 것이며, 식별 가능한 정보는 제거되었습니다. 인프라 구성은 별권 「인프라 아키텍처 포트폴리오」를 참고해 주십시오.<br>
+  작성일 2026.07.24
+</div>
+
+</div>

@@ -1,0 +1,974 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>개인 프로젝트 포트폴리오 · Community</title>
+<style>
+:root{
+  --ink:#182019;
+  --muted:#667067;
+  --paper:#fbfaf6;
+  --surface:#ffffff;
+  --line:#dce1d8;
+  --green:#6f8565;
+  --green-deep:#344b39;
+  --green-soft:#edf1e9;
+  --sand:#eee4d5;
+  --sand-deep:#d9cab5;
+  --coral:#d97063;
+  --yellow:#e7bd52;
+  --blue:#6f8fc4;
+  --shadow:0 18px 52px rgba(35,47,37,.10);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  color:var(--ink);
+  background:
+    radial-gradient(circle at 92% 2%,rgba(231,189,82,.14),transparent 24rem),
+    #efeee8;
+  font-family:-apple-system,BlinkMacSystemFont,"Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;
+  font-size:15px;
+  line-height:1.65;
+  word-break:keep-all;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,p,figure{margin-top:0}
+.portfolio{width:min(1180px,calc(100% - 32px));margin:24px auto 72px}
+.page{
+  position:relative;
+  min-height:780px;
+  margin-bottom:24px;
+  padding:54px 58px 48px;
+  overflow:hidden;
+  border-radius:30px;
+  background:var(--paper);
+  box-shadow:var(--shadow);
+}
+.page-no{
+  position:absolute;
+  right:42px;
+  bottom:24px;
+  color:#8a9189;
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.14em;
+}
+.eyebrow{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:14px;
+  color:var(--green);
+  font-size:11px;
+  font-weight:850;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+}
+.eyebrow:before{content:"";width:26px;height:2px;background:var(--yellow)}
+.page-head{
+  display:grid;
+  grid-template-columns:116px minmax(0,1fr);
+  gap:24px;
+  align-items:start;
+  margin-bottom:27px;
+}
+.section-no{
+  padding-top:8px;
+  color:var(--green);
+  font-size:11px;
+  font-weight:850;
+  letter-spacing:.15em;
+}
+h1{
+  margin-bottom:22px;
+  font-size:clamp(48px,6.4vw,78px);
+  line-height:1.06;
+  letter-spacing:-.055em;
+}
+h2{
+  margin-bottom:10px;
+  font-size:clamp(28px,3.5vw,42px);
+  line-height:1.18;
+  letter-spacing:-.045em;
+}
+h3{letter-spacing:-.025em}
+.lead{max-width:850px;margin:0;color:var(--muted);font-size:16px}
+.tag{
+  display:inline-block;
+  color:var(--green);
+  font-size:9.5px;
+  font-weight:900;
+  letter-spacing:.13em;
+}
+.chip-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:13px}
+.chip{
+  display:inline-flex;
+  align-items:center;
+  min-height:25px;
+  padding:4px 9px;
+  border-radius:99px;
+  color:#4f5d50;
+  background:var(--green-soft);
+  font-size:10.5px;
+  font-weight:750;
+}
+.note{
+  margin-top:14px;
+  padding:12px 15px;
+  border:1px solid #ead9b5;
+  border-radius:12px;
+  color:#716856;
+  background:#fff7e6;
+  font-size:11.5px;
+}
+
+/* 01 cover */
+.cover{
+  min-height:800px;
+  display:grid;
+  grid-template-columns:minmax(0,1.4fr) minmax(290px,.6fr);
+  gap:52px;
+  align-items:end;
+  color:#fff;
+  background:
+    linear-gradient(135deg,rgba(255,255,255,.07),transparent 44%),
+    var(--green-deep);
+}
+.cover:after{
+  content:"";
+  position:absolute;
+  width:470px;
+  height:470px;
+  top:-220px;
+  right:-205px;
+  border:76px solid rgba(255,255,255,.05);
+  border-radius:50%;
+}
+.cover .eyebrow{color:#d9e4d7}
+.cover-copy{max-width:710px;margin-bottom:29px;color:#d7e1d6;font-size:17px}
+.cover-copy strong{color:#fff}
+.identity{display:flex;align-items:center;flex-wrap:wrap;gap:12px;color:#ccd8cc;font-size:12px}
+.identity b{color:#fff;font-size:15px}
+.identity i{width:1px;height:27px;background:rgba(255,255,255,.22)}
+.proof-stack{position:relative;z-index:1;display:grid;gap:10px}
+.proof{
+  padding:18px 19px;
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:16px;
+  background:rgba(255,255,255,.075);
+}
+.proof b{display:block;color:#fff;font-size:25px;line-height:1.15}
+.proof span{color:#ced8cd;font-size:11px}
+.proof.accent{border-color:var(--yellow);background:var(--yellow)}
+.proof.accent b,.proof.accent span{color:var(--ink)}
+.cover-foot{
+  position:absolute;
+  left:58px;
+  right:58px;
+  bottom:27px;
+  display:flex;
+  justify-content:space-between;
+  color:#bccabb;
+  font-size:10px;
+}
+
+/* 02 product map */
+.scope-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.scope{
+  min-height:112px;
+  padding:15px 14px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:var(--surface);
+}
+.scope span{display:block;margin-bottom:22px;color:var(--green);font-size:9px;font-weight:900}
+.scope h3{margin-bottom:5px;font-size:14px}
+.scope p{margin:0;color:var(--muted);font-size:10.5px;line-height:1.45}
+.map-title{margin:22px 0 10px;font-size:13px}
+.domain-map{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.domain{
+  min-height:61px;
+  padding:10px 11px;
+  border-radius:11px;
+  background:var(--green-soft);
+}
+.domain b{display:block;margin-bottom:3px;font-size:11px}
+.domain small{display:block;color:var(--muted);font-size:9px;line-height:1.4}
+.workflow{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:7px;
+  margin-top:18px;
+  padding:11px;
+  border-radius:15px;
+  background:var(--sand);
+}
+.work-step{padding:10px;border-radius:10px;background:rgba(255,255,255,.72)}
+.work-step span{
+  display:grid;
+  place-items:center;
+  width:22px;
+  height:22px;
+  margin-bottom:9px;
+  border-radius:50%;
+  color:#fff;
+  background:var(--green-deep);
+  font-size:9px;
+  font-weight:900;
+}
+.work-step b{display:block;font-size:11px}
+.work-step small{display:block;color:var(--muted);font-size:9px;line-height:1.4}
+
+/* 03-06 feature pages */
+.feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}
+.feature-card{
+  overflow:hidden;
+  border:1px solid var(--line);
+  border-radius:19px;
+  background:var(--surface);
+}
+.phone-frame{padding:10px;background:#e9eadf}
+.phone-frame img{
+  display:block;
+  width:100%;
+  height:auto;
+  aspect-ratio:430/932;
+  object-fit:cover;
+  object-position:top;
+  border-radius:11px;
+  box-shadow:0 8px 22px rgba(34,45,35,.13);
+}
+.feature-copy{padding:16px 15px 15px}
+.feature-copy h3{margin:6px 0 7px;font-size:16px;line-height:1.32}
+.feature-copy p{margin:0;color:var(--muted);font-size:11.5px;line-height:1.55}
+.feature-copy .chip-row{margin-top:11px}
+.feature-copy .chip{font-size:9.5px}
+.capability-band{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:7px;
+  margin-top:13px;
+  padding:11px;
+  border-radius:14px;
+  background:var(--green-deep);
+  color:#fff;
+}
+.capability-band div{padding:6px 8px;border-left:1px solid rgba(255,255,255,.16)}
+.capability-band div:first-child{border-left:0}
+.capability-band b{display:block;font-size:10.5px}
+.capability-band small{display:block;color:#d6dfd5;font-size:8.8px;line-height:1.35}
+
+/* 07 evidence */
+.evidence-table{overflow:hidden;border:1px solid var(--line);border-radius:16px;background:var(--surface)}
+table{width:100%;border-collapse:collapse}
+th,td{padding:12px 13px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+th{color:var(--green-deep);background:var(--green-soft);font-size:10px}
+td{font-size:10.5px;line-height:1.48}
+tr:last-child td{border-bottom:0}
+td:first-child{font-weight:850;white-space:nowrap}
+code{padding:2px 5px;border-radius:5px;background:#f0f2ef;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9em}
+.metric-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:17px}
+.metric{
+  min-height:83px;
+  padding:14px;
+  border:1px solid var(--line);
+  border-radius:13px;
+  background:var(--surface);
+}
+.metric b{display:block;margin-bottom:5px;color:var(--green-deep);font-size:22px;line-height:1.1}
+.metric span{display:block;color:var(--muted);font-size:9.5px;line-height:1.4}
+.method-note{
+  display:grid;
+  grid-template-columns:120px 1fr;
+  gap:18px;
+  margin-top:14px;
+  padding:15px 17px;
+  border-radius:14px;
+  background:var(--sand);
+}
+.method-note b{font-size:11px}
+.method-note p{margin:0;color:#5f605a;font-size:10.5px}
+
+/* 08 quality */
+.quality-top{display:grid;grid-template-columns:.86fr 1.14fr;gap:12px}
+.quality-panel{padding:18px;border:1px solid var(--line);border-radius:16px;background:var(--surface)}
+.quality-panel h3{margin-bottom:13px;font-size:17px}
+.result-box{padding:19px;border-radius:14px;color:#fff;background:var(--green-deep)}
+.result-box b{display:block;margin-bottom:8px;font-size:38px;line-height:1}
+.result-box span{color:#d6dfd5;font-size:11px}
+.loop{display:grid;gap:9px}
+.loop-item{display:grid;grid-template-columns:26px 1fr;gap:10px;align-items:start}
+.loop-item span{
+  display:grid;
+  place-items:center;
+  width:25px;height:25px;
+  border-radius:50%;
+  color:#fff;background:var(--green);
+  font-size:9px;font-weight:900;
+}
+.loop-item b{display:block;font-size:11px}
+.loop-item small{display:block;color:var(--muted);font-size:9.5px}
+.gap-cases{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+.gap-case{min-height:76px;padding:13px;border-radius:12px;background:var(--green-soft)}
+.gap-case b{display:block;margin-bottom:6px;font-size:11px}
+.gap-case p{margin:0;color:var(--muted);font-size:9.5px;line-height:1.45}
+.test-facts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px}
+.test-fact{padding:13px;border:1px solid var(--line);border-radius:12px;background:#fff}
+.test-fact b{display:block;color:var(--green-deep);font-size:19px}
+.test-fact span{font-size:9px;color:var(--muted)}
+
+/* 09 depth */
+.money-flow{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:8px;
+  padding:13px;
+  border-radius:16px;
+  background:var(--green-soft);
+}
+.money-flow div{position:relative;padding:12px 10px;border-radius:11px;background:#fff}
+.money-flow div:not(:last-child):after{
+  content:"→";
+  position:absolute;
+  right:-8px;
+  top:50%;
+  z-index:2;
+  color:var(--green);
+  font-weight:900;
+}
+.money-flow b{display:block;font-size:11px}
+.money-flow small{display:block;color:var(--muted);font-size:8.8px}
+.depth-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:15px}
+.depth-card{
+  min-height:112px;
+  padding:17px;
+  border:1px solid var(--line);
+  border-radius:15px;
+  background:#fff;
+}
+.depth-card span{display:block;margin-bottom:12px;color:var(--coral);font-size:9px;font-weight:900}
+.depth-card h3{margin-bottom:7px;font-size:15px}
+.depth-card p{margin:0;color:var(--muted);font-size:10.5px}
+.ledger-note{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:14px;
+}
+.ledger-note div{padding:14px;border-radius:13px;background:var(--sand)}
+.ledger-note b{display:block;margin-bottom:4px;font-size:11px}
+.ledger-note p{margin:0;color:#5e5d57;font-size:9.5px}
+
+/* 10 status */
+.status-table td:first-child{width:122px;color:var(--green-deep)}
+.closing{
+  display:grid;
+  grid-template-columns:1fr 185px;
+  gap:30px;
+  align-items:end;
+  margin-top:18px;
+  padding:30px;
+  border-radius:20px;
+  background:var(--sand);
+}
+.closing h2{font-size:31px}
+.closing p{margin:0;color:#5c5d57;font-size:12px}
+.closing-mark{text-align:right;color:#65655f;font-size:10px}
+.closing-mark b{display:block;color:var(--ink);font-size:19px}
+.source-note{
+  margin-top:14px;
+  padding:14px 16px;
+  border:1px solid var(--line);
+  border-radius:13px;
+  color:var(--muted);
+  background:#fff;
+  font-size:9.5px;
+}
+
+@media(max-width:900px){
+  .page{padding:42px 34px}
+  .cover{grid-template-columns:1fr;gap:34px}
+  .proof-stack{grid-template-columns:repeat(3,1fr)}
+  .page-head{grid-template-columns:1fr;gap:4px}
+  .scope-grid{grid-template-columns:repeat(2,1fr)}
+  .domain-map{grid-template-columns:repeat(2,1fr)}
+  .feature-grid{grid-template-columns:1fr}
+  .phone-frame{padding:18px 25%}
+  .feature-copy{text-align:left}
+  .quality-top{grid-template-columns:1fr}
+  .closing{grid-template-columns:1fr}
+  .closing-mark{text-align:left}
+}
+@media(max-width:620px){
+  .portfolio{width:100%;margin:0}
+  .page{min-height:0;margin:0;border-radius:0;padding:36px 20px}
+  .cover{min-height:100vh}
+  .cover-foot{position:static;margin-top:28px}
+  h1{font-size:44px}
+  h2{font-size:29px}
+  .proof-stack,.scope-grid,.domain-map,.workflow,.metric-strip,.gap-cases,.test-facts,.depth-grid,.capability-band,.money-flow{grid-template-columns:1fr}
+  .phone-frame{padding:18px 16%}
+  .method-note,.ledger-note{grid-template-columns:1fr}
+  .page-no{display:none}
+  .evidence-table{overflow-x:auto}
+  table{min-width:760px}
+}
+
+@media print{
+  @page{size:A4;margin:0}
+  html,body{width:210mm;background:#fff}
+  body{
+    font-size:9pt;
+    print-color-adjust:exact;
+    -webkit-print-color-adjust:exact;
+  }
+  .portfolio{width:210mm;margin:0}
+  .page{
+    width:210mm;
+    height:297mm;
+    min-height:0;
+    margin:0;
+    padding:13mm 13mm 11mm;
+    overflow:hidden;
+    border-radius:0;
+    box-shadow:none;
+    break-after:page;
+    page-break-after:always;
+  }
+  .page:last-child{break-after:auto;page-break-after:auto}
+  .page-no{right:11mm;bottom:7mm}
+  .cover{
+    min-height:0;
+    padding:18mm 16mm 13mm;
+    grid-template-columns:1.4fr .6fr;
+    gap:12mm;
+  }
+  .cover-foot{left:16mm;right:16mm;bottom:8mm}
+  h1{font-size:49pt}
+  h2{font-size:27pt}
+  .lead{font-size:10.5pt}
+  .page-head{grid-template-columns:26mm 1fr;gap:6mm;margin-bottom:7mm}
+  .scope-grid{grid-template-columns:repeat(5,1fr);gap:2mm}
+  .scope{min-height:29mm;padding:3.5mm}
+  .scope span{margin-bottom:5mm}
+  .domain-map{grid-template-columns:repeat(4,1fr);gap:1.8mm}
+  .domain{min-height:15mm;padding:2.6mm}
+  .workflow{gap:1.8mm;margin-top:4mm;padding:2.8mm}
+  .work-step{padding:2.5mm}
+  .feature-grid{grid-template-columns:repeat(3,1fr);gap:3mm}
+  .feature-card{border-radius:4mm}
+  .phone-frame{padding:2.2mm}
+  .phone-frame img{border-radius:2.5mm;box-shadow:none}
+  .feature-copy{padding:3.7mm 3.4mm}
+  .feature-copy h3{font-size:11.2pt}
+  .feature-copy p{font-size:7.9pt}
+  .feature-copy .chip{font-size:6.8pt}
+  .capability-band{gap:1.8mm;margin-top:3mm;padding:2.5mm}
+  .capability-band div{padding:1.5mm 2mm}
+  .note{margin-top:3mm;padding:2.7mm 3.2mm;font-size:7.4pt}
+  th,td{padding:3mm 3.2mm}
+  th{font-size:7pt}
+  td{font-size:7.3pt}
+  .metric-strip{gap:2mm;margin-top:4mm}
+  .metric{min-height:21mm;padding:3.5mm}
+  .method-note{margin-top:3.5mm;padding:3.5mm 4mm}
+  .quality-top{gap:3mm}
+  .quality-panel{padding:4mm}
+  .gap-cases,.test-facts{gap:2mm;margin-top:3.5mm}
+  .money-flow{gap:2mm;padding:3mm}
+  .depth-grid{gap:2.5mm;margin-top:4mm}
+  .depth-card{min-height:28mm;padding:4mm}
+  .ledger-note{gap:2.5mm;margin-top:3.5mm}
+  .closing{margin-top:4mm;padding:7mm}
+  .source-note{margin-top:3.5mm;padding:3.5mm}
+}
+
+/* ══ 가로(landscape) 인쇄 오버라이드 ══ */
+@media print{
+  @page{size:A4 landscape;margin:0}
+  html,body{width:297mm}
+  .portfolio{width:297mm}
+  .page{width:297mm;height:210mm;padding:9mm 13mm 8mm}
+  .page-no{right:11mm;bottom:5mm}
+  .cover{padding:11mm 16mm 9mm;gap:10mm}
+  .cover-foot{left:16mm;right:16mm;bottom:6mm}
+  h1{font-size:38pt}
+  h2{font-size:19pt}
+  .lead{font-size:9.3pt}
+  .page-head{margin-bottom:4mm}
+  /* 스크린샷 카드 — 세로 폰샷을 가로형 카드로 */
+  .feature-grid{gap:4mm}
+  .feature-card{display:grid;grid-template-columns:44% 56%;align-items:stretch}
+  .phone-frame{padding:2mm;display:flex;align-items:flex-start}
+  .feature-copy{padding:3mm 3mm}
+  .feature-copy h3{font-size:9.6pt;margin:1mm 0}
+  .feature-copy p{font-size:7.2pt;line-height:1.5}
+  .feature-copy .chip{font-size:6.2pt}
+  /* 밀도 높은 페이지 압축 */
+  .scope{min-height:20mm;padding:2.6mm}
+  .scope span{margin-bottom:3mm}
+  .domain-map{grid-template-columns:repeat(6,1fr);gap:1.6mm}
+  .domain{min-height:11mm;padding:2mm}
+  .workflow{margin-top:2.5mm;padding:2.2mm}
+  .work-step{padding:2mm}
+  /* 표지 — 우측 통계 열 확대 */
+  .cover{grid-template-columns:1.25fr .75fr}
+  /* 스크린샷 카드 — 폰·설명 균형 */
+  .feature-card{grid-template-columns:44% 56%}
+  /* E2E 페이지 — 가로에서는 결과·순서를 좌우 2컬럼으로 */
+  .quality-top{grid-template-columns:1fr 1fr;gap:3mm}
+  .quality-panel{padding:3.5mm 4mm}
+  .quality-panel h3{margin-bottom:2mm;font-size:11.5px}
+  .result-box{padding:4mm 5mm}
+  .result-box b{font-size:24px;margin-bottom:1mm}
+  .metric{min-height:0;padding:2.4mm 3mm}
+  .metric b{font-size:15px;margin-bottom:1mm}
+  .metric-strip{gap:2.5mm;margin-top:2.5mm}
+  .loop{gap:1.8mm}
+  .gap-cases{grid-template-columns:repeat(3,1fr);gap:2.5mm;margin-top:2.5mm}
+  .gap-case{min-height:0;padding:2.6mm 3mm}
+  .test-facts{grid-template-columns:repeat(4,1fr);gap:2.5mm;margin-top:2.5mm}
+  .test-fact{padding:2.4mm 3mm}
+  .test-fact b{font-size:14px}
+  /* 스크린샷 4개 페이지(3·4 / 5·6)를 두 장씩 한 시트로 합침 */
+  .page:nth-of-type(3),.page:nth-of-type(5){height:104mm;break-after:auto;page-break-after:auto}
+  .page:nth-of-type(4),.page:nth-of-type(6){height:105mm}
+  .page:nth-of-type(3),.page:nth-of-type(4),.page:nth-of-type(5),.page:nth-of-type(6){padding:6mm 13mm 4mm}
+  .page:nth-of-type(3) .page-head,.page:nth-of-type(4) .page-head,
+  .page:nth-of-type(5) .page-head,.page:nth-of-type(6) .page-head{margin-bottom:2.5mm}
+  .page:nth-of-type(3) h2,.page:nth-of-type(4) h2,
+  .page:nth-of-type(5) h2,.page:nth-of-type(6) h2{font-size:13.5pt}
+  .page:nth-of-type(3) .lead,.page:nth-of-type(4) .lead,
+  .page:nth-of-type(5) .lead,.page:nth-of-type(6) .lead{font-size:8.2pt;margin-top:.5mm}
+  .page:nth-of-type(3) .feature-card,.page:nth-of-type(4) .feature-card,
+  .page:nth-of-type(5) .feature-card,.page:nth-of-type(6) .feature-card{grid-template-columns:24mm 1fr}
+  .page:nth-of-type(3) .phone-frame,.page:nth-of-type(4) .phone-frame,
+  .page:nth-of-type(5) .phone-frame,.page:nth-of-type(6) .phone-frame{padding:1.5mm}
+  .page:nth-of-type(3) .feature-copy,.page:nth-of-type(4) .feature-copy,
+  .page:nth-of-type(5) .feature-copy,.page:nth-of-type(6) .feature-copy{padding:2.2mm 2.5mm}
+  .page:nth-of-type(3) .feature-copy h3,.page:nth-of-type(4) .feature-copy h3,
+  .page:nth-of-type(5) .feature-copy h3,.page:nth-of-type(6) .feature-copy h3{font-size:8.6pt;margin:.6mm 0}
+  .page:nth-of-type(3) .feature-copy p,.page:nth-of-type(4) .feature-copy p,
+  .page:nth-of-type(5) .feature-copy p,.page:nth-of-type(6) .feature-copy p{font-size:6.8pt;line-height:1.45}
+  .page:nth-of-type(3) .feature-copy .chip,.page:nth-of-type(4) .feature-copy .chip,
+  .page:nth-of-type(5) .feature-copy .chip,.page:nth-of-type(6) .feature-copy .chip{font-size:5.8pt}
+  .page:nth-of-type(3) .note,.page:nth-of-type(4) .note,
+  .page:nth-of-type(5) .note,.page:nth-of-type(6) .note{padding:1.8mm 3mm;font-size:6.8pt;margin-top:2mm}
+  /* 합쳐진 시트에서는 앞쪽 페이지 번호 숨김 + 전체 재번호 (총 8장) */
+  .page:nth-of-type(3) .page-no,.page:nth-of-type(5) .page-no{display:none}
+  .page .page-no{font-size:0}
+  .page .page-no::after{font-size:9px;letter-spacing:.14em}
+  .page:nth-of-type(2)  .page-no::after{content:"02 / 08"}
+  .page:nth-of-type(4)  .page-no::after{content:"03 / 08"}
+  .page:nth-of-type(6)  .page-no::after{content:"04 / 08"}
+  .page:nth-of-type(7)  .page-no::after{content:"05 / 08"}
+  .page:nth-of-type(8)  .page-no::after{content:"06 / 08"}
+  .page:nth-of-type(9)  .page-no::after{content:"07 / 08"}
+  .page:nth-of-type(10) .page-no::after{content:"08 / 08"}
+}
+
+</style>
+</head>
+<body>
+<main class="portfolio">
+  <article class="page cover">
+    <div>
+      <div class="eyebrow">Personal Project · Community</div>
+      <h1>혼자 만든<br>커뮤니티 서비스</h1>
+      <p class="cover-copy">
+        본업은 <strong>17년 차 백엔드 개발자</strong>지만 서버 구현에서 멈추지 않았습니다.
+        기능 기획, Pencil 화면 설계, Flutter 앱, 운영 API와 화면, 실시간 메시지,
+        자동화 테스트까지 한 제품으로 연결했습니다.
+      </p>
+      <div class="identity">
+        <b>박근혁</b><i></i><span>Backend Engineer · 개인 프로젝트</span><i></i><span>2026.02 — 진행 중</span>
+      </div>
+    </div>
+    <aside class="proof-stack" aria-label="프로젝트 핵심 수치">
+      <div class="proof accent"><b>5개 실행 영역</b><span>Public API · App · Admin API · Admin Web · Realtime</span></div>
+      <div class="proof"><b>233</b><span>현재 Flutter <code>*_screen.dart</code> 화면 소스</span></div>
+      <div class="proof"><b>53 / 53</b><span>핵심 확장 시나리오 fresh covered</span></div>
+    </aside>
+    <div class="cover-foot">
+      <span>기획 · 디자인 · 구현 · 검증을 단독 수행</span>
+      <span>Updated 2026.07.27</span>
+    </div>
+  </article>
+
+  <article class="page">
+    <div class="page-head">
+      <div class="section-no">01 · 제품 범위</div>
+      <div>
+        <h2>사용자 기능에서 운영 통제까지 연결했습니다</h2>
+        <p class="lead">
+          기능마다 앱 화면, 공개 API, 운영 업무, 실시간 처리와 테스트가 이어지도록 구성했습니다.
+          화면 수보다 각 기능이 실제 사용자 행동과 운영 흐름으로 끝나는지를 기준으로 작업했습니다.
+        </p>
+      </div>
+    </div>
+
+    <div class="scope-grid">
+      <section class="scope"><span>01</span><h3>Public API</h3><p>인증, 탐색, 이벤트, 결제·정산과 권한 규칙</p></section>
+      <section class="scope"><span>02</span><h3>Flutter App</h3><p>사용자·호스트 여정과 예외 상태를 포함한 서비스 앱</p></section>
+      <section class="scope"><span>03</span><h3>Admin API</h3><p>제재, 분쟁, 정산, 감사 업무용 별도 백엔드</p></section>
+      <section class="scope"><span>04</span><h3>Admin Web</h3><p>운영자가 데이터를 판단하고 조치하는 업무 화면</p></section>
+      <section class="scope"><span>05</span><h3>Realtime</h3><p>Socket.IO, Redis fan-out과 메시지 영속화</p></section>
+    </div>
+
+    <h3 class="map-title">앱에 구현한 핵심 기능군</h3>
+    <div class="domain-map">
+      <div class="domain"><b>홈 · 통합 검색</b><small>추천, 근거리, 이벤트·클럽·플랜·사람 검색</small></div>
+      <div class="domain"><b>이벤트 생명주기</b><small>생성, 신청, 승인, 대기, 출석, 회고</small></div>
+      <div class="domain"><b>클럽 운영</b><small>회원·권한, 게시판, 공지, 사진, 일정</small></div>
+      <div class="domain"><b>클럽 재정</b><small>기금, 후원, 구독, 인출과 정책</small></div>
+      <div class="domain"><b>지갑 · 결제 · 정산</b><small>포인트, 거래, 분담, 환불, 출금</small></div>
+      <div class="domain"><b>플랜 마켓 · 편집기</b><small>블록 편집, 발행, 구매, 이벤트 전환</small></div>
+      <div class="domain"><b>정기모임</b><small>반복 세션, 회원 승인, 납부와 정산</small></div>
+      <div class="domain"><b>채팅 · 알림</b><small>읽음 상태, 재연결, 그룹 알림, 방해금지</small></div>
+      <div class="domain"><b>캘린더 · 길찾기</b><small>월간 일정, 반복 가용성, 위치 프라이버시</small></div>
+      <div class="domain"><b>리뷰 · 신고 · 신뢰</b><small>평판, 증거, 이의제기와 처리 상태</small></div>
+      <div class="domain"><b>프라이빗 데이팅</b><small>본인 인증, 후보, 매칭, 안전 확인</small></div>
+      <div class="domain"><b>계정 · 개인정보</b><small>온보딩, 데이터 내보내기와 삭제 요청</small></div>
+    </div>
+
+    <div class="workflow" aria-label="기능 설계와 구현 흐름">
+      <div class="work-step"><span>1</span><b>서버 계약 확인</b><small>Controller · DTO · Enum과 권한 플래그 확인</small></div>
+      <div class="work-step"><span>2</span><b>명세 · Pencil 설계</b><small>Screen ID, 상태, 오류, 이동 흐름 정의</small></div>
+      <div class="work-step"><span>3</span><b>토큰 · 컴포넌트 구현</b><small>색상·간격·타이포·상태 표현 통일</small></div>
+      <div class="work-step"><span>4</span><b>E2E 피드백</b><small>실제 동작에서 찾은 누락을 앱과 서버에 반영</small></div>
+    </div>
+    <div class="page-no">02 / 10</div>
+  </article>
+
+  <article class="page">
+    <div class="page-head">
+      <div class="section-no">02 · 탐색과 참가</div>
+      <div>
+        <h2>찾고, 비교하고, 참가를 결정합니다</h2>
+        <p class="lead">추천 목록에서 상세 조건까지 이어지는 기본 사용자 흐름을 실제 Flutter 앱으로 확인했습니다.</p>
+      </div>
+    </div>
+
+    <div class="feature-grid">
+      <figure class="feature-card">
+        <div class="phone-frame"><img src="assets/community/app/home.png" alt="추천과 근처 이벤트가 표시된 Community 앱 홈"></div>
+        <figcaption class="feature-copy">
+          <span class="tag">HOME</span>
+          <h3>주변 모임을 발견한다</h3>
+          <p>추천 이벤트와 근처 이벤트를 나눠 보여주고, 날짜·장소·인원·가격을 목록에서 비교합니다.</p>
+          <div class="chip-row"><span class="chip">추천 API</span><span class="chip">근거리 조회</span></div>
+        </figcaption>
+      </figure>
+      <figure class="feature-card">
+        <div class="phone-frame"><img src="assets/community/app/search-results.png" alt="이벤트와 클럽을 함께 검색한 Community 앱 검색 결과"></div>
+        <figcaption class="feature-copy">
+          <span class="tag">SEARCH</span>
+          <h3>여러 유형을 한 번에 찾는다</h3>
+          <p>이벤트·클럽·플랜·사람을 유형별 탭으로 분리하고 검색어, 필터와 정렬 상태를 유지합니다.</p>
+          <div class="chip-row"><span class="chip">통합 검색</span><span class="chip">필터 상태 유지</span></div>
+        </figcaption>
+      </figure>
+      <figure class="feature-card">
+        <div class="phone-frame"><img src="assets/community/app/event-detail.png" alt="일시와 장소, 참가 조건을 보여주는 Community 이벤트 상세"></div>
+        <figcaption class="feature-copy">
+          <span class="tag">EVENT DETAIL</span>
+          <h3>조건을 확인하고 참가한다</h3>
+          <p>일시·장소·참가비·정원·주최자를 모으고, 멤버십과 모집 상태에 따라 참가 동작을 바꿉니다.</p>
+          <div class="chip-row"><span class="chip">역할별 CTA</span><span class="chip">찜 · 공유 · 길찾기</span></div>
+        </figcaption>
+      </figure>
+    </div>
+    <div class="note">로컬 샘플 API와 실제 Flutter 앱으로 촬영했습니다. 인물·모임 사진은 서비스 상황을 설명하기 위한 가상 이미지이며 운영 사용자 데이터가 아닙니다.</div>
+    <div class="page-no">03 / 10</div>
+  </article>
+
+  <article class="page">
+    <div class="page-head">
+      <div class="section-no">03 · 호스트 운영</div>
+      <div>
+        <h2>참가 화면뿐 아니라 모임을 여는 사람의 일도 만들었습니다</h2>
+        <p class="lead">신청 판단, 현장 출석과 클럽 자금까지 호스트가 반복해서 수행하는 업무를 앱 안에 넣었습니다.</p>
+      </div>
+    </div>
+
+    <div class="feature-grid">
+      <figure class="feature-card">
+        <div class="phone-frame"><img src="assets/community/app/applications.png" alt="상태별 참가 신청을 관리하는 Community 앱 화면"></div>
+        <figcaption class="feature-copy">
+          <span class="tag">APPLICATIONS</span>
+          <h3>신청 상태를 나눠 판단한다</h3>
+          <p>심사 중·결제 대기·승인·거절을 구분하고, 선입금 여부와 정원 재검사 뒤 결과를 반영합니다.</p>
+          <div class="chip-row"><span class="chip">승인 · 거절</span><span class="chip">결제 대기</span></div>
+        </figcaption>
+      </figure>
+      <figure class="feature-card">
+        <div class="phone-frame"><img src="assets/community/app/qr-checkin.png" alt="QR과 단축 코드로 출석을 운영하는 Community 앱 화면"></div>
+        <figcaption class="feature-copy">
+          <span class="tag">CHECK-IN</span>
+          <h3>QR·수동·통계로 출석을 운영한다</h3>
+          <p>5분 만료 QR과 6자리 코드, 수동 체크인과 참석 통계를 같은 화면에서 관리합니다.</p>
+          <div class="chip-row"><span class="chip">만료 QR</span><span class="chip">노쇼 판단 근거</span></div>
+        </figcaption>
+      </figure>
+      <figure class="feature-card">
+        <div class="phone-frame"><img src="assets/community/app/club-fund.png" alt="후원과 지출, 인출을 관리하는 Community 클럽 기금 화면"></div>
+        <figcaption class="feature-copy">
+          <span class="tag">CLUB FUND</span>
+          <h3>클럽 돈의 흐름을 관리한다</h3>
+          <p>후원·가입비·구독으로 늘어난 기금과 인출·환불·지출을 구분하고 최근 내역을 함께 보여줍니다.</p>
+          <div class="chip-row"><span class="chip">후원 · 구독</span><span class="chip">인출 권한</span></div>
+        </figcaption>
+      </figure>
+    </div>
+    <div class="note">이벤트 상세의 서버 capability flag와 클럽의 역할·멤버십 상태를 라우트 접근과 버튼 노출에 동일하게 적용했습니다.</div>
+    <div class="page-no">04 / 10</div>
+  </article>
+
+  <article class="page">
+    <div class="page-head">
+      <div class="section-no">04 · 돈과 콘텐츠</div>
+      <div>
+        <h2>모임 전후의 결제와 정산, 운영 노하우까지 이어집니다</h2>
+        <p class="lead">금전 상태는 결과 금액만 보여주지 않고 계산 근거와 처리 단계가 다시 설명되도록 구성했습니다.</p>
+      </div>
+    </div>
+
+    <div class="feature-grid">
+      <figure class="feature-card">
+        <div class="phone-frame"><img src="assets/community/app/wallet.png" alt="유료와 무료 포인트를 구분한 Community 앱 지갑"></div>
+        <figcaption class="feature-copy">
+          <span class="tag">WALLET</span>
+          <h3>유료·무료 잔액을 분리한다</h3>
+          <p>충전한 포인트와 보상 포인트를 나눠 표시하고 거래, 결제수단, 수익과 정산으로 연결합니다.</p>
+          <div class="chip-row"><span class="chip">차감 우선순위</span><span class="chip">거래 이력</span></div>
+        </figcaption>
+      </figure>
+      <figure class="feature-card">
+        <div class="phone-frame"><img src="assets/community/app/settlement-detail.png" alt="정산 처리 단계와 공제 내역을 보여주는 Community 앱 화면"></div>
+        <figcaption class="feature-copy">
+          <span class="tag">SETTLEMENT</span>
+          <h3>정산 계산과 처리 상태를 추적한다</h3>
+          <p>총 참여비에서 수수료와 원천징수를 분리하고 검토·지급 준비·처리·완료 단계를 남깁니다.</p>
+          <div class="chip-row"><span class="chip">공제 내역</span><span class="chip">이의 처리</span></div>
+        </figcaption>
+      </figure>
+      <figure class="feature-card">
+        <div class="phone-frame"><img src="assets/community/app/plan-editor.png" alt="모임 운영 문서를 블록으로 편집하는 Community 앱 화면"></div>
+        <figcaption class="feature-copy">
+          <span class="tag">PLAN EDITOR</span>
+          <h3>운영 노하우를 블록으로 편집한다</h3>
+          <p>제목·문단·할 일·콜아웃·일정 블록을 조합하고 발행, 판매와 이벤트 생성으로 이어갑니다.</p>
+          <div class="chip-row"><span class="chip">블록 CRUD</span><span class="chip">발행 · 마켓</span></div>
+        </figcaption>
+      </figure>
+    </div>
+    <div class="note">지갑·결제·모임 정산·크리에이터 수익은 서로 다른 화면이지만 같은 거래·원장 규칙을 사용합니다.</div>
+    <div class="page-no">05 / 10</div>
+  </article>
+
+  <article class="page">
+    <div class="page-head">
+      <div class="section-no">05 · 소통과 개인 관리</div>
+      <div>
+        <h2>참가 이후의 소식과 관계도 앱 안에서 이어집니다</h2>
+        <p class="lead">신청·결제·정산 알림, 관계 기반 메시지와 개인 관리 기능을 별도 부가 화면이 아닌 제품 흐름으로 연결했습니다.</p>
+      </div>
+    </div>
+
+    <div class="feature-grid">
+      <figure class="feature-card">
+        <div class="phone-frame"><img src="assets/community/app/notifications.png" alt="신청과 결제, 정산, 채팅 알림을 모은 Community 알림 센터"></div>
+        <figcaption class="feature-copy">
+          <span class="tag">NOTIFICATIONS</span>
+          <h3>중요한 상태 변화를 한곳에서 본다</h3>
+          <p>참가 신청, 결제, 정산, 메시지와 일정 알림을 유형별 아이콘과 읽음 상태로 구분합니다.</p>
+          <div class="chip-row"><span class="chip">31개 알림 타입</span><span class="chip">읽음 · 방해금지</span></div>
+        </figcaption>
+      </figure>
+      <figure class="feature-card">
+        <div class="phone-frame"><img src="assets/community/app/community-chat-thread.png" alt="실시간 연결 실패에도 메시지를 유지한 Community 채팅 화면"></div>
+        <figcaption class="feature-copy">
+          <span class="tag">COMMUNITY CHAT</span>
+          <h3>실시간 연결 실패에도 대화를 유지한다</h3>
+          <p>Socket 연결 상태를 알리고, 실시간 연결이 끊겨도 메시지 저장과 조회 경로를 유지합니다.</p>
+          <div class="chip-row"><span class="chip">REST fallback</span><span class="chip">읽음 상태</span></div>
+        </figcaption>
+      </figure>
+      <figure class="feature-card">
+        <div class="phone-frame"><img src="assets/community/app/profile.png" alt="프로필과 신뢰, 정산 메뉴를 모은 Community 마이페이지"></div>
+        <figcaption class="feature-copy">
+          <span class="tag">MY PAGE</span>
+          <h3>신뢰·정산·개인정보를 관리한다</h3>
+          <p>이벤트·클럽·신뢰점수와 함께 계좌, 정산 이력, 운영 인박스와 개인정보 요청을 모았습니다.</p>
+          <div class="chip-row"><span class="chip">신뢰 점수</span><span class="chip">데이터 통제</span></div>
+        </figcaption>
+      </figure>
+    </div>
+
+    <div class="capability-band">
+      <div><b>정기모임</b><small>반복 세션 · 회원 승인 · 납부</small></div>
+      <div><b>캘린더·길찾기</b><small>가용성 · 반복 규칙 · 위치 보호</small></div>
+      <div><b>리뷰·분쟁</b><small>신뢰 점수 · 신고 · 증거 · 이의</small></div>
+      <div><b>계정 생명주기</b><small>온보딩 · 내보내기 · 삭제 요청</small></div>
+    </div>
+    <div class="page-no">06 / 10</div>
+  </article>
+
+  <article class="page">
+    <div class="page-head">
+      <div class="section-no">06 · 구현 규모</div>
+      <div>
+        <h2>다섯 저장소를 같은 제품 규칙으로 관리했습니다</h2>
+        <p class="lead">아래 수치는 2026년 7월 저장소에서 확인한 파일과 HTTP mapping 기준입니다.</p>
+      </div>
+    </div>
+
+    <div class="evidence-table">
+      <table>
+        <thead><tr><th>영역</th><th>구현 책임</th><th>확인된 규모</th><th>품질 장치</th></tr></thead>
+        <tbody>
+          <tr><td><code>api</code></td><td>공개 서비스 규칙·정산·추천·검색</td><td>138 Controller · 774 HTTP mappings</td><td>372 Java 테스트 클래스 · 약 3,696 테스트 어노테이션</td></tr>
+          <tr><td><code>community_app</code></td><td>사용자·호스트 여정, 상태, 실시간·푸시</td><td>233 <code>*_screen.dart</code></td><td>222 unit/widget · 106 integration 테스트 파일</td></tr>
+          <tr><td><code>admin_api</code></td><td>제재·분쟁·정산·감사·운영 데이터</td><td>118 Controller · 580 HTTP mappings</td><td>91 Java 테스트 클래스 · 407 테스트</td></tr>
+          <tr><td><code>admin_front</code></td><td>운영 판단과 조치용 Next.js 콘솔</td><td>63 <code>page.tsx</code></td><td>12 Playwright spec · 48/48 통과 기록</td></tr>
+          <tr><td><code>socketio</code></td><td>채팅·이벤트 중계와 Redis fan-out</td><td>독립 실시간 서비스</td><td>권한·영속화는 Public API 계약과 연결</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="metric-strip">
+      <div class="metric"><b>33</b><span>기능·플로우·상태 분기를 정리한 UI/UX 문서</span></div>
+      <div class="metric"><b>139</b><span>초기 명세 기준 화면 정의 — 현재 화면 소스 233개와 별도 기준</span></div>
+      <div class="metric"><b>9</b><span>사용자 앱 5개 + 운영 화면 4개 Pencil 파일</span></div>
+      <div class="metric"><b>9</b><span>색상·간격·타이포·상태 등을 나눈 theme/token 파일</span></div>
+    </div>
+
+    <div class="method-note">
+      <b>디자인 작업 방식</b>
+      <p>
+        Pencil 시안과 Claude를 활용한 디자인 검토를 병행했지만, 화면의 데이터·권한·상태 값은
+        Controller·DTO·Enum과 E2E 결과로 다시 확인했습니다. AI 결과를 그대로 채택하지 않고 소스 근거와 체크리스트를 남겼습니다.
+      </p>
+    </div>
+    <div class="page-no">07 / 10</div>
+  </article>
+
+  <article class="page">
+    <div class="page-head">
+      <div class="section-no">07 · 자동 검증</div>
+      <div>
+        <h2>E2E로 빠진 기능을 찾고 다시 구현했습니다</h2>
+        <p class="lead">테스트 수를 늘리는 데서 끝내지 않고, 시나리오가 막히는 이유를 앱·서버의 제품 누락으로 되돌렸습니다.</p>
+      </div>
+    </div>
+
+    <div class="quality-top">
+      <section class="quality-panel">
+        <div class="result-box"><b>53 / 53</b><span>현재 canonical expansion scenario fresh covered<br>pending 0 · merge 0 · gap 0</span></div>
+        <div class="test-facts">
+          <div class="test-fact"><b>13</b><span>처음 확인한 gap</span></div>
+          <div class="test-fact"><b>10</b><span>앱 UI 보강</span></div>
+          <div class="test-fact"><b>3</b><span>서버+앱 보강</span></div>
+          <div class="test-fact"><b>94</b><span>시나리오 runner</span></div>
+        </div>
+      </section>
+      <section class="quality-panel">
+        <h3>검증 순서</h3>
+        <div class="loop">
+          <div class="loop-item"><span>1</span><div><b>기능 목록과 시나리오 대조</b><small>자동화되지 않은 흐름과 중복 테스트를 분류</small></div></div>
+          <div class="loop-item"><span>2</span><div><b>누락 원인 확인</b><small>화면, API, seed, selector 중 실제로 빠진 부분을 구분</small></div></div>
+          <div class="loop-item"><span>3</span><div><b>앱 또는 서버 먼저 보강</b><small>테스트 제외로 수치를 맞추지 않고 기능을 구현</small></div></div>
+          <div class="loop-item"><span>4</span><div><b>fresh run으로 닫기</b><small>재현 명령과 verdict를 남기고 gap을 종료</small></div></div>
+        </div>
+      </section>
+    </div>
+
+    <div class="gap-cases">
+      <div class="gap-case"><b>정산 진행 상태</b><p>정산 신청 CTA와 진행 중 상태를 화면에 추가한 뒤 시나리오를 다시 실행했습니다.</p></div>
+      <div class="gap-case"><b>만료 QR 재발급</b><p>만료·재발급·이전 코드 무효화 흐름을 앱과 서버 응답으로 확인했습니다.</p></div>
+      <div class="gap-case"><b>검색 결과 확장</b><p>클럽·플랜 검색 API와 전용 결과 카드를 보강해 통합 검색 흐름을 닫았습니다.</p></div>
+    </div>
+
+    <div class="test-facts">
+      <div class="test-fact"><b>106</b><span>Flutter integration 테스트 파일</span></div>
+      <div class="test-fact"><b>Seed 복구</b><span>변경 테스트 뒤 기준 데이터 복원</span></div>
+      <div class="test-fact"><b>선택 실행</b><span>변경 소스에 맞는 runner만 실행</span></div>
+      <div class="test-fact"><b>CI Guard</b><span>하드코딩 색상·상태 계약 점검</span></div>
+    </div>
+    <div class="page-no">08 / 10</div>
+  </article>
+
+  <article class="page">
+    <div class="page-head">
+      <div class="section-no">08 · 기술 깊이</div>
+      <div>
+        <h2>금전 이동은 원장과 대사로 다시 설명할 수 있게 했습니다</h2>
+        <p class="lead">참가비·모임 정산·환불·클럽 기금·크리에이터 수익·출금을 같은 복식부기 원장에 연결했습니다.</p>
+      </div>
+    </div>
+
+    <div class="money-flow" aria-label="금전 처리 흐름">
+      <div><b>결제</b><small>PG · 포인트</small></div>
+      <div><b>지갑</b><small>유료 · 무료 잔액</small></div>
+      <div><b>모임 정산</b><small>분담 · 환불 · 이의</small></div>
+      <div><b>출금</b><small>승인 · AML · Outbox</small></div>
+      <div><b>PG 대사</b><small>일일 · 월 마감</small></div>
+    </div>
+
+    <div class="depth-grid">
+      <section class="depth-card"><span>01</span><h3>20개 계정과목</h3><p>사용자 지갑, PG 미수금, 플랫폼 현금, 크리에이터 미지급금과 클럽 기금을 차변·대변으로 분리했습니다.</p></section>
+      <section class="depth-card"><span>02</span><h3>서로 다른 시간대의 대사</h3><p>실시간 3-way probe, 일일 PG 대사, 월 마감 시산표로 잔액과 원장의 차이를 확인합니다.</p></section>
+      <section class="depth-card"><span>03</span><h3>출금 전 AML 4개 규칙</h3><p>신규 계좌 고액, 동일 계좌 반복, 단기 고액과 분할 이체를 출금 파이프라인에서 심사합니다.</p></section>
+      <section class="depth-card"><span>04</span><h3>Outbox · DLQ · 역분개</h3><p>외부 전송 실패와 재시도를 격리하고, 금전 기록은 삭제하지 않고 역분개와 정정 이력으로 남깁니다.</p></section>
+    </div>
+
+    <div class="ledger-note">
+      <div><b>결과만 맞추지 않습니다</b><p>오류·환불·정정은 원장을 덮어쓰지 않고 원거래와 반대 방향의 기록을 남깁니다.</p></div>
+      <div><b>운영 화면까지 같은 근거를 봅니다</b><p>거래, 정산, PG 결과와 원장 entry를 연결해 운영자가 금액이 바뀐 이유를 추적할 수 있게 했습니다.</p></div>
+    </div>
+    <div class="page-no">09 / 10</div>
+  </article>
+
+  <article class="page">
+    <div class="page-head">
+      <div class="section-no">09 · 현재 상태</div>
+      <div>
+        <h2>구현 결과와 출시 전 조건을 구분해 관리합니다</h2>
+        <p class="lead">외부 계약이 필요한 부분을 완료로 표현하지 않고, 코드로 준비한 범위와 실제 운영 조건을 나눴습니다.</p>
+      </div>
+    </div>
+
+    <div class="evidence-table status-table">
+      <table>
+        <tbody>
+          <tr><td>구현·검증</td><td>Public/Admin API, Flutter 앱, Admin Web, Realtime, 복식부기 원장, 대사와 핵심 E2E 흐름</td></tr>
+          <tr><td>외부 계약 대기</td><td>PG 실계약과 NICE 본인인증. provider 경계와 출금·대사 파이프라인은 먼저 분리했습니다.</td></tr>
+          <tr><td>출시 게이트</td><td>13종 release-gate 체크리스트로 외부 연동, 운영 증빙과 잔여 조건을 추적합니다.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="closing">
+      <div>
+        <h2>백엔드에서 시작해<br>사용자와 운영 흐름까지 확인했습니다.</h2>
+        <p>
+          앱을 직접 만들면서 서버 응답만으로는 설명되지 않는 상태를 발견했고,
+          호스트와 운영 흐름을 구현하면서 추가 조회 조건, 권한 플래그와 감사 이력이 필요하다는 점을 확인했습니다.
+          그 피드백을 다시 API와 테스트에 반영한 것이 이 프로젝트의 핵심 경험입니다.
+        </p>
+      </div>
+      <div class="closing-mark"><b>박근혁</b>Backend Engineer<br>개인 프로젝트</div>
+    </div>
+
+    <div class="source-note">
+      수치 기준: 2026년 7월 저장소 파일·HTTP mapping 집계, E2E current dashboard와 프로젝트 검증 기록.
+      앱 화면은 로컬 샘플 데이터로 실행한 실제 Flutter 화면이며, 외부 계약 전 기능은 상용 운영 완료로 표현하지 않았습니다.
+    </div>
+    <div class="page-no">10 / 10</div>
+  </article>
+</main>
+</body>
+</html>

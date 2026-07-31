@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>프로젝트 소개 — Wonder Holdem Android</title>
+<style>
+:root{
+  --bg:#ffffff; --fg:#171a1f; --muted:#667085; --line:#e2e7e5;
+  --poker:#0f766e; --poker-deep:#064e3b; --poker-soft:#ecfdf5;
+  --gold:#a16207; --gold-soft:#fffbeb;
+  --blue:#2563eb; --blue-soft:#eff6ff;
+  --violet:#7c3aed; --violet-soft:#f5f3ff;
+  --red:#b42318; --red-soft:#fff1f0;
+  --code:#f5f7f6;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--bg);color:var(--fg);
+  font-family:-apple-system,BlinkMacSystemFont,"Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;
+  font-size:14px;line-height:1.72;-webkit-font-smoothing:antialiased;
+}
+a{color:var(--poker);text-decoration-thickness:1px;text-underline-offset:3px}
+.wrap{max-width:1080px;margin:0 auto;padding:48px 32px 96px}
+h1,h2,h3,h4{line-height:1.35;margin:0}
+.doc-title{font-size:40px;font-weight:850;letter-spacing:-.025em}
+.doc-kicker{font-size:12px;font-weight:800;letter-spacing:.12em;color:var(--poker);text-transform:uppercase;margin-bottom:8px}
+.doc-sub{color:var(--muted);font-size:15px;margin-top:10px}
+h2{font-size:26px;font-weight:800;letter-spacing:-.015em;margin:64px 0 7px;padding-bottom:12px;border-bottom:2px solid var(--fg)}
+h3{font-size:19px;font-weight:760;margin:40px 0 10px}
+h4{font-size:15px;font-weight:760;margin:26px 0 8px;color:var(--poker)}
+p{margin:10px 0}
+.lead{color:var(--muted);margin:6px 0 18px;font-size:14.5px}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.87em;background:var(--code);padding:1px 5px;border-radius:4px}
+strong{font-weight:750}
+small{font-size:12px;color:var(--muted)}
+.nowrap{white-space:nowrap}
+
+.cover{border-bottom:3px solid var(--fg);padding-bottom:28px;margin-bottom:8px}
+.cover-row{display:flex;align-items:flex-start;justify-content:space-between;gap:24px}
+.store-link{
+  flex:0 0 auto;display:inline-flex;align-items:center;gap:8px;margin-top:6px;
+  border:1px solid #b9dfd4;background:var(--poker-soft);color:var(--poker-deep);
+  padding:9px 13px;border-radius:10px;text-decoration:none;font-size:12px;font-weight:750;
+}
+.store-link:before{content:"▶";font-size:10px}
+.badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:18px}
+.badge{font-size:11.5px;font-weight:650;padding:4px 10px;border-radius:99px;background:var(--poker-soft);color:var(--poker);border:1px solid #ccebdd}
+.badge.gold{background:var(--gold-soft);color:var(--gold);border-color:#f3dfae}
+.badge.blue{background:var(--blue-soft);color:var(--blue);border-color:#d4e2ff}
+
+.note{border-left:3px solid var(--poker);background:var(--poker-soft);padding:12px 16px;border-radius:0 8px 8px 0;margin:16px 0;font-size:13.2px}
+.note.gold{border-color:var(--gold);background:var(--gold-soft)}
+.note.blue{border-color:var(--blue);background:var(--blue-soft)}
+.note .h{font-weight:800;display:block;margin-bottom:3px}
+
+.stats{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin:16px 0}
+.stat{border:1px solid var(--line);border-radius:11px;padding:14px 14px;background:#fff;min-width:0}
+.stat .v{font-size:22px;font-weight:850;letter-spacing:-.025em;line-height:1.2;color:var(--poker-deep)}
+.stat .k{font-size:11.5px;color:var(--muted);font-weight:650;margin-top:4px;line-height:1.45}
+
+.tw{overflow-x:auto;margin:14px 0}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top}
+th{background:#f7f9f8;font-weight:750;font-size:12.5px;white-space:nowrap}
+tbody tr:nth-child(even){background:#fcfdfc}
+.t-num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+
+ul.kv{list-style:none;padding:0;margin:10px 0}
+ul.kv li{padding:8px 0 8px 19px;border-bottom:1px solid var(--line);position:relative;font-size:13.3px}
+ul.kv li:before{content:"";position:absolute;left:2px;top:17px;width:6px;height:6px;border-radius:50%;background:var(--poker)}
+ul.kv li:last-child{border-bottom:none}
+ul.kv b{font-weight:760}
+
+.shots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:20px 0}
+.shots.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.shot{margin:0;border:1px solid var(--line);border-radius:15px;background:#f7f9f8;padding:12px;overflow:hidden;display:flex;flex-direction:column;align-items:center}
+.shot img{display:block;width:100%;height:auto;border-radius:10px;background:transparent}
+.shot figcaption{align-self:stretch;font-size:12px;color:var(--muted);line-height:1.6;padding:10px 3px 1px}
+.shot figcaption b{color:var(--fg)}
+
+.process{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:20px 0;align-items:stretch}
+.step{border:1px solid var(--line);border-radius:11px;padding:13px 12px;background:#fff;position:relative}
+.step:not(:last-child):after{content:"→";position:absolute;right:-10px;top:50%;transform:translateY(-50%);z-index:2;color:var(--poker);font-weight:850;background:#fff;width:20px;text-align:center}
+.step .no{font-size:10px;font-weight:850;letter-spacing:.08em;color:var(--poker)}
+.step .t{font-size:13px;font-weight:780;margin-top:2px}
+.step .d{font-size:11.5px;color:var(--muted);line-height:1.55;margin-top:4px}
+
+.diagram{border:1px solid var(--line);border-radius:14px;padding:20px;background:#fcfdfc;margin:18px 0}
+.diagram .cap{font-size:11px;font-weight:800;letter-spacing:.08em;color:var(--muted);margin-bottom:13px;text-transform:uppercase}
+.flow{display:flex;gap:8px;align-items:stretch;flex-wrap:wrap}
+.flow .box{flex:1 1 150px;border:1px solid #bfdfd6;background:#fff;border-radius:10px;padding:11px 12px;min-width:135px}
+.flow .box.gold{border-color:#ecd49c;background:var(--gold-soft)}
+.flow .box.blue{border-color:#c8d9ff;background:var(--blue-soft)}
+.flow .box.violet{border-color:#dccdfb;background:var(--violet-soft)}
+.flow .box .t{font-size:12.5px;font-weight:780}
+.flow .box .d{font-size:11px;color:var(--muted);line-height:1.5;margin-top:3px}
+.flow .arrow{display:flex;align-items:center;color:var(--poker);font-weight:850}
+.subflow{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+.subflow .box{border:1px dashed #b8c5c1;background:#fff;border-radius:9px;padding:10px}
+.subflow .t{font-size:12px;font-weight:760}
+.subflow .d{font-size:10.8px;color:var(--muted);line-height:1.5;margin-top:2px}
+
+.matrix{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0}
+.matrix .card{border:1px solid var(--line);border-radius:11px;padding:14px;background:#fff}
+.matrix .card .v{font-size:20px;font-weight:850;color:var(--poker-deep)}
+.matrix .card .t{font-size:12px;font-weight:750;margin-top:3px}
+.matrix .card .d{font-size:11.5px;color:var(--muted);margin-top:4px}
+
+.result{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0}
+.result .card{border-radius:11px;padding:14px;background:var(--poker-deep);color:#fff}
+.result .card .v{font-size:21px;font-weight:850;line-height:1.2}
+.result .card .t{font-size:11.5px;color:#ccebdd;margin-top:4px}
+
+.tagline{border:1px solid #d9c787;background:linear-gradient(135deg,#fffbeb,#f3fff8);border-radius:14px;padding:20px 22px;margin:20px 0}
+.tagline .big{font-size:18px;font-weight:820;line-height:1.5;letter-spacing:-.01em}
+.tagline .sub{font-size:12.5px;color:var(--muted);margin-top:6px}
+.foot{margin-top:32px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}
+
+@page{size:A4;margin:12mm 11mm}
+@media print{
+  body{font-size:9.8pt;line-height:1.58;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .wrap{max-width:none;padding:0}
+  .doc-title{font-size:27pt}
+  .doc-sub{font-size:10.5pt}
+  h2{font-size:17pt;margin:13pt 0 4pt;break-after:avoid}
+  h3{font-size:13pt;margin:10pt 0 4pt;break-after:avoid}
+  h4{font-size:10.5pt;break-after:avoid}
+  .note{padding:9px 13px}
+  .stats{grid-template-columns:repeat(3,1fr)}
+  .stat,.note,.diagram,.matrix,.result,.tagline,.process,.shot{break-inside:avoid}
+  thead{display:table-header-group}
+  tr{break-inside:avoid}
+  .tw{overflow:visible}
+  table{table-layout:fixed;width:100%}
+  th,td{white-space:normal;overflow-wrap:anywhere;word-break:keep-all;padding:5px 7px}
+  .shot img{width:auto;max-width:100%;height:86mm;max-height:86mm;object-fit:contain}
+  .shots.expanded .shot img{width:100%;height:auto;max-height:none}
+  .shots{gap:8px;margin:14px 0;break-inside:avoid}
+  .shots.three{gap:7px}
+  .shots.three .shot{padding:8px}
+  .shots.three .shot img{height:105mm;max-height:105mm}
+  .result .card{padding:10px}
+  .pb{break-before:page}
+  a{color:inherit;text-decoration:none}
+}
+@media screen and (max-width:760px){
+  .wrap{padding:28px 16px 60px}
+  .doc-title{font-size:30px}
+  .cover-row{display:block}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .shots,.shots.three{grid-template-columns:1fr}
+  .process{grid-template-columns:1fr}
+  .step:not(:last-child):after{content:"↓";right:auto;left:50%;top:auto;bottom:-14px;transform:translateX(-50%);height:20px;line-height:20px}
+  .flow{display:grid;grid-template-columns:1fr}
+  .flow .arrow{justify-content:center;transform:rotate(90deg)}
+  .subflow,.matrix,.result{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="cover">
+  <div class="cover-row">
+    <div>
+      <div class="doc-kicker">Solo Android Product · Released on Google Play</div>
+      <div class="doc-title">Wonder Holdem</div>
+      <div class="doc-sub">
+        서버 개발 17년의 도메인 설계 경험을 바탕으로 <strong>제품 정의·UX·Android 구현·<span class="nowrap">홀덤 엔진</span>·규칙 기반 봇 AI·수익화·Google Play 배포</strong>를 1인이 수행한 싱글플레이 홀덤 연습 앱<br>
+        <strong>박근혁</strong> · Backend Engineer · 2025.11 ~ 진행 중
+      </div>
+    </div>
+    <a class="store-link" href="https://play.google.com/store/apps/details?id=com.endside.holdem" target="_blank" rel="noopener">Google Play 공개 페이지</a>
+  </div>
+  <div class="badges">
+    <span class="badge gold">Google Play 출시</span>
+    <span class="badge">Kotlin · Jetpack Compose</span>
+    <span class="badge">Clean Architecture · MVVM</span>
+    <span class="badge">2~7인 싱글플레이</span>
+    <span class="badge">9개 설정 가능 아키타입</span>
+    <span class="badge">12개 행동 조정 변수</span>
+    <span class="badge">233개 AI 결정 시나리오</span>
+    <span class="badge blue">Billing · AdMob · Firebase</span>
+    <span class="badge blue">9개 언어</span>
+  </div>
+</header>
+
+<div class="note">
+  <span class="h">이 프로젝트가 보여주려는 것</span>
+  <strong>제품을 정의하고 화면과 기능을 설계해 Android 앱으로 구현한 뒤 Google Play 배포까지 혼자 마감하는 실행력</strong>과
+  <strong>복잡한 규칙·확률·상태를 측정·튜닝·회귀 검증이 가능한 시스템으로 만드는 설계력</strong>을 함께 보여줍니다.
+  공개 앱, 실제 실행 화면, 자동화 테스트와 AI 결정 시나리오를 근거로 제시합니다.
+</div>
+
+<h2 id="c1">1. 한눈에 보기</h2>
+
+<div class="stats">
+  <div class="stat"><div class="v">Google Play</div><div class="k">실제 공개 배포</div></div>
+  <div class="stat"><div class="v">1인</div><div class="k">기획 · 개발 · 출시</div></div>
+  <div class="stat"><div class="v">2~7인</div><div class="k">오프라인 싱글플레이</div></div>
+  <div class="stat"><div class="v">9종 · 12개</div><div class="k">성격 유형 · 행동 조정 변수</div></div>
+  <div class="stat"><div class="v">233/233</div><div class="k">AI 결정 매트릭스 · 2026.07.18</div></div>
+  <div class="stat"><div class="v">944</div><div class="k"><code>@Test</code> 선언</div></div>
+</div>
+
+<div class="tw"><table>
+<thead><tr><th style="width:19%">구분</th><th>내용</th></tr></thead>
+<tbody>
+<tr><td><b>제품</b></td><td>현금 베팅·환전 기능 없이 핵심 게임을 오프라인에서 플레이하며 AI와 반복 대결하는 Texas Hold’em 연습 앱</td></tr>
+<tr><td><b>단독 수행 범위</b></td><td>제품 정의 · 화면/기능 기획 · UX · Android 앱 · 게임 엔진 · 봇 AI · 테스트 · 다국어 · 수익화 · Google Play 배포</td></tr>
+<tr><td><b>앱 기술</b></td><td>Kotlin · Jetpack Compose · Material 3 · Hilt · Coroutines/Flow · Navigation Compose · Room · DataStore</td></tr>
+<tr><td><b>제품화 기술</b></td><td>Google Play Billing · AdMob · Firebase Crashlytics/Analytics · R8/리소스 축소 · release signing · 개인정보처리방침</td></tr>
+<tr><td><b>코드 규모</b></td><td>메인 Kotlin 약 7.6만 LOC · 테스트 Kotlin 약 3.0만 LOC · 453개 <code>@Composable</code> 선언 · 117커밋</td></tr>
+<tr><td><b>현재 버전</b></td><td>Google Play 공개 버전 v0.9.2 · 현재 소스 v0.9.3</td></tr>
+</tbody>
+</table></div>
+
+<div class="shots">
+  <figure class="shot">
+    <img src="assets/holdem/main-menu.png" alt="Wonder Holdem 실제 메인 메뉴">
+    <figcaption><b>제품의 전체 진입점.</b> 바로 플레이하는 기능뿐 아니라 봇 프로필, 통계, 시나리오 편집기, 레인지 뷰어, 설정까지 하나의 연습 제품으로 구성했습니다.</figcaption>
+  </figure>
+  <figure class="shot">
+    <img src="assets/holdem/game-multiway-flop.png" alt="Wonder Holdem 4인 멀티웨이 Flop 실제 게임 화면">
+    <figcaption><b>4인 Flop · 3-way 팟.</b> TAG의 가상 칩 450 Raise와 Fish의 450 Call 뒤, Hero의 트립스·승률 92%·Call 300·Raise 750을 실제 엔진 상태에서 함께 판단합니다.</figcaption>
+  </figure>
+</div>
+
+<div class="note gold">
+  <span class="h">스크린샷 기준</span>
+  <strong>2026.07.27 현재 소스를 Android API 36 에뮬레이터에서 직접 실행·조작</strong>했습니다.
+  게임 장면은 카드·스택·팟을 검증용 시나리오로 구성한 뒤 실제 엔진에 투입해 진행·렌더링했으며, 모든 이미지는 앱 콘텐츠 영역만 사용했습니다.
+</div>
+
+<h2 id="c2">2. 기획에서 Google Play까지 — 혼자 제품을 끝내는 범위</h2>
+<p class="lead">제품의 목적과 사용 흐름을 정의하고, 화면·기능·기술 구조를 설계해 출시와 운영을 고려한 형태로 완성했습니다.</p>
+
+<div class="process">
+  <div class="step"><div class="no">01 · PRODUCT</div><div class="t">제품 정의</div><div class="d">현금 베팅·환전 기능 없이 AI와 반복 플레이하는 오프라인 홀덤 연습 앱</div></div>
+  <div class="step"><div class="no">02 · UX</div><div class="t">화면·기능 기획</div><div class="d">게임 UX, 레이아웃, 시나리오, 프리미엄, i18n 문서화</div></div>
+  <div class="step"><div class="no">03 · BUILD</div><div class="t">Android 구현</div><div class="d">Compose UI, ViewModel, 엔진, 저장소, 결제·광고 통합</div></div>
+  <div class="step"><div class="no">04 · VERIFY</div><div class="t">다층 검증</div><div class="d">도메인 테스트, 결정 매트릭스, 스크린샷, Maestro API 36 에뮬레이터 E2E</div></div>
+  <div class="step"><div class="no">05 · RELEASE</div><div class="t">스토어 출시</div><div class="d">서명·축소·Crashlytics·개인정보·Play Billing까지 마감</div></div>
+</div>
+
+<ul class="kv">
+  <li><b>사용자가 반복할 의사결정부터 정의</b> — 현금 베팅·환전 기능 없이 포커의 확률·포지션·베팅 판단을 반복 연습하는 제품으로 범위를 고정했습니다.</li>
+  <li><b>화면 단위가 아닌 사용 흐름 단위 기획</b> — 메인 메뉴 → 게임 시작 → 의사결정 → 핸드 결과 → 통계/히스토리의 기본 흐름과, 특정 상황을 직접 만들고 바로 플레이하는 시나리오 흐름을 함께 설계했습니다.</li>
+  <li><b>개발자 도구도 제품 기능으로 전환</b> — 특정 카드·스택·포지션·스트리트·액션 이력을 구성하는 기능은 테스트 편의 기능에서 끝내지 않고 <strong>Scenario Editor</strong>라는 연습 기능으로 완성했습니다.</li>
+  <li><b>포커 지식을 시각 도구로 제공</b> — 169개 스타팅 핸드를 포지션·액션별 빈도로 보여주는 <strong>Range Viewer</strong>를 구현해 봇 전략의 근거와 사용자의 연습 도구를 같은 데이터 모델로 연결했습니다.</li>
+  <li><b>출시 이후를 고려한 제품화</b> — 무료/PRO 기능 경계는 UI와 ViewModel에서 이중 가드하고, Billing의 단일 상태 원천, 광고, 크래시 수집, 분석, 9개 언어, 개인정보처리방침을 앱 구조에 포함했습니다.</li>
+</ul>
+
+<div class="shots">
+  <figure class="shot">
+    <img src="assets/holdem/scenario-editor.png" alt="실제 시나리오 편집기 화면">
+    <figcaption><b>Scenario Editor.</b> Pre/Flop/Turn/River, 플레이어·봇, 홀 카드·보드 카드, 블라인드·팟·행동 이력을 편집하고 검증한 뒤 <em>Save &amp; Play</em>로 실제 엔진에 투입합니다.</figcaption>
+  </figure>
+  <figure class="shot">
+    <img src="assets/holdem/bot-profiles.png" alt="실제 봇 프로필 목록 화면">
+    <figcaption><b>Bot Profiles.</b> 내장 프리셋의 아키타입·난이도·Tightness·Aggression을 비교하고, 상세 능력치 확인과 사용자 프로필 생성을 한 흐름으로 연결했습니다.</figcaption>
+  </figure>
+</div>
+
+<h3>Google Play 출시 및 운영 기반</h3>
+<div class="tw"><table>
+<thead><tr><th>출시 항목</th><th>구현 근거</th><th>의미</th></tr></thead>
+<tbody>
+<tr><td><b>Google Play 공개 배포</b></td><td><a href="https://play.google.com/store/apps/details?id=com.endside.holdem">Wonder Holdem 스토어 페이지</a></td><td>패키지 <code>com.endside.holdem</code>으로 실제 사용자 설치 가능</td></tr>
+<tr><td><b>Release 빌드</b></td><td>서명 설정 · R8 minify · resource shrink · native debug symbol</td><td>디버그 앱이 아니라 배포 가능한 산출물 관리</td></tr>
+<tr><td><b>수익화</b></td><td>Google Play Billing 7.1.1 · AdMob</td><td>PRO 기능과 광고가 연결된 실제 제품 모델</td></tr>
+<tr><td><b>운영 가시성</b></td><td>Firebase Crashlytics · Analytics</td><td>출시 후 크래시와 이용 흐름을 관찰할 기반</td></tr>
+<tr><td><b>글로벌 대응</b></td><td>영어·한국어·일본어·독일어·프랑스어·스페인어·브라질 포르투갈어·중국어 간/번체</td><td>949개 기본 리소스 키 · 8개 locale parity · 길이·번역 검토 체계</td></tr>
+</tbody>
+</table></div>
+
+<h2 id="c3" class="pb">3. 한 핸드를 끝까지 진행하는 싱글플레이 도메인 엔진</h2>
+<p class="lead">화면 뒤에는 블라인드부터 쇼다운·분배까지 한 핸드를 끝까지 진행하고, 다음 핸드로 이어지는 독립적인 Texas Hold'em 도메인 엔진이 있습니다.</p>
+
+<div class="diagram">
+  <div class="cap">Game loop and clean boundaries</div>
+  <div class="flow">
+    <div class="box blue"><div class="t">Jetpack Compose UI</div><div class="d">카드·테이블·액션 패널·통계·다이얼로그</div></div>
+    <div class="arrow">→</div>
+    <div class="box"><div class="t">GameViewModel / PlayerActionManager</div><div class="d">사람의 입력을 대기 액션으로 관리</div></div>
+    <div class="arrow">→</div>
+    <div class="box violet"><div class="t">ViewModelClient</div><div class="d"><code>Client.act()</code> 요청에 <code>PlayAction</code> 반환</div></div>
+    <div class="box" style="flex-basis:100%"><div class="t">Domain Engine</div><div class="d"><code>Client.act()</code> ↔ <code>PlayAction</code> · Blind → Deal → Betting → Showdown → Next Hand</div></div>
+  </div>
+  <div class="cap" style="margin-top:14px">Lifecycle and persistence</div>
+  <div class="flow">
+    <div class="box violet"><div class="t">Application Use Cases</div><div class="d">StartGame · RestoreGame · CreateSnapshot</div></div>
+    <div class="arrow">→</div>
+    <div class="box gold"><div class="t">GameCoordinator</div><div class="d">플레이어 생성·테이블 구성·게임 생명주기 조정</div></div>
+    <div class="arrow">→</div>
+    <div class="box"><div class="t">Ports / Repositories</div><div class="d">Room · DataStore · 게임 상태 어댑터</div></div>
+  </div>
+</div>
+
+<ul class="kv">
+  <li><b>사람과 봇을 같은 인터페이스로 처리</b> — <code>Client.act()</code>를 <code>ViewModelClient</code>와 <code>AdaptiveBot</code>이 함께 구현합니다. 엔진 입장에서는 입력 주체가 UI인지 AI인지 알 필요가 없습니다.</li>
+  <li><b>포커 규칙의 예외까지 도메인에 격리</b> — 헤즈업 블라인드/액터 순서, 최소 레이즈 증가분, 폴드·올인·액션 완료 판정, 여러 사이드팟, 남은 카드 자동 딜, 쇼다운과 동률 분배를 서비스로 분리했습니다.</li>
+  <li><b>칩 보존을 불변식으로 검증</b> — 플레이어 스택 + 커밋 베팅 + 팟 총합을 감사하고, 액션 금액은 허용 범위와 스택 상한으로 정규화합니다. 행동 시뮬레이터에서는 silent correction 0건을 별도 지표로 추적합니다.</li>
+  <li><b>한 판이 아니라 플레이 세션</b> — 자동 다음 핸드, 게임 저장/복원, 핸드 히스토리, 세션 통계, 포지션/수익/플레이 스타일 분석으로 반복 플레이가 이어집니다.</li>
+</ul>
+
+<h2 id="c4">4. 규칙 기반 적응형 봇 AI</h2>
+<p class="lead">머신러닝 모델이 아니라, 포커 규칙·확률·상대 행동 통계와 프로필 파라미터를 결합한 규칙 기반 적응형 의사결정 시스템입니다. 카드·포지션·스택·팟·멘탈·성격을 하나의 컨텍스트로 만들고 전략을 라우팅한 뒤 게임 규칙상 허용된 액션으로 보정합니다.</p>
+
+<div class="note blue">
+  <span class="h">엔진별 전략 확장</span>
+  BASIC과 PRO Adaptive 모두 <strong>우선순위 Strategy Router</strong>를 사용합니다.
+  BASIC은 기본 성향을 적용하고, PRO Adaptive는 봇 프로필·상대 추적·멘탈 상태를 추가 결합합니다.
+</div>
+
+<div class="diagram">
+  <div class="cap">Adaptive bot decision pipeline</div>
+  <div class="flow">
+    <div class="box"><div class="t">GameEventBus</div><div class="d">핸드·액션·승패·스택 변화 이벤트 발행</div></div>
+    <div class="arrow">→</div>
+    <div class="box blue"><div class="t">OpponentTracker</div><div class="d">VPIP·PFR·3bet·AF 등 상대 행동 통계 누적</div></div>
+    <div class="box violet"><div class="t">MentalStateManager</div><div class="d">틸트·자신감·연승/연패·큰 팟 반응</div></div>
+    <div class="arrow">→</div>
+    <div class="box gold"><div class="t">BotDecisionContext</div><div class="d">카드·보드·SPR·pot odds·포지션·프로필 결합</div></div>
+    <div class="arrow">→</div>
+    <div class="box"><div class="t">StrategyRouter</div><div class="d">우선순위 전략 선택 + 보수적 게이트 + 강등</div></div>
+  </div>
+  <div class="subflow">
+    <div class="box"><div class="t">Push/Fold</div><div class="d">5BB 이하 숏스택 전용, 포지션·Chen 점수·올인 게이트</div></div>
+    <div class="box"><div class="t">Pre-Flop</div><div class="d">169핸드 콤보 가중 퍼센타일 × 목표 레인지 × 포지션</div></div>
+    <div class="box"><div class="t">Post-Flop</div><div class="d">AIR/DRAW/MEDIUM/STRONG/MONSTER 5버킷 × 보드 텍스처</div></div>
+    <div class="box"><div class="t">Chen Fallback</div><div class="d">예외·기본 경로와 보수적 액션 필터</div></div>
+  </div>
+</div>
+
+<div class="matrix">
+  <div class="card"><div class="v">9</div><div class="t">설정 가능 아키타입</div><div class="d">TAG · LAG · NIT · Calling Station · Maniac · Tricky · Balanced · Observer · Actor</div></div>
+  <div class="card"><div class="v">12</div><div class="t">내장 캐릭터 프리셋</div><div class="d">난이도·성격·대표 능력치가 다른 프리셋을 싱글플레이 좌석에 배치</div></div>
+  <div class="card"><div class="v">12</div><div class="t">행동 조정 변수</div><div class="d">앱 편집 UI 9개 + 내부 캘리브레이션 3개로 레인지·빈도·사이징·적응 강도 조절</div></div>
+</div>
+
+<ul class="kv">
+  <li><b>프리플랍은 169개 핸드의 퍼센타일 모델</b> — “AA면 레이즈” 같은 if 문 나열이 아니라 콤보 가중 순위, 포지션별 목표 VPIP, 오픈/3bet/4bet 단계, 가격 티어, 스택 깊이로 오픈·디펜드·리레이즈 레인지를 계산합니다.</li>
+  <li><b>포스트플랍은 핸드 버킷 × 정책 테이블</b> — 에퀴티와 실제 홀카드가 참여한 드로우를 분류하고, 베팅을 맞았는지, 보드 텍스처와 SPR이 어떤지에 따라 체크·콜·밸류벳·세미블러프·폴드를 혼합합니다.</li>
+  <li><b>성격 수치가 실제 행동에 연결</b> — Tightness는 레인지 폭, Aggression은 베팅/3bet 빈도, Bet Sizing Bias는 금액, Adaptivity는 상대 exploit 강도, Tilt/Confidence는 콜다운과 블러프 빈도를 바꿉니다.</li>
+  <li><b>상대 행동 통계를 누적해 대응 전략 조정</b> — <code>OpponentTracker</code>가 누적 통계를 만들고, <code>CounterStrategySelector</code>가 니트에는 스틸/블러프를 늘리고 콜링 스테이션에는 블러프를 줄이는 식으로 대응 강도를 조정합니다.</li>
+  <li><b>감정과 기만도 시스템으로 모델링</b> — 내부 틸트·자신감 상태값과 화면에 보이는 상태를 분리하고 Poker Face·Acting·Insight 파라미터로 거짓 신호와 간파 확률을 계산합니다.</li>
+  <li><b>마지막에는 최종 유효성 검사</b> — 허용된 액션 타입만 내보내고 금액은 최소 레이즈·현재 베팅·스택 상한에 맞춰 정규화합니다. 보수적 올인 게이트를 통과하지 못한 선택은 가격에 맞는 Call/Check/Fold로 강등합니다.</li>
+</ul>
+
+<div class="shots">
+  <figure class="shot">
+    <img src="assets/holdem/bot-profile-detail.png" alt="실제 봇 프로필 파라미터 편집 화면">
+    <figcaption><b>행동을 직접 설계하는 편집 UI.</b> Queen of Hearts 프리셋과 같은 핵심 수치인 Tightness 30·Aggression 90·Bluff 40·Risk 75로 사용자 프로필을 구성하는 실제 화면입니다.</figcaption>
+  </figure>
+  <figure class="shot">
+    <img src="assets/holdem/bot-profile-advanced.png" alt="Queen of Hearts 실제 확장 능력치 화면">
+    <figcaption><b>내장 Queen of Hearts 프리셋의 확장 스탯.</b> 레이더 차트와 Poker Face 65·Acting 75·Insight 50·Deception 71·Adaptivity 40·Bet Sizing 90을 한 화면에서 확인합니다.</figcaption>
+  </figure>
+</div>
+
+<h3>행동 지표로 튜닝하고 회귀 검증했습니다</h3>
+<div class="result">
+  <div class="card"><div class="v">12개 · 10,560핸드</div><div class="t">B3 전체 프리셋 기준선 · 2026.07.18</div></div>
+  <div class="card"><div class="v">82,944결정</div><div class="t">B3 기준선의 모든 의사결정 trace</div></div>
+  <div class="card"><div class="v">0건 · 0건</div><div class="t">의도하지 않은 액션 보정 · 반복 min-raise</div></div>
+  <div class="card"><div class="v">233/233</div><div class="t">69,900결정 PASS · 2026.07.18</div></div>
+</div>
+
+<div class="note gold">
+  <span class="h">기준선과 최신 재검증 구분</span>
+  10,560핸드·82,944결정은 <strong>2026.07.18 B3 전체 12프리셋 기준선</strong>입니다.
+  이후 Dormouse 프리플랍 빈도 조정을 반영한 최종 소스에서는 대표 6개 라인업 3,600핸드를 다시 측정했습니다.
+</div>
+
+<div class="tw"><table>
+<thead><tr><th>검증 층</th><th>범위</th><th>발견·방지하는 문제</th></tr></thead>
+<tbody>
+<tr><td><b>결정 매트릭스</b></td><td>233 시나리오 × 300 seed = 69,900결정 · 233/233 PASS (2026.07.18)</td><td>경계 핸드, 가격 임계, 믹싱 비율, 사이징, 올인·강등·불변식</td></tr>
+<tr><td><b>행동 시뮬레이터</b></td><td>B3 기준선: 12개 프리셋 · 10,560핸드 · 82,944결정 · 이후 최종 소스 대표 6개 라인업 3,600핸드 재측정</td><td>VPIP/PFR/3bet/AF/WTSD/C-bet, 올인 1.16~3.06%, 의도하지 않은 액션 보정 0건, 반복 min-raise 0건을 측정</td></tr>
+<tr><td><b>테스트 자산</b></td><td>944개 <code>@Test</code> 선언 · Gradle test/스크린샷 기준 검증 성공 (2026.07.27)</td><td>베팅·팟·쇼다운·핸드 평가·전략·저장/복원 회귀</td></tr>
+<tr><td><b>시각 회귀</b></td><td>Compose 스크린샷 기준 이미지 29종</td><td>2~7인 테이블, 큰 글꼴, 다국어, 사이드팟, 각 스트리트의 잘림·겹침</td></tr>
+</tbody>
+</table></div>
+
+<h2 id="c5">5. 서버 설계 경험을 확장한 Android 아키텍처</h2>
+<p class="lead">Compose 화면이 게임 규칙을 직접 소유하지 않도록, 도메인 엔진을 Android 프레임워크에서 분리하고 포트와 어댑터로 경계를 세웠습니다.</p>
+
+<div class="diagram">
+  <div class="cap">Layer ownership</div>
+  <div class="flow">
+    <div class="box blue"><div class="t">UI Layer</div><div class="d">Compose Screens/Components · ViewModel · UI State · Navigation</div></div>
+    <div class="arrow">→</div>
+    <div class="box gold"><div class="t">Application</div><div class="d">Use Cases · GameCoordinator · Player/Bot Factory · Client bridge</div></div>
+    <div class="arrow">→</div>
+    <div class="box"><div class="t">Domain</div><div class="d">게임 규칙 · 전략 · 계산기 · EventBus · Ports</div></div>
+    <div class="box violet"><div class="t">Infrastructure/Data</div><div class="d">Room · DataStore · Logger · Billing · Firebase adapters</div></div>
+  </div>
+</div>
+
+<ul class="kv">
+  <li><b>도메인은 Android를 모릅니다</b> — 게임 엔진과 AI 핵심은 별도 <code>domain-core</code>/<code>domain-model</code> 모듈로 분리해 JVM에서 빠르게 검증하고, Android 앱은 UI·저장·플랫폼 어댑터를 제공합니다.</li>
+  <li><b>상태 소유권을 분리</b> — Table/Player/Pot의 규칙 상태는 도메인이, 화면 표시 상태는 <code>GameUiState</code>가, 영속 상태는 Room/DataStore가 소유합니다.</li>
+  <li><b>DI로 구현 세부를 바꿀 수 있게</b> — Repository·Logger·Evaluator·Game Service를 Hilt로 바인딩해 테스트 더블과 플랫폼 구현을 교체합니다.</li>
+  <li><b>디버그 자동화도 아키텍처에 포함</b> — ADB 명령을 typed command/dispatcher/handler로 분리해 화면 이동·게임 액션·프리미엄·봇 수를 자동 제어하고, Maestro 시나리오와 연결했습니다.</li>
+  <li><b>출시 품질을 화면 크기 하나로 판단하지 않음</b> — 2~7인 테이블, 한국어·독일어·포르투갈어, 큰 글꼴, side pot, speech bubble, spectator 등 다양한 상태를 스크린샷 기준선으로 고정했습니다.</li>
+</ul>
+
+<div class="tagline">
+  <div class="big">서버에서 쌓은 설계력을 제품 정의·화면·Android 구현·게임 엔진으로 확장해,<br>실제 스토어 출시까지 마무리했습니다.</div>
+  <div class="sub">Wonder Holdem은 실행 가능한 앱, 공개 스토어, 코드와 테스트로 그 범위를 보여주는 프로젝트입니다.</div>
+</div>
+
+<div class="foot">
+  <b>박근혁</b> · Backend Engineer<br>
+  Google Play: <a href="https://play.google.com/store/apps/details?id=com.endside.holdem">Wonder Holdem</a> · 스크린샷: Android API 36 에뮬레이터 실제 실행 화면 · 작성일 2026.07.27
+</div>
+
+</div>
+</body>
+</html>

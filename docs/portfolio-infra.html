@@ -1,0 +1,1717 @@
+<meta charset="utf-8">
+<title>인프라 아키텍처 포트폴리오 — 박근혁</title>
+<style>
+:root{
+  --bg:#ffffff; --fg:#16181d; --muted:#6b7280; --line:#e2e5ea;
+  --accent:#2563eb; --accent-soft:#eff4ff;
+  --pub:#059669; --pub-bg:#ecfdf5;
+  --app:#2563eb; --app-bg:#eff6ff;
+  --db:#7c3aed;  --db-bg:#f5f1ff;
+  --ext:#6b7280; --ext-bg:#f4f5f7;
+  --warn:#b45309; --warn-bg:#fffbeb;
+  --code:#f6f7f9;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--fg);
+  font-family:-apple-system,BlinkMacSystemFont,"Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;
+  font-size:14px; line-height:1.7; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1080px;margin:0 auto;padding:48px 32px 96px}
+
+/* ---------- typography ---------- */
+h1,h2,h3,h4{line-height:1.35;margin:0}
+.doc-title{font-size:40px;font-weight:800;letter-spacing:-.02em}
+.doc-sub{color:var(--muted);font-size:15px;margin-top:10px}
+h2{font-size:26px;font-weight:750;letter-spacing:-.015em;margin:64px 0 6px;padding-bottom:12px;border-bottom:2px solid var(--fg)}
+h3{font-size:19px;font-weight:700;margin:40px 0 10px}
+h4{font-size:15px;font-weight:700;margin:26px 0 8px;color:var(--accent)}
+p{margin:10px 0}
+.lead{color:var(--muted);margin:6px 0 18px}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.87em;background:var(--code);padding:1px 5px;border-radius:4px}
+strong{font-weight:700}
+small{font-size:12px;color:var(--muted)}
+
+/* ---------- header ---------- */
+.cover{border-bottom:3px solid var(--fg);padding-bottom:28px;margin-bottom:8px}
+.badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:18px}
+.badge{font-size:11.5px;font-weight:600;padding:4px 10px;border-radius:99px;background:var(--accent-soft);color:var(--accent);border:1px solid #dbe6ff}
+
+/* ---------- section index ---------- */
+.toc{background:#fafbfc;border:1px solid var(--line);border-radius:12px;padding:20px 24px;margin-top:28px}
+.toc ol{margin:8px 0 0;padding-left:20px}
+.toc li{margin:3px 0}
+.toc a{color:var(--fg);text-decoration:none}
+.toc a:hover{color:var(--accent)}
+
+/* ---------- meta strip ---------- */
+.meta{display:flex;flex-wrap:wrap;gap:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:16px 0 24px}
+.meta div{flex:1 1 150px;padding:11px 14px;border-right:1px solid var(--line)}
+.meta div:last-child{border-right:none}
+.meta dt{font-size:11px;color:var(--muted);font-weight:600;letter-spacing:.03em;text-transform:uppercase}
+.meta dd{margin:2px 0 0;font-size:13.5px;font-weight:650}
+
+/* ---------- tables ---------- */
+.tw{overflow-x:auto;margin:14px 0}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top}
+th{background:#f7f8fa;font-weight:700;font-size:12.5px;white-space:nowrap}
+td code{white-space:nowrap}
+tbody tr:nth-child(even){background:#fcfcfd}
+.t-num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+
+/* ---------- diagram ---------- */
+.diagram{border:1px solid var(--line);border-radius:14px;padding:22px;background:#fcfcfd;margin:18px 0}
+.diagram .cap{font-size:12px;color:var(--muted);margin-bottom:16px;font-weight:600;letter-spacing:.02em}
+.tier{border:1.5px dashed var(--ext);border-radius:11px;padding:16px 14px 13px;margin:0 0 8px;position:relative;background:#fff}
+.tier>.tl{position:absolute;top:-9px;left:14px;background:#fcfcfd;padding:0 8px;font-size:10.5px;font-weight:750;letter-spacing:.06em;text-transform:uppercase;color:var(--ext)}
+.tier.pub{border-color:var(--pub);background:var(--pub-bg)} .tier.pub>.tl{color:var(--pub)}
+.tier.app{border-color:var(--app);background:var(--app-bg)} .tier.app>.tl{color:var(--app)}
+.tier.db{border-color:var(--db);background:var(--db-bg)}   .tier.db>.tl{color:var(--db)}
+.tier.ext{border-style:solid;border-color:var(--line);background:#fff}
+.nodes{display:flex;gap:9px;flex-wrap:wrap}
+.node{flex:1 1 145px;min-width:130px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:9px 11px}
+.node .nt{font-size:12.8px;font-weight:700;line-height:1.4}
+.node .ns{font-size:11px;color:var(--muted);line-height:1.5;margin-top:2px}
+.node.solo{flex:1 1 100%}
+.arw{text-align:center;color:var(--muted);font-size:15px;line-height:1;margin:6px 0 8px;font-weight:700}
+.arw span{background:#fcfcfd;padding:0 10px}
+.arw.line{border-top:1px solid var(--line);height:0;margin:14px 0;position:relative}
+
+/* chain */
+.chain{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin:12px 0}
+.chip{background:#fff;border:1px solid var(--line);border-radius:7px;padding:6px 11px;font-size:12.5px;font-weight:650}
+.chip.a{border-color:#c7d9ff;background:var(--app-bg);color:#1d4ed8}
+.chip.p{border-color:#a7e8cf;background:var(--pub-bg);color:#047857}
+.chip.d{border-color:#d9cdf8;background:var(--db-bg);color:#6d28d9}
+.ar{color:var(--muted);font-weight:700;font-size:13px}
+
+/* callouts */
+.note{border-left:3px solid var(--accent);background:var(--accent-soft);padding:12px 16px;border-radius:0 8px 8px 0;margin:16px 0;font-size:13.2px}
+.note.w{border-color:var(--warn);background:var(--warn-bg)}
+.note .h{font-weight:750;display:block;margin-bottom:3px}
+
+/* key-value list */
+ul.kv{list-style:none;padding:0;margin:10px 0}
+ul.kv li{padding:7px 0 7px 18px;border-bottom:1px solid var(--line);position:relative;font-size:13.3px}
+ul.kv li:before{content:"";position:absolute;left:2px;top:15px;width:5px;height:5px;border-radius:50%;background:var(--accent)}
+ul.kv li:last-child{border-bottom:none}
+ul.kv b{font-weight:700}
+
+/* stat cards */
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}
+.stat{flex:1 1 150px;border:1px solid var(--line);border-radius:11px;padding:14px 16px;background:#fff}
+.stat .v{font-size:23px;font-weight:800;letter-spacing:-.02em;line-height:1.2}
+.stat .k{font-size:11.5px;color:var(--muted);font-weight:600;margin-top:3px}
+
+/* env pills */
+.envrow{display:flex;gap:9px;flex-wrap:wrap;margin:16px 0}
+.env{flex:1 1 200px;border:1px solid var(--line);border-radius:11px;overflow:hidden;background:#fff}
+.env .eh{padding:8px 13px;font-size:12.5px;font-weight:750;color:#fff}
+.env .eb{padding:11px 13px;font-size:12.3px;line-height:1.65}
+.env.e1 .eh{background:#6b7280}.env.e2 .eh{background:#059669}
+.env.e3 .eh{background:#2563eb}.env.e4 .eh{background:#7c3aed}
+
+.fig{margin:20px 0;border:1px solid #e2e5ea;border-radius:14px;padding:18px 18px 6px;background:#fcfcfd}
+.fig svg{width:100%;height:auto;display:block}
+.fig figcaption{font-size:12px;color:#6b7280;line-height:1.6;padding:12px 4px 10px;border-top:1px solid #eef0f3;margin-top:12px}
+svg text{font-family:-apple-system,BlinkMacSystemFont,"Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif}
+svg .t{font-size:11.5px;font-weight:650;fill:#16181d}
+svg .ts{font-size:10px;fill:#6b7280}
+svg .tm{font-size:11px;font-family:ui-monospace,Menlo,monospace;fill:#16181d}
+svg .tz{font-size:10px;font-weight:750;letter-spacing:.06em;fill:#6b7280}
+svg .taz{font-size:10.5px;font-weight:700;fill:#2563eb}
+svg .tsg{font-size:9.5px;font-weight:650;fill:#dc2626}
+svg .tasg{font-size:10px;font-weight:700;fill:#c2410c}
+svg .ln{stroke:#5b6472;stroke-width:1.5;fill:none}
+svg .ln.d{stroke-dasharray:5 3}
+svg .ln.g{stroke:#059669}svg .ln.b{stroke:#2563eb}svg .ln.r{stroke:#dc2626}svg .ln.p{stroke:#7c3aed}
+svg .bdg{fill:#1d4ed8;stroke:#fff;stroke-width:1.6}
+svg .tbdg{font-size:10px;font-weight:800;fill:#fff}
+svg .area-region{fill:#fbfbfc;stroke:#94a3b8;stroke-width:1.4;stroke-dasharray:7 4}
+svg .area-cloud{fill:#fbfbfc;stroke:#232F3E;stroke-width:1.5}
+svg .area-vpc{fill:#fdfcff;stroke:#8C4FFF;stroke-width:1.6}
+svg .area-az{fill:none;stroke:#2563eb;stroke-width:1.2;stroke-dasharray:6 4}
+svg .area-dash{fill:#fff;stroke:#94a3b8;stroke-width:1.3;stroke-dasharray:6 4}
+svg .area-ec2{fill:#fff9f3;stroke:#ED7100;stroke-width:1.6}
+svg .sn-pub{fill:#ecfdf5;stroke:#059669;stroke-width:1.3}
+svg .sn-app{fill:#eff6ff;stroke:#2563eb;stroke-width:1.3}
+svg .sn-db{fill:#f7f3ff;stroke:#7c3aed;stroke-width:1.3}
+svg .sg{fill:none;stroke:#dc2626;stroke-width:1.2;stroke-dasharray:5 3}
+svg .asg{fill:#fffaf5;stroke:#ED7100;stroke-width:1.2;stroke-dasharray:5 3}
+svg .rtb{fill:#fff;stroke:#cbd5e1;stroke-width:1.2}
+svg .callout{fill:#fff;stroke:#cbd5e1;stroke-width:1.2}
+
+ol.legend{list-style:none;counter-reset:lg;padding:0;margin:14px 0 6px}
+ol.legend li{counter-increment:lg;position:relative;padding:9px 0 9px 34px;border-bottom:1px solid var(--line);font-size:13.2px;line-height:1.65}
+ol.legend li:last-child{border-bottom:none}
+ol.legend li:before{content:counter(lg);position:absolute;left:0;top:10px;width:21px;height:21px;line-height:21px;text-align:center;border-radius:50%;background:#1d4ed8;color:#fff;font-size:11px;font-weight:800}
+ol.legend .r{display:block;color:var(--muted);font-size:12.3px;margin-top:3px}
+h5{font-size:13.5px;font-weight:750;margin:22px 0 2px;color:var(--fg)}
+hr.sep{border:none;border-top:1px solid var(--line);margin:34px 0}
+.foot{margin-top:64px;padding-top:20px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}
+
+/* ---------- print ---------- */
+@page{size:A4;margin:13mm 12mm}
+@media print{
+  body{font-size:10.2pt;line-height:1.6}
+  .wrap{max-width:none;padding:0}
+  h2{font-size:17pt;margin:22pt 0 4pt;break-after:avoid}
+  h3{font-size:13pt;margin:15pt 0 4pt;break-after:avoid}
+  h4{font-size:11pt;break-after:avoid}
+  .doc-title{font-size:28pt}
+  .diagram,.tw,table,.note,.stats,.envrow,.meta{break-inside:avoid}
+  .node,.stat,.env,.tier{break-inside:avoid}
+  tr{break-inside:avoid}
+  /* 인쇄 시 표가 지면 밖으로 밀려 잘리는 것 방지 */
+  .tw{overflow:visible}
+  table{table-layout:fixed;width:100%}
+  th,td{white-space:normal;overflow-wrap:anywhere;word-break:keep-all;padding:6px 8px}
+  td code{white-space:normal}
+  .pb{break-before:page}
+  .fig{break-inside:avoid}
+  .fig svg{max-height:none}
+  .toc{break-after:page}
+  a{color:inherit;text-decoration:none}
+}
+@media (max-width:640px){
+  .wrap{padding:28px 16px 60px}
+  .doc-title{font-size:29px}
+  h2{font-size:21px}
+}
+</style>
+
+<!-- AWS 아이콘 심볼 라이브러리 + 화살표 마커 (문서 최상단 1회 삽입) -->
+<svg xmlns="http://www.w3.org/2000/svg" style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
+<defs>
+  <marker id="ah"   viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#5b6472"/></marker>
+  <marker id="ah-g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#059669"/></marker>
+  <marker id="ah-b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#2563eb"/></marker>
+  <marker id="ah-r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#dc2626"/></marker>
+  <marker id="ah-p" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#7c3aed"/></marker>
+  <marker id="ah-o" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#c2410c"/></marker>
+</defs>
+
+<!-- ============ 사용자 / 클라이언트 ============ -->
+<symbol id="i-user" viewBox="0 0 48 48">
+  <circle cx="24" cy="16" r="8" fill="#232F3E"/>
+  <path d="M8 44c0-9 7.2-15 16-15s16 6 16 15z" fill="#232F3E"/>
+</symbol>
+<symbol id="i-admin" viewBox="0 0 48 48">
+  <circle cx="19" cy="15" r="7.5" fill="#B0084D"/>
+  <path d="M4 42c0-8.5 6.8-14 15-14s15 5.5 15 14z" fill="#B0084D"/>
+  <circle cx="37" cy="12" r="8" fill="none" stroke="#B0084D" stroke-width="3"/>
+  <path d="M37 4v-3M37 23v-3M45 12h3M26 12h3" stroke="#B0084D" stroke-width="2.6" stroke-linecap="round"/>
+</symbol>
+<symbol id="i-client" viewBox="0 0 48 48">
+  <rect x="3" y="8" width="30" height="24" rx="2.5" fill="#D13212"/>
+  <rect x="7" y="12" width="22" height="16" rx="1" fill="#fff"/>
+  <rect x="12" y="35" width="12" height="3" rx="1.5" fill="#D13212"/>
+  <rect x="33" y="18" width="13" height="24" rx="2.5" fill="#D13212"/>
+  <rect x="36" y="22" width="7" height="14" rx="1" fill="#fff"/>
+</symbol>
+<symbol id="i-game" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#232F3E"/>
+  <path d="M13 20h22a7 7 0 0 1 7 7v1a6 6 0 0 1-11 3.5l-1.6-2H18.6L17 32A6 6 0 0 1 6 28.5v-1a7 7 0 0 1 7-7z" fill="#fff"/>
+  <path d="M14 25v5M11.5 27.5h5" stroke="#232F3E" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="33" cy="26" r="2" fill="#232F3E"/><circle cx="37" cy="30" r="2" fill="#232F3E"/>
+</symbol>
+
+<!-- ============ 네트워킹 (보라) ============ -->
+<symbol id="i-r53" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#8C4FFF"/>
+  <text x="24" y="32" text-anchor="middle" font-family="Helvetica,Arial" font-size="19" font-weight="700" fill="#fff">53</text>
+</symbol>
+<symbol id="i-cf" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#8C4FFF"/>
+  <circle cx="24" cy="24" r="13" fill="none" stroke="#fff" stroke-width="2.2"/>
+  <ellipse cx="24" cy="24" rx="6" ry="13" fill="none" stroke="#fff" stroke-width="2.2"/>
+  <path d="M11 24h26M13.5 17h21M13.5 31h21" stroke="#fff" stroke-width="2.2"/>
+</symbol>
+<symbol id="i-vpc" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#8C4FFF"/>
+  <path d="M24 9l13 7v16l-13 7-13-7V16z" fill="none" stroke="#fff" stroke-width="2.4"/>
+  <circle cx="24" cy="24" r="4" fill="#fff"/>
+</symbol>
+<symbol id="i-router" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#8C4FFF"/>
+  <circle cx="24" cy="24" r="6" fill="#fff"/>
+  <path d="M24 8v8M24 32v8M8 24h8M32 24h8" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/>
+</symbol>
+<symbol id="i-otel" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#8C4FFF"/>
+  <circle cx="24" cy="24" r="9" fill="none" stroke="#fff" stroke-width="2.4"/>
+  <circle cx="24" cy="24" r="3" fill="#fff"/>
+  <path d="M24 6v6M24 36v6M6 24h6M36 24h6" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>
+</symbol>
+
+<!-- ============ 컴퓨팅 / 컨테이너 (주황) ============ -->
+<symbol id="i-alb" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#ED7100"/>
+  <circle cx="24" cy="11" r="4" fill="#fff"/>
+  <circle cx="11" cy="38" r="4" fill="#fff"/><circle cx="24" cy="38" r="4" fill="#fff"/><circle cx="37" cy="38" r="4" fill="#fff"/>
+  <path d="M24 15v9M11 34v-5h26v5M24 29v-5" stroke="#fff" stroke-width="2.3" fill="none"/>
+</symbol>
+<symbol id="i-nlb" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#ED7100"/>
+  <circle cx="11" cy="11" r="4" fill="#fff"/><circle cx="37" cy="11" r="4" fill="#fff"/>
+  <circle cx="11" cy="37" r="4" fill="#fff"/><circle cx="37" cy="37" r="4" fill="#fff"/>
+  <circle cx="24" cy="24" r="5" fill="#fff"/>
+  <path d="M14.5 14.5 20 20M33.5 14.5 28 20M14.5 33.5 20 28M33.5 33.5 28 28" stroke="#fff" stroke-width="2.2"/>
+</symbol>
+<symbol id="i-ec2" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#ED7100"/>
+  <rect x="12" y="12" width="24" height="24" rx="2.5" fill="none" stroke="#fff" stroke-width="2.4"/>
+  <rect x="18" y="18" width="12" height="12" rx="1.5" fill="#fff"/>
+  <path d="M17 8v4M24 8v4M31 8v4M17 36v4M24 36v4M31 36v4M8 17h4M8 24h4M8 31h4M36 17h4M36 24h4M36 31h4" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>
+</symbol>
+<symbol id="i-eks" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#ED7100"/>
+  <path d="M24 8 38 15.5v17L24 40 10 32.5v-17z" fill="none" stroke="#fff" stroke-width="2.4"/>
+  <circle cx="24" cy="24" r="4" fill="#fff"/>
+  <path d="M24 12v8M24 28v8M14.5 18.5 20.5 22M33.5 18.5 27.5 22M14.5 29.5 20.5 26M33.5 29.5 27.5 26" stroke="#fff" stroke-width="1.9"/>
+</symbol>
+<symbol id="i-pod" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#fff" stroke="#ED7100" stroke-width="2.4"/>
+  <path d="M24 10 37 17v14l-13 7-13-7V17z" fill="none" stroke="#ED7100" stroke-width="2.4"/>
+  <path d="M24 10v14l13-7M24 24v14M24 24 11 17" stroke="#ED7100" stroke-width="2"/>
+</symbol>
+<symbol id="i-igw" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#ED7100"/>
+  <path d="M9 24h30M31 16l8 8-8 8" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="7" y="12" width="5" height="24" rx="2" fill="#fff"/>
+</symbol>
+<symbol id="i-nat" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#ED7100"/>
+  <path d="M10 18h20M24 12l6 6-6 6" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M38 30H18M24 36l-6-6 6-6" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+</symbol>
+<symbol id="i-ecr" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#ED7100"/>
+  <rect x="10" y="20" width="12" height="9" rx="1.5" fill="#fff"/>
+  <rect x="26" y="20" width="12" height="9" rx="1.5" fill="#fff"/>
+  <rect x="18" y="31" width="12" height="9" rx="1.5" fill="#fff"/>
+  <rect x="18" y="9" width="12" height="9" rx="1.5" fill="#fff"/>
+</symbol>
+<symbol id="i-bastion" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#4D5A6B"/>
+  <rect x="9" y="12" width="30" height="24" rx="2.5" fill="#fff"/>
+  <path d="M14 20l5 4-5 4M23 28h11" stroke="#4D5A6B" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+</symbol>
+
+<!-- ============ 스토리지 / 빌드 (초록) ============ -->
+<symbol id="i-s3" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#7AA116"/>
+  <path d="M13 12h22l-3 25H16z" fill="#fff"/>
+  <path d="M13 18h22M15 26h18" stroke="#7AA116" stroke-width="2"/>
+</symbol>
+<symbol id="i-glacier" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#3F8624"/>
+  <path d="M24 9v30M11 16.5l26 15M37 16.5l-26 15" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/>
+</symbol>
+<symbol id="i-build" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#7AA116"/>
+  <path d="M28 10a8 8 0 0 0-10.5 10.5L10 28v8h8l7.5-7.5A8 8 0 0 0 36 18z" fill="#fff"/>
+</symbol>
+<symbol id="i-git" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#4D5A6B"/>
+  <circle cx="16" cy="13" r="4.5" fill="#fff"/><circle cx="16" cy="35" r="4.5" fill="#fff"/><circle cx="33" cy="20" r="4.5" fill="#fff"/>
+  <path d="M16 17.5v13M16 24h10a4 4 0 0 0 4-4" stroke="#fff" stroke-width="2.4" fill="none"/>
+</symbol>
+<symbol id="i-jenkins" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#D24939"/>
+  <circle cx="24" cy="17" r="7" fill="#fff"/>
+  <path d="M13 40c0-7 5-11 11-11s11 4 11 11z" fill="#fff"/>
+</symbol>
+
+<!-- ============ 데이터베이스 ============ -->
+<symbol id="i-rds" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#3B48CC"/>
+  <ellipse cx="24" cy="15" rx="12" ry="5" fill="#fff"/>
+  <path d="M12 15v18c0 2.8 5.4 5 12 5s12-2.2 12-5V15" fill="none" stroke="#fff" stroke-width="2.6"/>
+  <path d="M12 24c0 2.8 5.4 5 12 5s12-2.2 12-5" fill="none" stroke="#fff" stroke-width="2.2"/>
+</symbol>
+<symbol id="i-mysql" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#00618A"/>
+  <ellipse cx="24" cy="15" rx="12" ry="5" fill="#fff"/>
+  <path d="M12 15v18c0 2.8 5.4 5 12 5s12-2.2 12-5V15" fill="none" stroke="#fff" stroke-width="2.6"/>
+  <path d="M12 24c0 2.8 5.4 5 12 5s12-2.2 12-5" fill="none" stroke="#fff" stroke-width="2.2"/>
+</symbol>
+<symbol id="i-cass" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#2E27AD"/>
+  <ellipse cx="24" cy="14" rx="11" ry="4.5" fill="#fff"/>
+  <path d="M13 14v20c0 2.5 5 4.5 11 4.5s11-2 11-4.5V14" fill="none" stroke="#fff" stroke-width="2.4"/>
+  <path d="M13 21c0 2.5 5 4.5 11 4.5S35 23.5 35 21M13 28c0 2.5 5 4.5 11 4.5S35 30.5 35 28" fill="none" stroke="#fff" stroke-width="1.9"/>
+</symbol>
+<symbol id="i-redis" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#C7131F"/>
+  <path d="M9 15l15-6 15 6-15 6z" fill="#fff"/>
+  <path d="M9 24l15 6 15-6" fill="none" stroke="#fff" stroke-width="2.6" stroke-linejoin="round"/>
+  <path d="M9 32l15 6 15-6" fill="none" stroke="#fff" stroke-width="2.6" stroke-linejoin="round"/>
+</symbol>
+
+<!-- ============ 메시징 / 알림 (핑크) ============ -->
+<symbol id="i-mq" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#E7157B"/>
+  <circle cx="24" cy="24" r="5" fill="#fff"/>
+  <circle cx="11" cy="13" r="3.5" fill="#fff"/><circle cx="37" cy="13" r="3.5" fill="#fff"/>
+  <circle cx="11" cy="35" r="3.5" fill="#fff"/><circle cx="37" cy="35" r="3.5" fill="#fff"/>
+  <path d="M13.5 15.5 20 21M34.5 15.5 28 21M13.5 32.5 20 27M34.5 32.5 28 27" stroke="#fff" stroke-width="2"/>
+</symbol>
+<symbol id="i-sns" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#E7157B"/>
+  <path d="M12 20h7l10-7v22l-10-7h-7z" fill="#fff"/>
+  <path d="M33 18a8 8 0 0 1 0 12" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+</symbol>
+<symbol id="i-ses" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#E7157B"/>
+  <rect x="9" y="14" width="30" height="20" rx="2.5" fill="#fff"/>
+  <path d="M9 16l15 11 15-11" fill="none" stroke="#E7157B" stroke-width="2.4"/>
+</symbol>
+<symbol id="i-socket" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#0E8A78"/>
+  <circle cx="24" cy="24" r="13" fill="none" stroke="#fff" stroke-width="2.4"/>
+  <path d="M17 24a7 14 0 0 1 14 0a7 14 0 0 1-14 0" fill="none" stroke="#fff" stroke-width="2"/>
+  <circle cx="24" cy="24" r="3.5" fill="#fff"/>
+</symbol>
+
+<!-- ============ 보안 ============ -->
+<symbol id="i-lock" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#3F8624"/>
+  <rect x="13" y="22" width="22" height="17" rx="2.5" fill="#fff"/>
+  <path d="M18 22v-5a6 6 0 0 1 12 0v5" fill="none" stroke="#fff" stroke-width="2.8"/>
+</symbol>
+<symbol id="i-acm" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#DD344C"/>
+  <rect x="9" y="11" width="30" height="20" rx="2.5" fill="#fff"/>
+  <path d="M14 17h20M14 22h13" stroke="#DD344C" stroke-width="2.2" stroke-linecap="round"/>
+  <path d="M24 31l-5 8 5-2 5 2z" fill="#fff"/>
+</symbol>
+<symbol id="i-secrets" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#DD344C"/>
+  <circle cx="18" cy="24" r="7" fill="none" stroke="#fff" stroke-width="2.8"/>
+  <path d="M25 24h14M34 24v6M39 24v5" stroke="#fff" stroke-width="2.8" stroke-linecap="round"/>
+</symbol>
+<symbol id="i-jwt" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#4D5A6B"/>
+  <circle cx="18" cy="24" r="6.5" fill="none" stroke="#fff" stroke-width="2.6"/>
+  <path d="M24.5 24H39M35 24v5.5M39 24v4" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/>
+</symbol>
+
+<!-- ============ 기타 ============ -->
+<symbol id="i-nginx" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#009639"/>
+  <path d="M15 34V15l18 19V15" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+</symbol>
+<symbol id="i-docker" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#1D91D0"/>
+  <g fill="#fff">
+    <rect x="11" y="24" width="6" height="5.5" rx=".7"/><rect x="18" y="24" width="6" height="5.5" rx=".7"/>
+    <rect x="25" y="24" width="6" height="5.5" rx=".7"/><rect x="18" y="17.5" width="6" height="5.5" rx=".7"/>
+    <rect x="25" y="17.5" width="6" height="5.5" rx=".7"/><rect x="25" y="11" width="6" height="5.5" rx=".7"/>
+  </g>
+  <path d="M9 31c0 5 4 8 10 8 11 0 18-5 20-13 3 1.5 6 .5 7-1-2-1.5-4-1-5 0" fill="#fff"/>
+</symbol>
+<symbol id="i-batch" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#ED7100"/>
+  <circle cx="24" cy="24" r="13" fill="none" stroke="#fff" stroke-width="2.6"/>
+  <path d="M24 15v9l6 4" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+</symbol>
+<symbol id="i-ai" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#01A88D"/>
+  <circle cx="24" cy="24" r="4" fill="#fff"/>
+  <circle cx="12" cy="14" r="3" fill="#fff"/><circle cx="36" cy="14" r="3" fill="#fff"/>
+  <circle cx="12" cy="34" r="3" fill="#fff"/><circle cx="36" cy="34" r="3" fill="#fff"/>
+  <path d="M14.5 15.5 21 21M33.5 15.5 27 21M14.5 32.5 21 27M33.5 32.5 27 27" stroke="#fff" stroke-width="1.9"/>
+</symbol>
+<symbol id="i-pay" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="9" fill="#1A73E8"/>
+  <rect x="8" y="14" width="32" height="21" rx="3" fill="#fff"/>
+  <rect x="8" y="19" width="32" height="4" fill="#1A73E8"/>
+  <rect x="12" y="27" width="10" height="3" rx="1.5" fill="#1A73E8"/>
+</symbol>
+<symbol id="i-cloud" viewBox="0 0 48 48">
+  <path d="M13 36a8.5 8.5 0 0 1-.6-17A12 12 0 0 1 35 21.5a7.3 7.3 0 0 1-1 14.5z" fill="#ED7100"/>
+</symbol>
+</svg>
+
+
+<div class="wrap">
+
+<!-- ============ COVER ============ -->
+<header class="cover">
+  <div class="doc-title">인프라 아키텍처 포트폴리오</div>
+  <div class="doc-sub">
+    EKS 기반 MSA 표준 구성 · 메시징 시스템 · 단일 서버 접근 — 2021~2026 AWS 인프라 기록<br>
+    <strong>박근혁</strong> · Backend Engineer / Backend Engineering 파트장 · 총 경력 17년
+  </div>
+  <div class="badges">
+    <span class="badge">AWS EKS</span><span class="badge">CloudFormation</span><span class="badge">eksctl</span>
+    <span class="badge">Helm</span><span class="badge">Docker Compose</span><span class="badge">ALB / NLB</span>
+    <span class="badge">RDS · Aurora</span><span class="badge">ElastiCache</span><span class="badge">CloudFront + OAC</span>
+    <span class="badge">Route53 · ACM</span><span class="badge">ECR · CodeBuild</span><span class="badge">AmazonMQ</span>
+    <span class="badge">Keyspaces</span><span class="badge">IRSA</span><span class="badge">OpenSearch</span>
+  </div>
+</header>
+
+<div class="note">
+  <span class="h">문서 성격</span>
+  본 문서는 <strong>인프라 구성</strong>에 초점을 맞춘 포트폴리오입니다. 메시지·인증 시퀀스와 설계 방법론은 별권 「백엔드 설계」로 분리했습니다. 계정 ID·리소스 ID·공인 IP·도메인·자격증명 등
+  식별 가능한 값은 모두 제거하거나 치환했으며, 아키텍처 구조와 설계 의도는 실제와 동일합니다.
+  모든 구성은 본인이 직접 설계·구축하고 IaC로 코드화한 것입니다.
+</div>
+
+<style>@media print{
+  .cover{padding-bottom:16px}
+  .cover .badges{margin-top:10px}
+  .toc{padding:12px 20px;font-size:12px}
+  .toc li{margin:1px 0}
+  .note{font-size:11.8px;padding:10px 14px;margin:12px 0}
+}</style>
+<div class="note w">
+  <span class="h">이 문서가 증명하는 것 — 세 가지</span>
+  ① 전혀 다른 세 서비스(메타버스·매칭·게임)에서 <strong>같은 EKS 표준 구성을 세 번 구축</strong>했다는 것.
+  ② 요청-응답과 성질이 다른 <strong>메시징 계층을 분리 설계</strong>했다는 것.
+  ③ 표준을 맹신하지 않는다는 것 — 런칭 전 스타트업에서는 <strong>단일 서버로 가고 EKS는 코드로만 준비</strong>해
+  유휴 비용을 월 ~$32까지 낮췄습니다.
+</div>
+
+<nav class="toc">
+  <strong style="font-size:13px;letter-spacing:.04em">목차</strong>
+  <ol>
+    <li><a href="#s0">한눈에 보기 — 4개사 인프라 비교</a></li>
+    <li><a href="#s2">EKS 기반 MSA 표준 구성</a>
+      <ol style="list-style:lower-alpha">
+        <li><a href="#s2a">전체 아키텍처 — WEB 계층</a></li>
+        <li><a href="#s2b">네트워크 — 3-Tier VPC</a></li>
+        <li><a href="#s2c">CI/CD — 태깅과 롤백 전략</a></li>
+        <li><a href="#s2d">파일 서비스와 관측</a></li>
+        <li><a href="#s2e">회사별 차이</a></li>
+      </ol></li>
+    <li><a href="#s3">메시징 시스템</a>
+      <ol style="list-style:lower-alpha">
+        <li><a href="#s3b">메시징 서비스 구성</a></li>
+        <li><a href="#s3c">MQ 가용성 — 프로토콜 계층별 분리</a></li>
+        <li><a href="#s3d">알림 경로 3종 — 수신자 상태에 따른 분기</a></li>
+        <li><a href="#s3e">실시간 채널 — 대기큐와 타이머</a></li>
+      </ol></li>
+    <li><a href="#s4">단일 서버로 시작하는 접근 — 퍼스트해빗</a>
+      <ol style="list-style:lower-alpha">
+        <li><a href="#s4a">환경 전략 — 단일 서버에서 시작해 EKS로 확장</a></li>
+        <li><a href="#s4b">DEV — 단일 EC2 통합 구성</a></li>
+        <li><a href="#s4c">STG(미국) — 데이터 계층 분리</a></li>
+        <li><a href="#s4d">PROD — 2장의 표준 구성으로 이행</a></li>
+        <li><a href="#s4e">CDN — 단일 CloudFront로 10개 버킷 라우팅</a></li>
+        <li><a href="#s4f">IaC 체계와 원클릭 Up/Down</a></li>
+        <li><a href="#s4g">비용 설계</a></li>
+      </ol></li>
+    <li><a href="#s5">인프라 설계 원칙</a></li>
+  </ol>
+</nav>
+
+
+<!-- ============ 0. 비교 ============ -->
+<h2 id="s0">1. 한눈에 보기 — 4개사 인프라 비교</h2>
+<p class="lead">같은 AWS라도 조직의 규모·단계·비용 여건에 따라 정답이 다릅니다. 아래는 각 회사에서 실제로 선택했던 구성과 그 이유입니다.</p>
+
+<div class="tw">
+<table>
+<thead><tr>
+  <th>구분</th><th>퍼스트해빗 (Chalk)</th><th>엘오디게임즈</th><th>유니메오</th><th>버닝갤럭시</th>
+</tr></thead>
+<tbody>
+<tr><td><b>기간</b></td><td>2025.10 ~ 현재</td><td>2024.09 ~ 2025.06</td><td>2023.08 ~ 2024.07</td><td>2021.06 ~ 2023.03</td></tr>
+<tr><td><b>서비스</b></td><td>교육 플랫폼<br><small>미국 시장 대상</small></td><td>게임 아웃게임 서버<br><small>Unity3D 클라이언트</small></td><td>간병사 매칭<br><small>차세대 운영 시스템</small></td><td>메타버스 라이프로깅<br><small>Unreal 클라이언트</small></td></tr>
+<tr><td><b>컴퓨팅</b></td><td>EC2 단일 서버(DEV/STG)<br><b>EKS</b>(PROD 예정, IaC 완비)</td><td><b>EKS</b> (k8s)</td><td><b>EKS</b> (k8s)</td><td><b>EKS</b> (k8s)</td></tr>
+<tr><td><b>네트워크</b></td><td>3-Tier VPC + NAT (EKS)<br>Public-only VPC (STG 미국)</td><td>CloudFormation VPC</td><td>CloudFormation VPC</td><td>CloudFormation<br>VPC / Subnet / NACL / Bastion</td></tr>
+<tr><td><b>DB</b></td><td>RDS MySQL 8.4<br>on-EC2 MySQL(DEV)</td><td>Aurora MySQL 8.x</td><td>Aurora MySQL 8.x</td><td>Aurora MySQL<br>+ <b>Keyspaces</b>(Cassandra)</td></tr>
+<tr><td><b>캐시/큐</b></td><td>ElastiCache Redis 7.1/7.2<br>Redisson 분산 락</td><td>ElastiCache Redis<br>Socket.IO 대기큐</td><td>ElastiCache Redis</td><td>ElastiCache Redis<br><b>AmazonMQ</b>(ActiveMQ)</td></tr>
+<tr><td><b>CI/CD</b></td><td>Bash 배포 스크립트<br>CodeBuild → ECR</td><td>Jenkins → ECR</td><td>CodeBuild → ECR</td><td>CodeCommit + CodeBuild + ECR</td></tr>
+<tr><td><b>CDN/스토리지</b></td><td>CloudFront + OAC<br>S3 10버킷 prefix 라우팅</td><td>CloudFront + S3</td><td>CloudFront + S3</td><td>CloudFront + S3<br>+ Glacier 수명주기</td></tr>
+<tr><td><b>관측</b></td><td>metrics-server<br><small>(Prometheus 도입 예정)</small></td><td>Prometheus · Grafana<br>OpenSearch</td><td>—</td><td><b>OpenTelemetry<br>+ OpenSearch</b></td></tr>
+<tr><td><b>IaC</b></td><td><b>CloudFormation + eksctl<br>+ Helm + Bash</b><br>원클릭 Up/Down</td><td>CloudFormation</td><td>CloudFormation</td><td>CloudFormation</td></tr>
+<tr><td><b>핵심 과제</b></td><td>런칭 전 비용 최소화와<br>운영 확장성 양립</td><td>게임 재화 정합성<br>실시간 대기큐</td><td>레거시 설계 개선<br>개발·운영 환경 신규 구축</td><td>0→1 구축<br>EKS 팀 내재화</td></tr>
+</tbody>
+</table>
+</div>
+
+
+<!-- ============ 1. 퍼스트해빗 ============ -->
+
+
+<h2 id="s2" class="pb">2. EKS 기반 MSA 표준 구성</h2>
+<p class="lead">버닝갤럭시 · 유니메오 · 엘오디게임즈 — 서비스는 메타버스 · 매칭 플랫폼 · 게임으로 전혀 다르지만,
+<b>인프라 구성은 사실상 하나</b>입니다. 세 번에 걸쳐 다듬으며 표준으로 굳어진 구성을 한 번에 정리합니다.</p>
+
+<div class="meta">
+  <div><dt>적용</dt><dd>3개사 · 2021~2025</dd></div>
+  <div><dt>컴퓨팅</dt><dd>AWS EKS (Kubernetes)</dd></div>
+  <div><dt>IaC</dt><dd>CloudFormation</dd></div>
+  <div><dt>CI/CD</dt><dd>CodeBuild · Jenkins → ECR</dd></div>
+</div>
+
+<div class="note"><span class="h">설계 결정 — 왜 같은 구성을 세 번 반복했나</span>
+출발점은 다날에서의 경험입니다. 시간이 없어 EKS 구축을 외부 파트너사에 맡겼더니 반복되는 비용과
+장애 대응 한계(티켓 대기)가 돌아왔고, Docker·Kubernetes를 학습해 <b>운영을 팀 안으로</b> 가져왔습니다.
+이후 세 회사는 서비스 도메인이 전혀 달랐지만 요구 조건 — 무중단 배포 · 서비스 단위 스케일링 · 빠른 롤백 —
+은 같았기에, 매번 새 구성을 실험하는 대신 <b>검증된 구성을 재사용하고 다듬는 쪽</b>을 택했습니다.
+감수한 것은 Kubernetes 러닝커브와 관리형 서비스의 상시 비용입니다. 러닝커브는 신입이 3개월 안에
+VPC 구성부터 CI/CD까지 단독 수행하는 학습 체계로 팀 전체에 상환했고, 그 결과 이 구성은
+특정 개인이 아니라 <b>팀이 운영할 수 있는 표준</b>이 되었습니다.</div>
+<h3 id="s2a">2-1. 전체 아키텍처 — WEB 계층</h3>
+<figure class="fig">
+<svg viewBox="0 0 980 812" role="img" aria-label="EKS 기반 MSA 표준 구성">
+  <use href="#i-user"  x="150" y="10" width="44" height="44"/>
+  <text class="t" x="172" y="70" text-anchor="middle">사용자</text>
+  <use href="#i-admin" x="856" y="10" width="44" height="44"/>
+  <text class="t" x="878" y="70" text-anchor="middle">관리자</text>
+
+  <rect class="area-cloud" x="24" y="92" width="932" height="700" rx="10"/>
+  <text class="tz" x="42" y="112">AWS CLOUD</text>
+
+  <use href="#i-cf"  x="60" y="140" width="40" height="40"/>
+  <text class="t"  x="80" y="196" text-anchor="middle">CloudFront</text>
+  <text class="ts" x="80" y="210" text-anchor="middle">OAC · CF Function</text>
+  <use href="#i-s3"  x="60" y="250" width="40" height="40"/>
+  <text class="t"  x="80" y="306" text-anchor="middle">S3 버킷 ×10</text>
+  <text class="ts" x="80" y="320" text-anchor="middle">Presigned URL</text>
+  <path class="ln p" d="M80 246 L80 200" marker-end="url(#ah-p)"/>
+  <path class="ln p" d="M84 136 L146 62" marker-end="url(#ah-p)"/>
+
+  <use href="#i-git"   x="60" y="380" width="40" height="40"/>
+  <text class="t" x="80" y="436" text-anchor="middle">Git</text>
+  <use href="#i-build" x="60" y="470" width="40" height="40"/>
+  <text class="t" x="80" y="526" text-anchor="middle">CodeBuild</text>
+  <use href="#i-ecr"   x="60" y="560" width="40" height="40"/>
+  <text class="t" x="80" y="616" text-anchor="middle">ECR</text>
+  <path class="ln g" d="M80 442 L80 466" marker-end="url(#ah-g)"/>
+  <path class="ln g" d="M80 532 L80 556" marker-end="url(#ah-g)"/>
+
+  <rect class="area-vpc" x="250" y="120" width="680" height="650" rx="10"/>
+  <use href="#i-vpc" x="262" y="128" width="18" height="18"/>
+  <text class="t" x="286" y="142">VPC 10.1.0.0/16</text>
+
+  <rect class="sn-pub" x="270" y="152" width="640" height="92" rx="8"/>
+  <text class="tz" x="288" y="170">PUBLIC SUBNET — 외부 노출 지점</text>
+  <use href="#i-alb" x="400" y="176" width="40" height="40"/>
+  <circle class="bdg" cx="401" cy="177" r="8.5"/><text class="tbdg" x="401" y="180.5" text-anchor="middle">1</text>
+  <text class="t" x="420" y="232" text-anchor="middle">ALB (사용자 API)</text>
+  <use href="#i-alb" x="700" y="176" width="40" height="40"/>
+  <circle class="bdg" cx="701" cy="177" r="8.5"/><text class="tbdg" x="701" y="180.5" text-anchor="middle">2</text>
+  <text class="t" x="720" y="232" text-anchor="middle">ALB (관리자)</text>
+  <path class="ln" d="M198 44 L396 186" marker-end="url(#ah)"/>
+  <path class="ln" d="M870 56 L744 184" marker-end="url(#ah)"/>
+
+  <rect class="sn-app" x="270" y="262" width="640" height="270" rx="8"/>
+  <text class="tz" x="288" y="282">PRIVATE SUBNET (APP) — EKS 워커 노드</text>
+
+  <use href="#i-alb" x="292" y="300" width="40" height="40"/>
+  <circle class="bdg" cx="293" cy="301" r="8.5"/><text class="tbdg" x="293" y="304.5" text-anchor="middle">3</text>
+  <text class="t"  x="312" y="356" text-anchor="middle">ALB Ingress</text>
+  <text class="ts" x="312" y="370" text-anchor="middle">Controller (IRSA)</text>
+  <text class="ts" x="312" y="384" text-anchor="middle">→ ALB 자동 생성</text>
+  <path class="ln d" d="M318 298 L396 226" marker-end="url(#ah)"/>
+
+  <rect class="asg" x="366" y="292" width="528" height="196" rx="6"/>
+  <text class="tasg" x="382" y="310">Managed NodeGroup (Auto Scaling) — Application Pods</text>
+  <use href="#i-jwt"    x="380" y="326" width="38" height="38"/>
+  <circle class="bdg" cx="381" cy="327" r="8.5"/><text class="tbdg" x="381" y="330.5" text-anchor="middle">4</text>
+  <use href="#i-pod"    x="464" y="326" width="38" height="38"/>
+  <circle class="bdg" cx="465" cy="327" r="8.5"/><text class="tbdg" x="465" y="330.5" text-anchor="middle">5</text>
+  <use href="#i-pod"    x="548" y="326" width="38" height="38"/>
+  <circle class="bdg" cx="549" cy="327" r="8.5"/><text class="tbdg" x="549" y="330.5" text-anchor="middle">6</text>
+  <use href="#i-batch"  x="632" y="326" width="38" height="38"/>
+  <circle class="bdg" cx="633" cy="327" r="8.5"/><text class="tbdg" x="633" y="330.5" text-anchor="middle">7</text>
+  <use href="#i-pod"    x="716" y="326" width="38" height="38"/>
+  <circle class="bdg" cx="717" cy="327" r="8.5"/><text class="tbdg" x="717" y="330.5" text-anchor="middle">8</text>
+  <use href="#i-socket" x="800" y="326" width="38" height="38"/>
+  <circle class="bdg" cx="801" cy="327" r="8.5"/><text class="tbdg" x="801" y="330.5" text-anchor="middle">9</text>
+  <text class="t"  x="399" y="382" text-anchor="middle">auth</text>
+  <text class="ts" x="399" y="396" text-anchor="middle">JWT · 소셜</text>
+  <text class="t"  x="483" y="382" text-anchor="middle">api</text>
+  <text class="ts" x="483" y="396" text-anchor="middle">사용자</text>
+  <text class="t"  x="567" y="382" text-anchor="middle">admin</text>
+  <text class="ts" x="567" y="396" text-anchor="middle">관리자</text>
+  <text class="t"  x="651" y="382" text-anchor="middle">batch</text>
+  <text class="ts" x="651" y="396" text-anchor="middle">배치</text>
+  <text class="t"  x="735" y="382" text-anchor="middle">file</text>
+  <text class="ts" x="735" y="396" text-anchor="middle">S3 프록시</text>
+  <text class="t"  x="819" y="382" text-anchor="middle">noti</text>
+  <text class="ts" x="819" y="396" text-anchor="middle">Socket.IO</text>
+  <path class="ln" d="M420 238 L420 288" marker-end="url(#ah)"/>
+  <path class="ln" d="M720 238 L720 288" marker-end="url(#ah)"/>
+  <text class="ts" x="640" y="444" text-anchor="middle">HPA · metrics-server 기반 Pod 오토스케일</text>
+  <path class="ln g d" d="M104 578 L240 578 L240 551 L370 551 L370 492" marker-end="url(#ah-g)"/>
+  <text class="ts" x="172" y="570" text-anchor="middle">이미지 pull</text>
+
+  <use href="#i-pod" x="294" y="404" width="36" height="36"/>
+  <circle class="bdg" cx="295" cy="405" r="8.5"/><text class="tbdg" x="295" y="408.5" text-anchor="middle">10</text>
+  <text class="t" x="312" y="456" text-anchor="middle">metrics-server</text>
+  <path class="ln d" d="M362 422 L336 422" marker-end="url(#ah)"/>
+  <use href="#i-batch" x="294" y="470" width="36" height="36"/>
+  <circle class="bdg" cx="295" cy="471" r="8.5"/><text class="tbdg" x="295" y="474.5" text-anchor="middle">11</text>
+  <text class="t" x="318" y="522" text-anchor="middle">K8s Job</text>
+  <path class="ln d" d="M292 488 L262 488 L262 620 L416 620" marker-end="url(#ah)"/>
+
+  <rect class="sn-db" x="270" y="558" width="470" height="180" rx="8"/>
+  <text class="tz" x="288" y="578">PRIVATE SUBNET (DB)</text>
+  <use href="#i-rds"   x="420" y="600" width="40" height="40"/>
+  <circle class="bdg" cx="421" cy="601" r="8.5"/><text class="tbdg" x="421" y="604.5" text-anchor="middle">12</text>
+  <use href="#i-redis" x="580" y="600" width="40" height="40"/>
+  <circle class="bdg" cx="581" cy="601" r="8.5"/><text class="tbdg" x="581" y="604.5" text-anchor="middle">13</text>
+  <text class="t"  x="440" y="656" text-anchor="middle">RDS MySQL 8.4</text>
+  <text class="ts" x="440" y="670" text-anchor="middle">업무 DB · 배치 메타 DB</text>
+  <text class="t"  x="600" y="656" text-anchor="middle">ElastiCache Redis 7.2</text>
+  <text class="ts" x="600" y="670" text-anchor="middle">캐시 · 세션 · 분산 락</text>
+  <path class="ln b" d="M440 492 L440 596" marker-end="url(#ah-b)"/>
+  <path class="ln r" d="M600 492 L600 596" marker-end="url(#ah-r)"/>
+  <path class="ln g d" d="M400 546 L240 546 L240 270 L104 270" marker-end="url(#ah-g)"/>
+</svg>
+<figcaption>세 회사에서 반복 적용한 표준 구성. 외부 노출은 Public Subnet의 ALB 한 경로로 통일하고, 워커 노드·데이터 계층은 Private Subnet에 격리합니다. ALB Ingress Controller는 트래픽 경로가 아니라 <b>ALB를 생성·관리하는 제어 컴포넌트</b>이므로 점선으로 구분했습니다.</figcaption>
+</figure>
+
+<h5>각 구성 요소의 역할과 트래픽 흐름</h5>
+<ol class="legend">
+  <li><b>ALB (사용자 API)</b> — 사용자 트래픽 진입점<span class="r">HTTPS를 종단하고 Public Subnet에서 Private Subnet의 워커 노드로 트래픽을 넘긴다. Ingress 리소스로부터 자동 생성된다.</span></li>
+  <li><b>ALB (관리자)</b> — 관리자 트래픽 진입점<span class="r">사용자 경로와 로드밸런서를 분리해, 관리자 접근에만 별도의 접근 제한과 인증서 정책을 적용할 수 있게 했다.</span></li>
+  <li><b>ALB Ingress Controller</b> — 로드밸런서 생성·관리 (제어면)<span class="r">트래픽이 지나가는 경로가 아니다. Ingress 리소스를 감시하다가 ALB와 타깃그룹을 만들고 갱신한다. 권한은 IRSA로 위임받아 정적 키를 쓰지 않는다.</span></li>
+  <li><b>auth</b> — 인증 · 인가 전담 서비스<span class="r">JWT를 발급·갱신하고 소셜 로그인과 본인인증을 처리한다. 발급된 토큰은 api·admin이 검증만 하므로 인증 로직이 복제되지 않는다.</span></li>
+  <li><b>api</b> — 사용자 API<span class="r">서비스의 사용자 기능 전반을 담당한다. 요청자는 토큰의 주체로만 식별한다.</span></li>
+  <li><b>admin</b> — 관리자 API<span class="r">동일한 도메인을 전체 데이터 관점에서 조회·관리한다. 역할 기반 권한 체크와 벌크·확장 검색을 추가로 갖는다.</span></li>
+  <li><b>batch</b> — 배치 오케스트레이션<span class="r">워커로 자신을 등록하고 하트비트를 보내며, DB에 저장된 크론 스케줄을 읽어 잡을 실행한다. 정기 집계·정리·외부 연동 잡을 담당한다.</span></li>
+  <li><b>file</b> — 파일 프록시<span class="r">Presigned URL을 발급해 실제 파일 전송은 클라이언트와 S3가 직접 하게 한다. 애플리케이션이 파일 대역폭을 부담하지 않는다.</span></li>
+  <li><b>noti</b> — 실시간 알림 브리지<span class="r">내부 서비스가 REST로 호출하면 Redis에서 사용자↔세션 매핑을 찾아 Socket.IO로 이벤트를 밀어 넣는다.</span></li>
+  <li><b>metrics-server</b> — 리소스 메트릭 수집<span class="r">Pod의 CPU·메모리 사용량을 수집해 HPA가 오토스케일 판단에 쓸 수 있게 한다.</span></li>
+  <li><b>Kubernetes Job</b> — 일회성 DB 작업<span class="r">스키마 마이그레이션·시드·점검을 필요할 때만 실행한다. 상시 접속 가능한 Bastion을 두지 않기 위한 대체 경로다.</span></li>
+  <li><b>RDS MySQL</b> — 업무 DB · 배치 메타 DB<span class="r">Private Subnet에 있어 인터넷 경로가 없다. 읽기 트랜잭션은 읽기 전용 커넥션으로 라우팅된다.</span></li>
+  <li><b>ElastiCache Redis</b> — 캐시 · 세션 · 분산 락<span class="r">용도별로 DB 번호를 나눠 인증·블랙리스트·소셜·알림 데이터가 서로 섞이지 않게 했다.</span></li>
+</ol><h3 id="s2b">2-2. 네트워크 — 3-Tier VPC</h3>
+<figure class="fig">
+<svg viewBox="0 0 980 664" role="img" aria-label="유니메오 3-Tier VPC 네트워크 구성">
+  <use href="#i-cloud" x="900" y="0" width="42" height="42"/>
+  <text class="t" x="892" y="30" text-anchor="end">Internet</text>
+
+  <rect class="area-region" x="16" y="44" width="916" height="602" rx="10"/>
+  <text class="tz" x="34" y="64">REGION ap-northeast-2 (an2)</text>
+
+  <rect class="area-vpc" x="34" y="76" width="646" height="552" rx="8"/>
+  <use href="#i-vpc" x="42" y="82" width="18" height="18"/>
+  <text class="t" x="66" y="96">VPC dev-an2-vpc-cr (10.1.0.0/16)</text>
+
+  <rect class="area-az" x="48" y="110" width="300" height="502" rx="6"/>
+  <text class="taz" x="198" y="128" text-anchor="middle">A-Z (an2a)</text>
+  <rect class="area-az" x="360" y="110" width="300" height="502" rx="6"/>
+  <text class="taz" x="510" y="128" text-anchor="middle">A-Z (an2c)</text>
+
+  <!-- public -->
+  <rect class="sn-pub" x="60" y="140" width="276" height="132" rx="5"/>
+  <use href="#i-lock" x="68" y="146" width="15" height="15"/>
+  <text class="t"  x="90" y="157">Public subnet</text>
+  <text class="ts" x="90" y="170">dev-an2-sub-cr-pub-a (10.1.1.0/24)</text>
+  <use href="#i-bastion" x="92"  y="184" width="38" height="38"/>
+  <use href="#i-nat" x="232" y="184" width="38" height="38"/>
+  <text class="t" x="111" y="238" text-anchor="middle">Bastion</text>
+  <text class="t" x="251" y="238" text-anchor="middle">NAT Gateway</text>
+  <text class="ts" x="251" y="252" text-anchor="middle">dev-an2-nat-cr-a (단일)</text>
+
+  <rect class="sn-pub" x="372" y="140" width="276" height="132" rx="5"/>
+  <use href="#i-lock" x="380" y="146" width="15" height="15"/>
+  <text class="t"  x="402" y="157">Public subnet</text>
+  <text class="ts" x="402" y="170">dev-an2-sub-cr-pub-c (10.1.2.0/24)</text>
+  <use href="#i-alb" x="404" y="184" width="38" height="38"/>
+  <text class="t" x="423" y="238" text-anchor="middle">ALB</text>
+  <text class="ts" x="546" y="206" text-anchor="middle">ALB 는 Ingress Controller 가</text>
+  <text class="ts" x="546" y="220" text-anchor="middle">Ingress 리소스로부터 생성</text>
+  <text class="tsg" x="546" y="240" text-anchor="middle">Private 접근은 Bastion 경유만 허용</text>
+
+  <!-- private app -->
+  <rect class="sn-app" x="60" y="288" width="276" height="152" rx="5"/>
+  <use href="#i-lock" x="68" y="294" width="15" height="15"/>
+  <text class="t"  x="90" y="305">Private subnet (APP)</text>
+  <text class="ts" x="90" y="318">dev-an2-sub-cr-pri-app-a (10.1.32.0/20)</text>
+  <rect class="sg" x="72" y="328" width="252" height="102" rx="4"/>
+  <text class="tsg" x="78" y="342">SG dev-an2-sg-cr-pri-app</text>
+  <use href="#i-eks" x="98"  y="350" width="38" height="38"/>
+  <use href="#i-eks" x="238" y="350" width="38" height="38"/>
+  <text class="t" x="117" y="404" text-anchor="middle">EKS Node</text>
+  <text class="t" x="257" y="404" text-anchor="middle">EKS Node</text>
+  <text class="ts" x="187" y="422" text-anchor="middle">Managed NodeGroup · t3.medium</text>
+
+  <rect class="sn-app" x="372" y="288" width="276" height="152" rx="5"/>
+  <use href="#i-lock" x="380" y="294" width="15" height="15"/>
+  <text class="t"  x="402" y="305">Private subnet (APP)</text>
+  <text class="ts" x="402" y="318">dev-an2-sub-cr-pri-app-c (10.1.48.0/20)</text>
+  <rect class="sg" x="384" y="328" width="252" height="102" rx="4"/>
+  <text class="tsg" x="390" y="342">SG dev-an2-sg-cr-pri-app</text>
+  <use href="#i-eks" x="410" y="350" width="38" height="38"/>
+  <use href="#i-eks" x="550" y="350" width="38" height="38"/>
+  <text class="t" x="429" y="404" text-anchor="middle">EKS Node</text>
+  <text class="t" x="569" y="404" text-anchor="middle">EKS Node</text>
+
+  <!-- private db -->
+  <rect class="sn-db" x="60" y="456" width="276" height="146" rx="5"/>
+  <use href="#i-lock" x="68" y="462" width="15" height="15"/>
+  <text class="t"  x="90" y="473">Private subnet (DB)</text>
+  <text class="ts" x="90" y="486">dev-an2-sub-cr-pri-db-a (10.1.5.0/24)</text>
+  <rect class="sg" x="72" y="496" width="252" height="98" rx="4"/>
+  <text class="tsg" x="78" y="510">SG dev-an2-sg-cr-pri-db-layer</text>
+  <use href="#i-rds"   x="98"  y="518" width="38" height="38"/>
+  <use href="#i-redis" x="238" y="518" width="38" height="38"/>
+  <text class="t" x="117" y="572" text-anchor="middle">RDS MySQL 8.4</text>
+  <text class="t" x="257" y="572" text-anchor="middle">ElastiCache 7.2</text>
+
+  <rect class="sn-db" x="372" y="456" width="276" height="146" rx="5"/>
+  <use href="#i-lock" x="380" y="462" width="15" height="15"/>
+  <text class="t"  x="402" y="473">Private subnet (DB)</text>
+  <text class="ts" x="402" y="486">dev-an2-sub-cr-pri-db-c (10.1.6.0/24)</text>
+  <rect class="sg" x="384" y="496" width="252" height="98" rx="4"/>
+  <text class="tsg" x="390" y="510">SG dev-an2-sg-cr-pri-db-layer</text>
+  <use href="#i-rds"   x="410" y="518" width="38" height="38"/>
+  <use href="#i-redis" x="550" y="518" width="38" height="38"/>
+  <text class="t" x="429" y="572" text-anchor="middle">RDS (Standby)</text>
+  <text class="t" x="569" y="572" text-anchor="middle">ElastiCache</text>
+
+  <!-- right column -->
+  <use href="#i-igw" x="838" y="86" width="38" height="38"/>
+  <text class="t" x="857" y="140" text-anchor="middle">IGW</text>
+  <path class="ln" d="M868 90 L900 40" marker-end="url(#ah)"/>
+
+  <use href="#i-lock" x="700" y="192" width="30" height="30"/>
+  <text class="t" x="715" y="236" text-anchor="middle">NACL</text>
+  <rect class="rtb" x="752" y="186" width="160" height="46" rx="4"/>
+  <text class="t"  x="832" y="204" text-anchor="middle">Route table · pub</text>
+  <text class="ts" x="832" y="220" text-anchor="middle">0.0.0.0/0 → IGW</text>
+  <path class="ln" d="M650 206 L696 206" marker-end="url(#ah)"/>
+  <path class="ln" d="M732 208 L748 208" marker-end="url(#ah)"/>
+  <path class="ln" d="M857 184 L857 130" marker-end="url(#ah)"/>
+
+  <use href="#i-lock" x="700" y="352" width="30" height="30"/>
+  <text class="t" x="715" y="396" text-anchor="middle">NACL</text>
+  <rect class="rtb" x="752" y="346" width="160" height="46" rx="4"/>
+  <text class="t"  x="832" y="364" text-anchor="middle">Route table · pri-app</text>
+  <text class="ts" x="832" y="380" text-anchor="middle">0.0.0.0/0 → NAT Gateway</text>
+  <path class="ln" d="M650 366 L696 366" marker-end="url(#ah)"/>
+  <path class="ln" d="M732 368 L748 368" marker-end="url(#ah)"/>
+
+  <use href="#i-lock" x="700" y="518" width="30" height="30"/>
+  <text class="t" x="715" y="562" text-anchor="middle">NACL</text>
+  <rect class="rtb" x="752" y="512" width="160" height="46" rx="4"/>
+  <text class="t"  x="832" y="530" text-anchor="middle">Route table · pri-db</text>
+  <text class="ts" x="832" y="546" text-anchor="middle">10.1.0.0/16 local only</text>
+  <path class="ln" d="M650 532 L696 532" marker-end="url(#ah)"/>
+  <path class="ln" d="M732 534 L748 534" marker-end="url(#ah)"/>
+
+</svg>
+<figcaption>표준 3-Tier 네트워크 — 2 AZ × (Public / Private-APP / Private-DB). 워커 노드와 데이터 계층은 인바운드 경로가 없는 Private Subnet에 배치하고, 사람의 접근은 Public Subnet의 Bastion 한 곳으로 제한합니다. 자원 명명은 유니메오 DEV 환경의 실제 예시입니다.</figcaption>
+</figure><div class="tw"><table>
+<thead><tr><th>서브넷</th><th class="t-num">CIDR</th><th class="t-num">가용 IP</th><th>AZ</th><th>라우트 테이블 기본 경로</th></tr></thead>
+<tbody>
+<tr><td>pub-a / pub-c</td><td class="t-num">10.1.1.0/24 · 10.1.2.0/24</td><td class="t-num">251</td><td>an-2a / 2c</td><td><code>0.0.0.0/0 → IGW</code></td></tr>
+<tr><td>pri-app-a / -c</td><td class="t-num">10.1.32.0/20 · 10.1.48.0/20</td><td class="t-num">4,091</td><td>an-2a / 2c</td><td><code>0.0.0.0/0 → NAT</code></td></tr>
+<tr><td>pri-db-a / -c</td><td class="t-num">10.1.5.0/24 · 10.1.6.0/24</td><td class="t-num">251</td><td>an-2a / 2c</td><td>local only</td></tr>
+</tbody></table></div>
+
+<ul class="kv">
+  <li><b>애플리케이션 계층에만 /20 을 할당</b> — Pod마다 ENI가 붙는 EKS 특성상 IP 소진이 가장 먼저 발생하는 곳이 워커 노드 서브넷입니다. Public·DB는 /24(251개)로 충분하지만 APP은 <b>AZ당 4,091개</b>를 확보했습니다.</li>
+  <li><b>환경별 VPC CIDR을 미리 분리</b> — DEV <code>10.1.0.0/16</code> · STG <code>10.2.0.0/16</code> · PRD <code>10.3.0.0/16</code>. 나중에 환경 간 피어링이나 통합이 필요해져도 대역이 겹치지 않도록 설계 시점에 확정했습니다.</li>
+  <li><b>SG는 참조 체인으로 구성</b> — <code>sg-cr-pub</code>(사무실 IP ← SSH) → <code>sg-cr-pri-app</code>(SSH ← pub SG) → <code>sg-cr-pri-db-layer</code>(3306·6379 ← VPC 대역). 사람이 들어오는 입구에만 IP를 하드코딩했습니다.</li>
+  <li><b>EKS 전용 SG 규칙을 별도 정의</b> — 클러스터 컨트롤플레인 ↔ 노드 간 443 / 1025-65535 통신, ALB → 노드 트래픽을 AWS 권장 규칙에 맞춰 문서화.</li>
+  <li><b>네트워크 전체를 CloudFormation 템플릿으로 코드화</b> — VPC·서브넷·라우트테이블·NAT·SG를 한 스택으로 배포.</li>
+</ul>
+
+<h4>내부 통신 규약</h4><div class="tw"><table>
+<thead><tr><th style="width:16%">항목</th><th style="width:42%">내부 통신</th><th>외부 통신</th></tr></thead>
+<tbody>
+<tr><td>TLS</td><td>HTTP (내부망 한정)</td><td><b>HTTPS</b></td></tr>
+<tr><td>도메인</td><td>내부 전용 도메인 (Private Route53)</td><td>외부 공개 도메인</td></tr>
+<tr><td>API 구분</td><td><code>/inter/{API 그룹}</code></td><td><code>/{API 그룹}</code></td></tr>
+<tr><td>의도</td><td colspan="2">서비스 간 호출을 <b>IP가 아닌 내부 도메인</b>으로 통일해 자원 교체 시 설정 변경이 필요 없게 만들고, 경로 prefix만 봐도 내부/외부 호출을 구분할 수 있도록 규정</td></tr>
+</tbody></table></div>
+
+<h3 id="s2c">2-3. CI/CD — 태깅과 롤백 전략</h3>
+
+<div class="chain">
+  <span class="chip">CodeCommit</span><span class="ar">→</span>
+  <span class="chip a">CodeBuild<br><small>Gradle 빌드 → 이미지 생성</small></span><span class="ar">→</span>
+  <span class="chip">ECR<br><small>DEV</small></span><span class="ar">→</span>
+  <span class="chip p">EKS (DEV)</span>
+  <span class="ar" style="margin:0 4px">/</span>
+  <span class="chip">ECR<br><small>QA · REAL</small></span><span class="ar">→</span>
+  <span class="chip p">EKS (상위)</span>
+</div>
+<ul class="kv">
+  <li><b>ECR 태그 정책을 명시적으로 규정</b> — <code>latest</code> 태그만 쓰면 새 이미지 push 시 기존 이미지가 untagged가 되어, <b>이미지가 올라간 순간 반드시 배포까지 이어져야</b> 정합성이 유지됩니다. 이 제약을 다이어그램으로 문서화해 팀이 같은 규칙을 지키도록 했습니다.</li>
+  <li><b>롤백 시나리오를 사전에 정의</b> — 배포 실패 시 이전 digest 이미지를 재태깅해 되돌리는 절차를 정리.</li>
+  <li><b>환경별 ECR 분리</b> — DEV 리전과 QA/REAL 리전의 레지스트리를 나누어 승격(promotion) 경로를 명확히 함.</li>
+</ul>
+
+<h3 id="s2d">2-4. 파일 서비스와 관측</h3>
+
+<ul class="kv">
+  <li><b>보안 등급에 따라 다운로드 경로 이원화</b> — 보안이 필요한 파일은 <b>File 서버를 프록시로 경유</b>하고, 공개 가능한 콘텐츠는 <b>CloudFront에서 직접</b> 서빙. 모든 파일을 프록시로 보내지 않아 서버 대역폭 부담을 줄였습니다.</li>
+  <li><b>업로드 카테고리별 버킷 분리</b> + <b>S3 수명주기 정책</b> — 접근 빈도가 낮아지는 파일은 Glacier로 자동 전환하거나 자동 삭제해 스토리지 비용을 통제.</li>
+  <li><b>File 서버 자체를 Scale Out 대상으로</b> — Auto Scaling Group에 배치해 업로드 트래픽 증가에 대응.</li>
+</ul>
+
+
+<h4>관측 파이프라인</h4>
+<div class="chain">
+  <span class="chip a">애플리케이션</span><span class="ar">→</span>
+  <span class="chip">OpenTelemetry</span><span class="ar">→</span>
+  <span class="chip d">OpenSearch</span><span class="ar">→</span>
+  <span class="chip">로그 · 메트릭 분석</span>
+</div>
+
+<h3 id="s2e">2-5. 회사별 차이</h3>
+<div class="tw"><table>
+<thead><tr><th style="width:16%">항목</th><th>버닝갤럭시 (2021~2023)</th><th>유니메오 (2023~2024)</th><th>엘오디게임즈 (2024~2025)</th></tr></thead>
+<tbody>
+<tr><td>서비스</td><td>메타버스 메신저 · 소셜</td><td>간병사 매칭 운영 시스템</td><td>게임 아웃게임 플랫폼</td></tr>
+<tr><td>클라이언트</td><td>Unreal Engine (C++) · 모바일</td><td>웹 · 모바일</td><td>Unity3D</td></tr>
+<tr><td>추가 데이터 계층</td><td><b>Keyspaces(Cassandra)</b> — 메시지 본문</td><td>—</td><td>—</td></tr>
+<tr><td>메시징</td><td><b>AmazonMQ</b> · SNS/SES 푸시</td><td>—</td><td><b>Socket.IO</b> 대기큐</td></tr>
+<tr><td>CI</td><td>CodeCommit + CodeBuild</td><td>Bitbucket + CodeBuild</td><td>Jenkins</td></tr>
+<tr><td>관측</td><td>OpenTelemetry + OpenSearch</td><td>—</td><td>Prometheus · Grafana · OpenSearch</td></tr>
+<tr><td>고유 과제</td><td>0→1 구축 · EKS 팀 내재화</td><td>레거시 설계 개선 · 환경 신규 구축</td><td>재화 정합성 · 인게임 전환 인증</td></tr>
+</tbody></table></div>
+
+<h4>버닝갤럭시 — 0→1 구축과 팀 내재화</h4>
+<div class="note">
+  <span class="h">EKS 팀 내재화</span>
+  메타버스 플랫폼을 0→1로 구축하던 시기에 <b>신입 개발자도 평균 3개월 내에 Docker·Kubernetes를 익힌 뒤
+  AWS에서 VPC 설정부터 CI/CD 구축까지 단독으로 수행할 수 있는 팀 문화</b>를 만들었습니다.
+  회사 인지도 부족으로 충원이 어려웠기 때문에, 인프라 지식을 특정 개인에게 묶어 두지 않는 것이
+  곧 프로젝트 리스크 관리였습니다. 전 개발 과정을 문서화해 신규 유입 인원의 온보딩 견해차를 줄였습니다.
+</div>
+
+
+<!-- ============ 5. 원칙 ============ -->
+
+<h4>유니메오 — 환경 신규 구축</h4>
+<ul class="kv">
+  <li><b>로컬 개발 환경과 AWS 개발 환경을 처음부터 구축</b> — 신규 시스템이라 개발자가 바로 붙을 수 있는 환경 자체가 없던 상태에서 시작.</li>
+  <li><b>CloudFormation으로 자원 정의</b>, ECR·CodeBuild로 빌드/배포 파이프라인 구성.</li>
+  <li><b>인증 체계 전환</b> — 소셜 로그인과 자체 SSO(JWT)를 함께 운용하는 구조 설계.</li>
+  <li><b>스키마 관리를 Flyway로 코드화</b> — DB 변경을 배포 파이프라인 안으로 들여와 환경 간 스키마 드리프트를 제거.</li>
+</ul>
+
+<div class="note">
+  <span class="h">이 프로젝트에서 가장 중요했던 일</span>
+  인프라보다 <b>설계 자체를 되돌린 것</b>이 핵심이었습니다. 5년 전의 잘못된 DB 설계와 정산 개념이 차기 기획서에도
+  그대로 복제되어 접수 정보 변경·결제 수정·정산 금액 도출이 구조적으로 불가능한 상태였습니다.
+  약 2개월에 걸쳐 <b>ERD 재작성 → 데이터 관점 flow 설계 → 케이스별 데이터를 직접 전개</b>해 전 부서를 설득하고,
+  대대적인 설계 변경과 기획 수정을 관철했습니다.
+</div>
+
+
+<!-- ============ 4. 버닝갤럭시 ============ -->
+
+<h4>엘오디게임즈 — 게임 도메인 고유 과제</h4>
+<ul class="kv">
+  <li><b>게임 재화의 정합성</b> — 아이템·번들·재화 구매는 중복 지급이나 이중 차감이 절대 발생하면 안 되는 영역입니다. <b>외부 락(분산 락)을 도입해</b> 동시 요청에서도 재화 연산이 직렬화되도록 보장했습니다.</li>
+  <li><b>실시간 대기큐</b> — Spring Boot 프로세스 안에서 <b>Socket.IO(Netty) 서버를 함께 구동</b>해 REST와 실시간 채널을 한 배포 단위로 유지. 인프라 구성 요소를 늘리지 않으면서 실시간성을 확보했습니다.</li>
+  <li><b>결제 한도 정책</b> — Google 인앱 결제 연동에 <b>일별 결제 한도</b>를 서버에서 강제.</li>
+</ul>
+
+
+<!-- ============ 3. 유니메오 ============ -->
+
+<h4>엘오디게임즈 — 아웃게임 → 인게임 전환 인증</h4>
+<p>클라이언트는 아웃게임(HTTPS)과 인게임(소켓)을 오가는데, 인게임 서버는 아웃게임의 세션을 알지 못합니다.
+그래서 <b>아웃게임 API가 일회용 티켓을 발급해 Redis에 넣고, 인게임 서버가 그 티켓으로 검증</b>하는 구조로 설계했습니다.</p>
+<figure class="fig">
+<svg viewBox="0 0 980 390" role="img" aria-label="아웃게임에서 인게임 전환 시 티켓 기반 인증">
+  <use href="#i-game" x="50" y="150" width="42" height="42"/>
+  <text class="t" x="71" y="208" text-anchor="middle">게임 클라이언트</text>
+
+  <rect class="area-cloud" x="170" y="24" width="790" height="344" rx="10"/>
+  <text class="tz" x="188" y="44">AWS CLOUD</text>
+  <rect class="area-dash" x="200" y="58" width="720" height="286" rx="8"/>
+  <text class="tz" x="218" y="78">PRIVATE NETWORK</text>
+
+  <rect class="asg" x="230" y="96" width="300" height="104" rx="6"/>
+  <text class="tasg" x="246" y="114">Auto Scaling group</text>
+  <use href="#i-pod" x="270" y="118" width="36" height="36"/>
+  <use href="#i-pod" x="390" y="118" width="36" height="36"/>
+  <text class="t" x="288" y="172" text-anchor="middle">아웃게임 API</text>
+  <text class="t" x="408" y="172" text-anchor="middle">아웃게임 API</text>
+
+  <use href="#i-redis" x="700" y="180" width="40" height="40"/>
+  <text class="t"  x="720" y="236" text-anchor="middle">Redis</text>
+  <text class="ts" x="720" y="250" text-anchor="middle">일회용 티켓 저장소</text>
+  <text class="tm" x="720" y="266" text-anchor="middle">ingame:{token}</text>
+
+  <use href="#i-ec2" x="270" y="262" width="36" height="36"/>
+  <use href="#i-ec2" x="390" y="262" width="36" height="36"/>
+  <text class="t" x="288" y="316" text-anchor="middle">in-game A</text>
+  <text class="t" x="408" y="316" text-anchor="middle">in-game B</text>
+
+  <path class="ln"   d="M96 158 L266 140" marker-end="url(#ah)"/>
+  <text class="ts" x="185" y="126" text-anchor="middle">① HTTPS(TLS) 티켓 요청</text>
+  <path class="ln b" d="M534 150 L696 192" marker-end="url(#ah-b)"/>
+  <text class="ts" x="614" y="152" text-anchor="middle">② 티켓 발급·저장</text>
+  <path class="ln d" d="M96 180 L266 272" marker-end="url(#ah)"/>
+  <text class="ts" x="162" y="240" text-anchor="middle">③ socket(SSL) + 티켓</text>
+  <path class="ln r" d="M430 278 L696 226" marker-end="url(#ah-r)"/>
+  <text class="ts" x="576" y="284" text-anchor="middle">④ 티켓 검증 후 입장 처리</text>
+</svg>
+<figcaption>아웃게임과 인게임은 프로토콜도 서버도 다르기 때문에, 전환 시점의 신원을 Redis의 일회용 티켓으로 넘겨 인게임 서버가 독립적으로 검증하도록 했습니다.</figcaption>
+</figure>
+
+<h2 id="s3" class="pb">3. 메시징 시스템</h2>
+<p class="lead">앞 장의 WEB 계층이 <b>요청에 응답하는 구조</b>라면, 메시징은 <b>요청 없이 먼저 도달해야 하는 구조</b>입니다.
+요구되는 성질이 근본적으로 달라서, 같은 클러스터 안에 있어도 별도 계층으로 설계했습니다.</p>
+
+<div class="note"><span class="h">설계 결정 — 저장과 순서와 전달을 분리</span>
+메신저는 쓰기가 몰리고 읽기는 기기마다 제각각인 워크로드입니다. 그래서 메시지 본문은 쓰기에 강한
+<b>Cassandra</b>에 적재하고, 순서 보장(시퀀스)과 읽음 위치(Read Index)는 <b>Redis</b>가,
+실시간 전달은 <b>MQTT(AmazonMQ) 브로드캐스트</b>가 맡도록 역할을 셋으로 나눴습니다.
+RDB 하나로 시작하면 개발은 단순하지만 수평 확장 시 가장 먼저 무너지는 지점이 메시지 테이블이라는 것을
+알고 있었기에, 처음부터 저장·순서·전달을 분리했습니다. 대가로 세 저장소의 정합성을 애플리케이션이
+책임져야 하며, 그 규칙(어디가 진실의 원천인지)을 아래 도식들이 기록합니다.</div>
+<h3 id="s3b">3-1. 메시징 서비스 구성</h3>
+<figure class="fig">
+<svg viewBox="0 0 980 750" role="img" aria-label="버닝갤럭시 메신저 소셜 플랫폼 MSA 구성">
+  <use href="#i-game"   x="60"  y="8" width="42" height="42"/>
+  <text class="t" x="81" y="66" text-anchor="middle">Unreal 클라이언트</text>
+  <use href="#i-client" x="230" y="8" width="42" height="42"/>
+  <text class="t" x="251" y="66" text-anchor="middle">모바일 앱</text>
+  <path class="ln d" d="M740 556 L966 556 L966 82 L442 82 L426 56" marker-end="url(#ah)"/>
+  <use href="#i-cloud"  x="400" y="8" width="42" height="42"/>
+  <text class="t" x="421" y="66" text-anchor="middle">FCM / APNS</text>
+  <path class="ln d" d="M396 30 L278 30" marker-end="url(#ah)"/>
+  <use href="#i-admin"  x="880" y="8" width="42" height="42"/>
+  <text class="t" x="901" y="66" text-anchor="middle">운영자</text>
+
+  <rect class="area-cloud" x="24" y="92" width="932" height="640" rx="10"/>
+  <text class="tz" x="42" y="112">AWS CLOUD</text>
+
+  <use href="#i-cf" x="70" y="140" width="38" height="38"/>
+  <text class="t" x="118" y="163">CloudFront</text>
+  <use href="#i-s3" x="70" y="230" width="38" height="38"/>
+  <text class="t" x="118" y="253">S3 (카테고리별)</text>
+  <use href="#i-glacier" x="70" y="320" width="38" height="38"/>
+  <text class="t"  x="118" y="338">Glacier</text>
+  <text class="ts" x="118" y="352">수명주기 자동 전환</text>
+  <path class="ln p" d="M89 226 L89 184" marker-end="url(#ah-p)"/>
+  <path class="ln g" d="M89 272 L89 314" marker-end="url(#ah-g)"/>
+
+  <use href="#i-alb" x="290" y="140" width="38" height="38"/>
+  <text class="t"  x="309" y="194" text-anchor="middle">ALB (L7)</text>
+  <text class="ts" x="309" y="208" text-anchor="middle">REST API</text>
+  <use href="#i-nlb" x="470" y="140" width="38" height="38"/>
+  <text class="t"  x="489" y="194" text-anchor="middle">NLB (L4)</text>
+  <text class="ts" x="489" y="208" text-anchor="middle">MQTT · OpenWire · STOMP</text>
+  <use href="#i-alb" x="820" y="140" width="38" height="38"/>
+  <text class="t"  x="839" y="194" text-anchor="middle">ALB (관리자)</text>
+
+  <path class="ln" d="M100 46 L288 148" marker-end="url(#ah)"/>
+  <path class="ln" d="M264 50 L300 136" marker-end="url(#ah)"/>
+  <path class="ln" d="M270 44 L468 146" marker-end="url(#ah)"/>
+  <path class="ln" d="M894 54 L846 136" marker-end="url(#ah)"/>
+
+  <rect class="area-vpc" x="220" y="232" width="700" height="480" rx="10"/>
+  <use href="#i-vpc" x="232" y="240" width="18" height="18"/>
+  <text class="t" x="256" y="254">VPC — Private Subnet (EKS)</text>
+
+  <rect class="asg" x="240" y="274" width="470" height="200" rx="6"/>
+  <text class="tasg" x="256" y="292">EKS — 도메인별 서비스 (Auto Scaling)</text>
+  <use href="#i-pod"    x="256" y="306" width="36" height="36"/>
+  <circle class="bdg" cx="257" cy="307" r="8.5"/><text class="tbdg" x="257" y="310.5" text-anchor="middle">1</text>
+  <use href="#i-jwt"    x="368" y="306" width="36" height="36"/>
+  <circle class="bdg" cx="369" cy="307" r="8.5"/><text class="tbdg" x="369" y="310.5" text-anchor="middle">2</text>
+  <use href="#i-pod"    x="480" y="306" width="36" height="36"/>
+  <circle class="bdg" cx="481" cy="307" r="8.5"/><text class="tbdg" x="481" y="310.5" text-anchor="middle">3</text>
+  <use href="#i-socket" x="592" y="306" width="36" height="36"/>
+  <circle class="bdg" cx="593" cy="307" r="8.5"/><text class="tbdg" x="593" y="310.5" text-anchor="middle">4</text>
+  <text class="t"  x="274" y="360" text-anchor="middle">Msg Proxy</text>
+  <text class="ts" x="274" y="374" text-anchor="middle">송수신 · 시퀀스</text>
+  <text class="t"  x="386" y="360" text-anchor="middle">Auth</text>
+  <text class="ts" x="386" y="374" text-anchor="middle">JWT · JWKs(RSA)</text>
+  <text class="t"  x="498" y="360" text-anchor="middle">Admin</text>
+  <text class="t"  x="610" y="360" text-anchor="middle">Noti</text>
+  <text class="ts" x="610" y="374" text-anchor="middle">실시간 알림</text>
+  <use href="#i-sns"  x="256" y="392" width="36" height="36"/>
+  <circle class="bdg" cx="257" cy="393" r="8.5"/><text class="tbdg" x="257" y="396.5" text-anchor="middle">5</text>
+  <use href="#i-pod"  x="368" y="392" width="36" height="36"/>
+  <circle class="bdg" cx="369" cy="393" r="8.5"/><text class="tbdg" x="369" y="396.5" text-anchor="middle">6</text>
+  <use href="#i-pod"  x="480" y="392" width="36" height="36"/>
+  <circle class="bdg" cx="481" cy="393" r="8.5"/><text class="tbdg" x="481" y="396.5" text-anchor="middle">7</text>
+  <text class="t"  x="274" y="446" text-anchor="middle">Alarm</text>
+  <text class="ts" x="274" y="460" text-anchor="middle">모바일 푸시</text>
+  <text class="t"  x="386" y="446" text-anchor="middle">File</text>
+  <text class="ts" x="386" y="460" text-anchor="middle">S3 프록시</text>
+  <text class="t"  x="498" y="446" text-anchor="middle">Rest API</text>
+  <text class="ts" x="498" y="460" text-anchor="middle">비즈니스 로직</text>
+
+  <use href="#i-mq" x="770" y="306" width="40" height="40"/>
+  <text class="t"  x="790" y="362" text-anchor="middle">AmazonMQ</text>
+  <text class="ts" x="790" y="376" text-anchor="middle">ActiveMQ · Topic 구독</text>
+  <path class="ln r" d="M489 182 L489 262 L790 262 L790 302" marker-end="url(#ah-r)"/>
+  <path class="ln" d="M714 340 L766 330" marker-end="url(#ah)"/>
+  <path class="ln" d="M309 182 L280 302" marker-end="url(#ah)"/>
+  <path class="ln" d="M839 182 L839 250 L512 250 L500 302" marker-end="url(#ah)"/>
+
+  <rect class="area-dash" x="240" y="502" width="660" height="188" rx="8"/>
+  <text class="tz" x="258" y="522">DATA &amp; MESSAGING (관리형 서비스)</text>
+  <use href="#i-rds"   x="280" y="540" width="38" height="38"/>
+  <use href="#i-cass"  x="420" y="540" width="38" height="38"/>
+  <use href="#i-redis" x="560" y="540" width="38" height="38"/>
+  <use href="#i-ses"   x="700" y="540" width="38" height="38"/>
+  <text class="t"  x="299" y="596" text-anchor="middle">Aurora MySQL</text>
+  <text class="ts" x="299" y="610" text-anchor="middle">관계형 업무 데이터</text>
+  <text class="t"  x="439" y="596" text-anchor="middle">Keyspaces (Cassandra)</text>
+  <text class="ts" x="439" y="610" text-anchor="middle">메시지 본문 · 대량 쓰기</text>
+  <text class="t"  x="579" y="596" text-anchor="middle">ElastiCache Redis</text>
+  <text class="ts" x="579" y="610" text-anchor="middle">메시지 시퀀스 · Read Index</text>
+  <text class="t"  x="719" y="596" text-anchor="middle">SNS / SES</text>
+  <text class="ts" x="719" y="610" text-anchor="middle">푸시 · 메일</text>
+  <path class="ln b" d="M299 478 L299 536" marker-end="url(#ah-b)"/>
+  <path class="ln b" d="M400 478 L435 536" marker-end="url(#ah-b)"/>
+  <path class="ln r" d="M560 478 L575 536" marker-end="url(#ah-r)"/>
+  <path class="ln" d="M274 432 L274 490 L719 490 L719 534" marker-end="url(#ah)"/>
+
+  <use href="#i-otel" x="820" y="416" width="38" height="38"/>
+  <text class="t"  x="839" y="472" text-anchor="middle">OpenTelemetry</text>
+  <text class="ts" x="839" y="486" text-anchor="middle">→ OpenSearch 수집</text>
+  <path class="ln d" d="M712 430 L816 432" marker-end="url(#ah)"/>
+</svg>
+<figcaption>버닝갤럭시 — 메시지 트래픽은 L4(NLB), 웹·관리 트래픽은 L7(ALB)로 분리. 메시지 본문은 Cassandra, 시퀀스·읽음 위치는 Redis, 실시간 전달은 MQ가 담당.</figcaption>
+</figure>
+
+<h5>각 서비스의 역할과 데이터 흐름</h5>
+<ol class="legend">
+  <li><b>Msg Proxy</b> — 메시지 송수신 API 서버<span class="r">유저가 보낸 메시지를 받아 ① 바로 받지 못하는 대상을 위해 Cassandra에 저장하고 ② MQ로 전송하며(OpenWire 프로토콜) ③ 특정 시점 이후의 메시지를 조회해 주고 ④ 모바일 push를 위해 알람 큐에 적재한다.</span></li>
+  <li><b>Auth</b> — 인증 · 인가 서버<span class="r">로그인·로그아웃·탈퇴 등 계정 관련 API를 처리한다. 유저의 친구나 기존 로그인 기기에 이벤트를 실시간으로 전달해야 할 때는 notice 큐에 적재한다.</span></li>
+  <li><b>Admin</b> — 운영 관리 시스템<span class="r">관리자가 회원에게 직접 메시지를 보내거나 계정 차단을 변경한다. 관리자 액션 중 실시간 대응이 필요한 건은 noti 큐로 넘긴다.</span></li>
+  <li><b>Noti</b> — 실시간 시스템 메시지 전달<span class="r">MQ를 통해 접속 중인 클라이언트에게 시스템 메시지를 실시간으로 전송한다.</span></li>
+  <li><b>Alarm</b> — 모바일 푸시 발송<span class="r">Amazon SNS를 거쳐 FCM / APNS로 push message를 전달한다. 상대 기기에 메시지가 도착했음을 알리는 역할.</span></li>
+  <li><b>File</b> — 파일 프록시<span class="r">파일 업로드를 담당한다. 보안성이 높은 파일은 S3에서 직접 내려주지 않고 File 서버를 경유해 다운로드시킨다.</span></li>
+  <li><b>Rest API</b> — 비즈니스 로직<span class="r">유저 계정 인덱스로 DM 목록 전체를, 또는 상대 계정 인덱스로 특정 상대와의 DM만 조회한다. 호출된 로직에 따라 RDB에 저장하고, notification 큐로 대상 유저에게 가져갈 메시지·이벤트가 있음을 알린다.</span></li>
+</ol><h3 id="s3c">3-2. MQ 가용성 — 프로토콜 계층별 분리</h3>
+<figure class="fig">
+<svg viewBox="0 0 980 340" role="img" aria-label="AmazonMQ 가용성 아키텍처 - 프로토콜 계층별 로드밸런서 분리">
+  <use href="#i-client" x="50" y="60" width="42" height="42"/>
+  <text class="t" x="71" y="118" text-anchor="middle">앱 클라이언트</text>
+  <use href="#i-admin"  x="50" y="220" width="42" height="42"/>
+  <text class="t" x="71" y="278" text-anchor="middle">운영자</text>
+
+  <use href="#i-r53" x="190" y="140" width="38" height="38"/>
+  <text class="t" x="209" y="194" text-anchor="middle">Route53</text>
+  <path class="ln" d="M96 84 L186 152" marker-end="url(#ah)"/>
+  <path class="ln" d="M96 244 L186 172" marker-end="url(#ah)"/>
+
+  <use href="#i-nlb" x="350" y="60" width="40" height="40"/>
+  <text class="t"  x="370" y="116" text-anchor="middle">NLB (L4)</text>
+  <text class="ts" x="370" y="130" text-anchor="middle">MQTT · OpenWire · STOMP</text>
+  <use href="#i-alb" x="350" y="220" width="40" height="40"/>
+  <text class="t"  x="370" y="276" text-anchor="middle">ALB (L7)</text>
+  <text class="ts" x="370" y="290" text-anchor="middle">HTTPS 웹 콘솔</text>
+  <path class="ln" d="M232 152 L346 92" marker-end="url(#ah)"/>
+  <path class="ln" d="M232 170 L346 234" marker-end="url(#ah)"/>
+
+  <use href="#i-acm" x="470" y="258" width="32" height="32"/>
+  <text class="t" x="486" y="306" text-anchor="middle">ACM</text>
+  <path class="ln d" d="M466 272 L398 256" marker-end="url(#ah)"/>
+
+  <rect class="area-vpc" x="560" y="40" width="400" height="280" rx="10"/>
+  <text class="tz" x="578" y="60">VPC — PRIVATE SUBNET</text>
+  <use href="#i-mq" x="730" y="140" width="44" height="44"/>
+  <text class="t"  x="752" y="200" text-anchor="middle">AmazonMQ (ActiveMQ)</text>
+  <text class="ts" x="752" y="214" text-anchor="middle">Active / Standby 이중화</text>
+  <path class="ln r" d="M394 86 L726 152" marker-end="url(#ah-r)"/>
+  <path class="ln"   d="M394 244 L726 180" marker-end="url(#ah)"/>
+  <text class="ts" x="760" y="272" text-anchor="middle">두 로드밸런서를 통해서만 도달</text>
+</svg>
+<figcaption>메시지 트래픽은 HTTP가 아니므로 L7로 처리할 수 없어 NLB(L4)로 분산하고, 관리 콘솔만 ALB(L7)+ACM으로 HTTPS 종단을 두었습니다.</figcaption>
+</figure><h3 id="s3d">3-3. 알림 경로 3종 — 수신자 상태에 따른 분기</h3>
+<figure class="fig">
+<svg viewBox="0 0 980 500" role="img" aria-label="수신자 상태에 따른 알림 전달 경로 3종">
+  <rect class="area-dash" x="30" y="40" width="170" height="430" rx="10"/>
+  <text class="tz" x="48" y="62">이벤트 발생</text>
+  <text class="ts" x="115" y="240" text-anchor="middle">업무 서비스에서</text>
+  <text class="ts" x="115" y="254" text-anchor="middle">알림 이벤트 발생</text>
+  <text class="ts" x="115" y="276" text-anchor="middle">수신자 상태에 따라</text>
+  <text class="ts" x="115" y="290" text-anchor="middle">경로가 갈린다</text>
+
+  <rect class="sn-app" x="230" y="60" width="720" height="118" rx="8"/>
+  <text class="tz" x="248" y="80">경로 A — 방 구독자 (앱 실행 중)</text>
+  <use href="#i-pod" x="270" y="96" width="38" height="38"/>
+  <text class="t" x="289" y="150" text-anchor="middle">Msg Proxy</text>
+  <use href="#i-mq" x="500" y="96" width="38" height="38"/>
+  <text class="t"  x="519" y="150" text-anchor="middle">AmazonMQ</text>
+  <text class="ts" x="519" y="164" text-anchor="middle">topic 구독</text>
+  <use href="#i-client" x="820" y="94" width="42" height="42"/>
+  <text class="t" x="841" y="150" text-anchor="middle">구독 중 클라이언트</text>
+  <path class="ln r" d="M312 115 L496 115" marker-end="url(#ah-r)"/>
+  <path class="ln r" d="M542 115 L816 115" marker-end="url(#ah-r)"/>
+  <text class="ts" x="404" y="107" text-anchor="middle">msg_idx 발행</text>
+  <text class="ts" x="679" y="107" text-anchor="middle">MQTT push</text>
+
+  <rect class="sn-pub" x="230" y="196" width="720" height="118" rx="8"/>
+  <text class="tz" x="248" y="216">경로 B — 특정 사용자 (소켓 연결 중)</text>
+  <use href="#i-socket" x="270" y="232" width="38" height="38"/>
+  <text class="t" x="289" y="286" text-anchor="middle">Noti 서버</text>
+  <use href="#i-redis" x="500" y="232" width="38" height="38"/>
+  <text class="t"  x="519" y="286" text-anchor="middle">Redis</text>
+  <text class="ts" x="519" y="300" text-anchor="middle">userId ↔ 세션 매핑</text>
+  <use href="#i-client" x="820" y="230" width="42" height="42"/>
+  <text class="t" x="841" y="286" text-anchor="middle">Socket.IO 세션</text>
+  <path class="ln g" d="M312 251 L496 251" marker-end="url(#ah-g)"/>
+  <path class="ln g" d="M542 251 L816 251" marker-end="url(#ah-g)"/>
+  <text class="ts" x="404" y="243" text-anchor="middle">세션 조회</text>
+  <text class="ts" x="679" y="243" text-anchor="middle">이벤트 전송</text>
+
+  <rect class="sn-db" x="230" y="332" width="720" height="130" rx="8"/>
+  <text class="tz" x="248" y="352">경로 C — 미접속 사용자 (앱이 꺼져 있음)</text>
+  <use href="#i-sns" x="270" y="368" width="38" height="38"/>
+  <text class="t" x="289" y="422" text-anchor="middle">Alarm</text>
+  <use href="#i-sns" x="470" y="368" width="38" height="38"/>
+  <text class="t" x="489" y="422" text-anchor="middle">Amazon SNS</text>
+  <use href="#i-cloud" x="650" y="368" width="38" height="38"/>
+  <text class="t"  x="669" y="422" text-anchor="middle">FCM / APNS</text>
+  <text class="ts" x="669" y="436" text-anchor="middle">외부 푸시 공급자</text>
+  <use href="#i-client" x="820" y="366" width="42" height="42"/>
+  <text class="t" x="841" y="422" text-anchor="middle">단말 push</text>
+  <path class="ln p" d="M312 387 L466 387" marker-end="url(#ah-p)"/>
+  <path class="ln p" d="M512 387 L646 387" marker-end="url(#ah-p)"/>
+  <path class="ln p" d="M692 387 L816 387" marker-end="url(#ah-p)"/>
+  <text class="ts" x="389" y="379" text-anchor="middle">알람 큐 적재</text>
+
+  <path class="ln" d="M204 115 L226 115" marker-end="url(#ah)"/>
+  <path class="ln" d="M204 251 L226 251" marker-end="url(#ah)"/>
+  <path class="ln" d="M204 387 L226 387" marker-end="url(#ah)"/>
+</svg>
+<figcaption>같은 "알림"이라도 수신자가 지금 어떤 상태인지에 따라 도달 수단이 다릅니다. 세 경로를 하나로 합치려 하면 어느 쪽도 제대로 동작하지 않기 때문에, 발신 지점부터 분리했습니다.</figcaption>
+</figure>
+
+<h5>각 경로의 역할과 선택 기준</h5>
+<ol class="legend">
+  <li><b>경로 A — MQ topic</b> — 방 단위 브로드캐스트<span class="r">채팅방처럼 <b>다수가 같은 이벤트를 동시에 받아야 할 때</b> 쓴다. 구독 모델이라 수신자가 늘어도 발신 측 비용이 늘지 않는다. 단, 그 순간 접속해 있는 사람에게만 도달한다.</span></li>
+  <li><b>경로 B — Socket.IO 세션</b> — 특정 사용자 지목 전송<span class="r">"이 사용자에게만" 보내야 할 때 쓴다. Redis에 저장된 <code>userId ↔ 세션</code> 매핑으로 대상 소켓을 찾는다. 방 개념이 없는 알림(친구 요청, 상태 변경)에 적합하다.</span></li>
+  <li><b>경로 C — SNS → FCM / APNS</b> — 미접속 사용자<span class="r">앱이 꺼져 있으면 A·B 어느 쪽도 도달하지 못한다. 이때만 모바일 푸시를 태운다. 외부 공급자를 거치므로 전달 지연과 실패를 전제하고, 도착 보장은 조회 경로가 대신한다.</span></li>
+</ol>
+<h3 id="s3e">3-4. 실시간 채널 — 대기큐와 타이머</h3>
+<p>메시지 전달 외에도 <b>연결을 유지한 채 서버가 상태를 밀어 넣어야 하는</b> 요구가 반복적으로 나왔습니다.</p>
+<ul class="kv">
+  <li><b>게임 대기큐</b> — Spring 프로세스 안에서 Socket.IO(Netty) 서버를 함께 구동했습니다. REST와 실시간 채널이 한 배포 단위라 인프라 구성 요소를 늘리지 않으면서 실시간성을 확보했습니다. 대기 순번은 Redis에 두어 서버가 재기동돼도 순서가 유지됩니다.</li>
+  <li><b>Redis ZSET 기반 타이머</b> — 만료 시각을 score로 저장하고 짧은 주기로 폴링합니다. 만료 항목이 나오면 애플리케이션 이벤트로 발행해 비동기로 처리하고, 필요하면 다시 스케줄합니다. 스케줄러를 따로 두지 않아도 "N초 뒤에 이 사용자에게 알림" 같은 요구를 처리할 수 있습니다.</li>
+  <li><b>다중 인스턴스 중복 실행 방지</b> — 폴링은 모든 인스턴스가 동시에 수행하므로 분산 락으로 한 번만 실행되도록 직렬화했습니다.</li>
+  <li><b>수평 확장의 한계를 명시했다</b> — 세션 매핑을 로컬 메모리에서 찾는 구조는 인스턴스가 늘면 다른 인스턴스의 세션을 찾지 못합니다. Redis Pub/Sub 브리지나 스토어 팩토리로 해결해야 한다는 점을 문서에 남겨, 확장 시점에 다시 설계하지 않아도 되게 했습니다.</li>
+</ul>
+<h2 id="s4" class="pb">4. 단일 서버로 시작하는 접근 — 퍼스트해빗</h2>
+<p class="lead">앞의 세 회사가 처음부터 EKS로 갔다면, 여기서는 <b>의도적으로 반대 방향</b>을 택했습니다.
+런칭 전 스타트업에서 Kubernetes를 상시 운영하면 고정비가 감당되지 않기 때문입니다.</p>
+<div class="meta">
+  <div><dt>기간</dt><dd>2025.10 ~ 현재</dd></div>
+  <div><dt>역할</dt><dd>Backend Engineering 파트장</dd></div>
+  <div><dt>리전</dt><dd>ap-northeast-2 / us-west-1</dd></div>
+  <div><dt>단계</dt><dd>런칭 준비</dd></div>
+</div>
+
+<div class="stats">
+  <div class="stat"><div class="v">6</div><div class="k">마이크로서비스</div></div>
+  <div class="stat"><div class="v">4</div><div class="k">인프라 환경 구축</div></div>
+  <div class="stat"><div class="v">20+</div><div class="k">CloudFormation 스택</div></div>
+  <div class="stat"><div class="v">10</div><div class="k">S3 콘텐츠 버킷</div></div>
+  <div class="stat"><div class="v">~$32</div><div class="k">유휴 시 월 비용</div></div>
+</div>
+
+<h3 id="s4a">4-1. 환경 전략 — 단일 서버에서 시작해 EKS로 확장</h3>
+<p>런칭 전 스타트업에서 처음부터 Kubernetes를 상시 운영하면 비용이 감당되지 않습니다.
+그래서 <b>개발 속도가 필요한 단계는 단일 서버로 최대한 단순하게</b> 가고,
+<b>EKS는 코드로 완성해 두되 필요할 때만 켜는</b> 전략을 택했습니다.
+동일한 애플리케이션 이미지가 두 방식 모두에서 동작하도록 프로파일만 분리했습니다.</p>
+
+<div class="envrow">
+  <div class="env e1">
+    <div class="eh">DEV · 서울</div>
+    <div class="eb"><b>단일 EC2 통합</b><br>API 6종 + MySQL + Redis 한 대<br><small>가장 빠른 반복, 최소 비용</small></div>
+  </div>
+  <div class="env e2">
+    <div class="eh">STG · 서울 (구)</div>
+    <div class="eb"><b>단일 EC2 + compose</b><br>S3·CloudFront 정식 구성<br><small>DEV 동일 구조의 검증 환경</small></div>
+  </div>
+  <div class="env e3">
+    <div class="eh">STG · 미국</div>
+    <div class="eb"><b>EC2 + RDS + ElastiCache</b><br>데이터 계층 분리, 전용 VPC<br><small>실서비스 리전·타임존 검증</small></div>
+  </div>
+  <div class="env e4">
+    <div class="eh">PROD · 예정</div>
+    <div class="eb"><b>EKS 3-Tier</b><br>IaC·원클릭 구축 완료<br><small>확장이 필요해지는 시점에 전환</small></div>
+  </div>
+</div>
+
+<div class="note">
+  <span class="h">설계 의도</span>
+  단계마다 인프라를 새로 만든 것이 아니라, <b>동일한 네이밍 규칙·SG 참조 모델·배포 파이프라인을 유지한 채
+  데이터 계층만 단계적으로 분리</b>했습니다. 그래서 EC2 → RDS/ElastiCache → EKS 전환에서
+  애플리케이션 코드 변경은 프로파일 YAML 교체 수준으로 끝납니다.
+</div>
+
+<h3 id="s4b">4-2. DEV — 단일 EC2 통합 구성</h3>
+<figure class="fig">
+<svg viewBox="0 0 900 646" role="img" aria-label="Chalk DEV 단일 EC2 통합 아키텍처">
+  <use href="#i-user" x="426" y="6" width="44" height="44"/>
+  <text class="t" x="448" y="66" text-anchor="middle">사용자 / 관리자 / 개발자</text>
+  <path class="ln" d="M448 74 L448 102" marker-end="url(#ah)"/>
+
+  <use href="#i-r53" x="296" y="106" width="40" height="40"/>
+  <text class="t" x="316" y="162" text-anchor="middle">Route53</text>
+  <use href="#i-alb" x="428" y="106" width="40" height="40"/>
+  <text class="t" x="448" y="162" text-anchor="middle">ALB · HTTPS:443</text>
+  <use href="#i-acm" x="560" y="106" width="40" height="40"/>
+  <text class="t" x="580" y="162" text-anchor="middle">ACM 인증서</text>
+  <path class="ln d" d="M338 126 L424 126" marker-end="url(#ah)"/>
+  <path class="ln d" d="M558 126 L472 126" marker-end="url(#ah)"/>
+  <text class="ts" x="448" y="188" text-anchor="middle">Target Group · HTTP:80 · Health Check /auth/hello</text>
+  <path class="ln" d="M448 194 L448 220" marker-end="url(#ah)"/>
+
+  <rect class="area-ec2" x="30" y="226" width="840" height="404" rx="14"/>
+  <use href="#i-ec2" x="46" y="238" width="24" height="24"/>
+  <text class="t" x="80" y="248">EC2 t3.large · Ubuntu 24.04 · EBS gp3 30GB</text>
+  <text class="ts" x="80" y="263">Default VPC · API 서버와 데이터 계층이 한 인스턴스에 동거</text>
+
+  <rect class="area-dash" x="48" y="276" width="804" height="340" rx="10"/>
+  <use href="#i-docker" x="58" y="282" width="20" height="20"/>
+  <text class="tz" x="84" y="296">DOCKER-COMPOSE</text>
+
+  <use href="#i-nginx" x="428" y="312" width="40" height="40"/>
+  <circle class="bdg" cx="429" cy="313" r="8.5"/><text class="tbdg" x="429" y="316.5" text-anchor="middle">1</text>
+  <text class="t" x="480" y="330">nginx</text>
+  <text class="ts" x="480" y="344">경로 기반 리버스 프록시 (/auth · /api · /admin …)</text>
+  <path class="ln" d="M448 352 L448 380"/>
+  <path class="ln" d="M100 380 L800 380"/>
+
+  <path class="ln" d="M100 380 L100 404" marker-end="url(#ah)"/>
+  <path class="ln" d="M240 380 L240 404" marker-end="url(#ah)"/>
+  <path class="ln" d="M380 380 L380 404" marker-end="url(#ah)"/>
+  <path class="ln" d="M520 380 L520 404" marker-end="url(#ah)"/>
+  <path class="ln" d="M660 380 L660 404" marker-end="url(#ah)"/>
+  <path class="ln" d="M800 380 L800 404" marker-end="url(#ah)"/>
+
+  <use href="#i-jwt"    x="80"  y="404" width="40" height="40"/>
+  <circle class="bdg" cx="81" cy="405" r="8.5"/><text class="tbdg" x="81" y="408.5" text-anchor="middle">2</text>
+  <use href="#i-pod"    x="220" y="404" width="40" height="40"/>
+  <circle class="bdg" cx="221" cy="405" r="8.5"/><text class="tbdg" x="221" y="408.5" text-anchor="middle">3</text>
+  <use href="#i-pod"    x="360" y="404" width="40" height="40"/>
+  <circle class="bdg" cx="361" cy="405" r="8.5"/><text class="tbdg" x="361" y="408.5" text-anchor="middle">4</text>
+  <use href="#i-batch"  x="500" y="404" width="40" height="40"/>
+  <circle class="bdg" cx="501" cy="405" r="8.5"/><text class="tbdg" x="501" y="408.5" text-anchor="middle">5</text>
+  <use href="#i-pod"    x="640" y="404" width="40" height="40"/>
+  <circle class="bdg" cx="641" cy="405" r="8.5"/><text class="tbdg" x="641" y="408.5" text-anchor="middle">6</text>
+  <use href="#i-socket" x="780" y="404" width="40" height="40"/>
+  <circle class="bdg" cx="781" cy="405" r="8.5"/><text class="tbdg" x="781" y="408.5" text-anchor="middle">7</text>
+  <text class="t"  x="100" y="462" text-anchor="middle">auth</text>
+  <text class="ts" x="100" y="476" text-anchor="middle">인증 / 인가</text>
+  <text class="t"  x="240" y="462" text-anchor="middle">api</text>
+  <text class="ts" x="240" y="476" text-anchor="middle">사용자 API</text>
+  <text class="t"  x="380" y="462" text-anchor="middle">admin</text>
+  <text class="ts" x="380" y="476" text-anchor="middle">관리자 API</text>
+  <text class="t"  x="520" y="462" text-anchor="middle">batch</text>
+  <text class="ts" x="520" y="476" text-anchor="middle">배치 스케줄</text>
+  <text class="t"  x="660" y="462" text-anchor="middle">file</text>
+  <text class="ts" x="660" y="476" text-anchor="middle">파일 프록시</text>
+  <text class="t"  x="800" y="462" text-anchor="middle">noti</text>
+  <text class="ts" x="800" y="476" text-anchor="middle">Socket.IO 알림</text>
+
+  <path class="ln" d="M100 484 L100 500"/><path class="ln" d="M240 484 L240 500"/>
+  <path class="ln" d="M380 484 L380 500"/><path class="ln" d="M520 484 L520 500"/>
+  <path class="ln" d="M660 484 L660 500"/><path class="ln" d="M800 484 L800 500"/>
+  <path class="ln" d="M100 500 L800 500"/>
+  <text class="ts" x="640" y="516">localhost 통신 (네트워크 홉 없음)</text>
+
+  <path class="ln b" d="M370 500 L370 524" marker-end="url(#ah-b)"/>
+  <path class="ln r" d="M530 500 L530 524" marker-end="url(#ah-r)"/>
+  <use href="#i-mysql" x="350" y="524" width="40" height="40"/>
+  <circle class="bdg" cx="351" cy="525" r="8.5"/><text class="tbdg" x="351" y="528.5" text-anchor="middle">8</text>
+  <use href="#i-redis" x="510" y="524" width="40" height="40"/>
+  <circle class="bdg" cx="511" cy="525" r="8.5"/><text class="tbdg" x="511" y="528.5" text-anchor="middle">9</text>
+  <text class="t"  x="370" y="582" text-anchor="middle">MySQL</text>
+  <text class="ts" x="370" y="596" text-anchor="middle">업무 DB · 배치 메타 DB</text>
+  <text class="t"  x="530" y="582" text-anchor="middle">Redis</text>
+  <text class="ts" x="530" y="596" text-anchor="middle">세션 · 캐시 · 분산 락 · 타이머</text>
+</svg>
+<figcaption>DEV — 단일 인스턴스 통합 아키텍처 (ap-northeast-2). 데이터 계층까지 같은 호스트에 두어 구축·반복 속도를 최우선으로 삼은 구성.</figcaption>
+</figure>
+
+<h5>한 인스턴스 안에서의 요청 흐름</h5>
+<ol class="legend">
+  <li><b>nginx</b> — 경로 기반 리버스 프록시<span class="r">ALB가 넘긴 요청을 경로 prefix로 판별해 컨테이너로 분배한다. 서비스가 늘어도 ALB 규칙을 건드리지 않고 nginx 설정만 고치면 된다.</span></li>
+  <li><b>auth</b> — 인증 · 인가<span class="r">로그인과 토큰 발급을 담당한다. 나머지 서비스는 발급된 토큰을 검증만 한다.</span></li>
+  <li><b>api</b> — 사용자 API<span class="r">학습·콘텐츠·상점 등 사용자 기능 전반.</span></li>
+  <li><b>admin</b> — 관리자 API<span class="r">같은 데이터를 운영자 관점에서 조회·수정한다.</span></li>
+  <li><b>batch</b> — 배치 스케줄러<span class="r">크론 스케줄에 따라 집계·정리 잡을 실행하고 실행 이력을 기록한다.</span></li>
+  <li><b>file</b> — 파일 프록시<span class="r">업로드/다운로드 경로를 중계하고 Presigned URL을 발급한다.</span></li>
+  <li><b>noti</b> — 실시간 알림<span class="r">REST 요청을 받아 접속 중인 클라이언트에게 Socket.IO로 이벤트를 전달한다.</span></li>
+  <li><b>MySQL</b> — 업무 DB · 배치 메타 DB<span class="r">별도 인스턴스가 아니라 같은 호스트의 컨테이너다. 네트워크 홉이 없어 빠르지만 백업·복구는 보장되지 않으므로 개발 데이터에 한정한다.</span></li>
+  <li><b>Redis</b> — 세션 · 캐시 · 분산 락 · 타이머<span class="r">인증 상태와 캐시뿐 아니라 알림 서비스의 타이머 큐, 재화 정합성이 필요한 연산의 분산 락도 여기서 처리한다.</span></li>
+</ol><p>API 서버 6종과 MySQL·Redis를 <b>한 대의 EC2 안에서 docker-compose로 함께 구동</b>하는 구성입니다.
+개발 단계에서 가장 빠르게 반복하기 위한 의도적인 단순화이며, 데이터 계층 분리는 STG 이후로 미뤘습니다.</p>
+
+
+
+
+<h4>이 구성에서 의도한 것과 감수한 것</h4>
+<div class="tw"><table>
+<thead><tr><th style="width:16%">항목</th><th style="width:42%">선택</th><th>이유 / 트레이드오프</th></tr></thead>
+<tbody>
+<tr><td>DB 배치</td><td>EC2 내부 MySQL·Redis</td><td>RDS·ElastiCache 대비 월 $37~42 절감. 대신 <b>백업·장애 복구 보장 없음</b> — 개발 데이터에 한정</td></tr>
+<tr><td>VPC</td><td>Default VPC 사용</td><td>DEV는 네트워크 격리보다 구축 속도 우선. 전용 3-Tier VPC는 EKS 스택에서 별도 구성</td></tr>
+<tr><td>DB 직접 접근</td><td>SG로 사내·재택 IP만 3306/6379 허용</td><td>Bastion 없이 로컬 IDE에서 바로 접속. <b>CIDR 화이트리스트로만 통제</b></td></tr>
+<tr><td>배포</td><td>로컬 빌드 → 이미지 tar → scp → <code>docker load</code></td><td>레지스트리 없이도 배포 가능. 이미지 크기만큼 전송 시간 소요</td></tr>
+<tr><td>TLS</td><td>ALB에서 종단, 내부는 HTTP</td><td>인증서 관리 지점을 ALB 하나로 단일화</td></tr>
+</tbody></table></div>
+
+<div class="note w">
+  <span class="h">개선 이력 — 네이밍 정리</span>
+  초기에 임시로 만든 자원들이 <code>…-admin</code>, <code>…-admin2</code> 같은 실제 역할과 무관한 이름을 갖고 있었습니다.
+  SG·ALB·TG의 <b>본명은 AWS에서 변경 불가(immutable)</b>이므로, 재생성 비용과 혼선 위험을 비교한 뒤
+  <b>Name 태그만 <code>api-db</code> 패턴으로 통일</b>하고 그 결정을 문서로 남겼습니다.
+  이후 STG는 처음부터 본명·태그가 일치하도록 설계했습니다.
+</div>
+
+<h3 id="s4c">4-3. STG(미국) — 데이터 계층 분리</h3>
+<figure class="fig">
+<svg viewBox="0 0 980 600" role="img" aria-label="STG 미국 리전 인프라 구성">
+  <use href="#i-user" x="60" y="8" width="42" height="42"/>
+  <text class="t" x="81" y="66" text-anchor="middle">사용자 (미국)</text>
+  <use href="#i-r53" x="250" y="10" width="38" height="38"/>
+  <text class="t" x="269" y="66" text-anchor="middle">Route53</text>
+  <path class="ln" d="M106 30 L246 30" marker-end="url(#ah)"/>
+
+  <rect class="area-region" x="24" y="90" width="672" height="484" rx="10"/>
+  <text class="tz" x="42" y="110">REGION us-west-1 (N. California)</text>
+
+  <rect class="area-vpc" x="42" y="126" width="636" height="432" rx="8"/>
+  <use href="#i-vpc" x="50" y="132" width="18" height="18"/>
+  <text class="t" x="74" y="146">VPC 10.2.0.0/16 — Public only (NAT 없음 · IGW 직결)</text>
+
+  <rect class="area-az" x="56" y="164" width="300" height="380" rx="6"/>
+  <text class="taz" x="206" y="182" text-anchor="middle">us-west-1a</text>
+  <rect class="area-az" x="368" y="164" width="300" height="380" rx="6"/>
+  <text class="taz" x="518" y="182" text-anchor="middle">us-west-1b</text>
+
+  <rect class="sn-pub" x="68" y="194" width="276" height="336" rx="5"/>
+  <use href="#i-lock" x="76" y="200" width="15" height="15"/>
+  <text class="t" x="98" y="211">Public subnet 10.2.1.0/24</text>
+  <rect class="sn-pub" x="380" y="194" width="276" height="336" rx="5"/>
+  <use href="#i-lock" x="388" y="200" width="15" height="15"/>
+  <text class="t" x="410" y="211">Public subnet 10.2.2.0/24</text>
+
+  <use href="#i-alb" x="110" y="234" width="38" height="38"/>
+  <circle class="bdg" cx="111" cy="235" r="8.5"/><text class="tbdg" x="111" y="238.5" text-anchor="middle">1</text>
+  <text class="t"  x="129" y="288" text-anchor="middle">ALB</text>
+  <text class="tsg" x="129" y="302" text-anchor="middle">80/443 ← 0.0.0.0/0</text>
+  <use href="#i-alb" x="422" y="234" width="38" height="38"/>
+  <text class="t"  x="441" y="288" text-anchor="middle">ALB (2AZ 대상)</text>
+
+  <use href="#i-ec2" x="262" y="234" width="38" height="38"/>
+  <circle class="bdg" cx="263" cy="235" r="8.5"/><text class="tbdg" x="263" y="238.5" text-anchor="middle">2</text>
+  <text class="t"  x="281" y="288" text-anchor="middle">EC2 t3.large</text>
+  <text class="ts" x="281" y="302" text-anchor="middle">docker-compose · 6 apps</text>
+  <text class="tsg" x="281" y="316" text-anchor="middle">80/443 ← ALB SG</text>
+
+  <use href="#i-secrets" x="422" y="330" width="38" height="38"/>
+  <circle class="bdg" cx="423" cy="331" r="8.5"/><text class="tbdg" x="423" y="334.5" text-anchor="middle">5</text>
+  <text class="t"  x="441" y="384" text-anchor="middle">Secrets Manager</text>
+  <text class="ts" x="441" y="398" text-anchor="middle">RDS 마스터 비밀번호</text>
+  <text class="ts" x="441" y="412" text-anchor="middle">자동 관리·교체</text>
+
+  <use href="#i-rds"   x="110" y="410" width="38" height="38"/>
+  <circle class="bdg" cx="111" cy="411" r="8.5"/><text class="tbdg" x="111" y="414.5" text-anchor="middle">3</text>
+  <text class="t"  x="129" y="464" text-anchor="middle">RDS MySQL 8.4</text>
+  <text class="ts" x="129" y="478" text-anchor="middle">db.t4g.small · gp3 암호화</text>
+  <text class="tsg" x="129" y="492" text-anchor="middle">3306 ← app SG</text>
+  <use href="#i-redis" x="262" y="410" width="38" height="38"/>
+  <circle class="bdg" cx="263" cy="411" r="8.5"/><text class="tbdg" x="263" y="414.5" text-anchor="middle">4</text>
+  <text class="t"  x="281" y="464" text-anchor="middle">ElastiCache 7.1</text>
+  <text class="ts" x="281" y="478" text-anchor="middle">Redis</text>
+  <text class="tsg" x="281" y="492" text-anchor="middle">6379 ← app SG</text>
+
+  <path class="ln" d="M269 84 L134 230" marker-end="url(#ah)"/>
+  <path class="ln" d="M152 254 L258 254" marker-end="url(#ah)"/>
+  <path class="ln b" d="M266 276 L144 406" marker-end="url(#ah-b)"/>
+  <path class="ln r" d="M281 276 L281 406" marker-end="url(#ah-r)"/>
+  <path class="ln d" d="M418 356 L152 418" marker-end="url(#ah)"/>
+
+  <text class="ts" x="530" y="452" text-anchor="middle">SG 참조 체인</text>
+  <text class="ts" x="530" y="468" text-anchor="middle">ALB SG → App SG → RDS / Redis SG</text>
+  <text class="ts" x="530" y="490" text-anchor="middle">CIDR 하드코딩은</text>
+  <text class="ts" x="530" y="504" text-anchor="middle">SSH·직접 DB 접속용 IP 1개뿐</text>
+
+  <use href="#i-cf" x="740" y="126" width="40" height="40"/>
+  <circle class="bdg" cx="741" cy="127" r="8.5"/><text class="tbdg" x="741" y="130.5" text-anchor="middle">6</text>
+  <text class="t"  x="796" y="143">CloudFront</text>
+  <text class="ts" x="796" y="157">OAC · Viewer Function</text>
+  <path class="ln p" d="M758 122 L758 80 L104 80 L92 52" marker-end="url(#ah-p)"/>
+
+  <rect class="area-dash" x="712" y="210" width="248" height="204" rx="10"/>
+  <text class="tz" x="730" y="230">ap-northeast-2 (크로스리전 재사용)</text>
+  <use href="#i-s3" x="816" y="252" width="40" height="40"/>
+  <circle class="bdg" cx="817" cy="253" r="8.5"/><text class="tbdg" x="817" y="256.5" text-anchor="middle">7</text>
+  <text class="t"  x="836" y="308" text-anchor="middle">S3 콘텐츠 버킷 ×10</text>
+  <text class="ts" x="836" y="326" text-anchor="middle">버킷 이중 구축·동기화</text>
+  <text class="ts" x="836" y="340" text-anchor="middle">파이프라인 불필요</text>
+  <path class="ln p" d="M836 248 L790 172" marker-end="url(#ah-p)"/>
+</svg>
+<figcaption>STG(미국) — 데이터 계층을 RDS·ElastiCache로 분리하고 NAT Gateway를 제거한 Public-only VPC. 콘텐츠 버킷은 서울 리전을 크로스리전으로 재사용.</figcaption>
+</figure>
+
+<h5>각 구성 요소의 역할과 접근 통제</h5>
+<ol class="legend">
+  <li><b>ALB</b> — 외부 진입점<span class="r">인터넷 전체에 80/443만 열려 있는 유일한 지점. 여기서 HTTPS를 종단한다.</span></li>
+  <li><b>EC2 (docker-compose)</b> — 애플리케이션 6종<span class="r">ALB의 Security Group에서 오는 트래픽만 받는다. IP가 아니라 SG를 참조하므로 인스턴스를 교체해도 규칙을 고칠 필요가 없다.</span></li>
+  <li><b>RDS MySQL 8.4</b> — 업무 DB<span class="r">3306은 애플리케이션 SG에서만 접근할 수 있다. 스토리지는 암호화되어 있고 마스터 비밀번호는 코드·설정 어디에도 없다.</span></li>
+  <li><b>ElastiCache Redis</b> — 캐시 · 세션<span class="r">6379를 애플리케이션 SG에만 개방한다.</span></li>
+  <li><b>Secrets Manager</b> — DB 자격 관리<span class="r">RDS 마스터 비밀번호를 자동 생성·교체한다. 애플리케이션은 최소 권한 계정만 사용한다.</span></li>
+  <li><b>CloudFront</b> — 콘텐츠 전송<span class="r">OAC로 S3에 접근하고 Viewer Function이 경로 prefix를 변환한다.</span></li>
+  <li><b>S3 (서울 리전)</b> — 콘텐츠 버킷<span class="r">미국 리전에서도 서울 버킷을 그대로 오리진으로 쓴다. 버킷 이중 구축과 동기화 파이프라인을 만들지 않기 위한 선택.</span></li>
+</ol><p>실제 서비스 리전인 <b>미국(us-west-1)</b>에 STG를 재구축하면서, 서울 STG를 해제하고
+<b>데이터 계층을 관리형 서비스로 분리</b>했습니다. 동시에 <b>NAT Gateway를 제거</b>해 고정비를 낮췄습니다.</p>
+
+
+
+
+<h4>주요 설계 결정</h4>
+<ul class="kv">
+  <li><b>Security Group은 CIDR이 아니라 SG 참조로 연결</b> — ALB SG → App SG → RDS/Redis SG 체인. CIDR 하드코딩은 SSH·직접 DB 접속용 사무실 IP 하나뿐이어서, 인스턴스가 바뀌어도 규칙을 고칠 일이 없습니다.</li>
+  <li><b>NAT Gateway 제거</b> — 모든 자원을 Public 서브넷에 두고 IGW로 직접 아웃바운드. Private 계층을 없앤 대신 SG를 촘촘히 설계해 통제. <b>월 약 $32 절감</b>이며, PROD에서는 다시 3-Tier + NAT로 복원합니다.</li>
+  <li><b>RDS 마스터 비밀번호는 Secrets Manager 자동 관리</b> — 코드·설정 어디에도 평문 비밀번호가 없고, 애플리케이션은 별도 최소 권한 계정만 사용합니다.</li>
+  <li><b>스토리지 암호화 활성화</b> — RDS gp3 스토리지 암호화 적용(DEV의 미암호화 EBS를 STG에서 교정).</li>
+  <li><b>ARM 인스턴스(t4g) 채택</b> — 동급 x86 대비 비용 효율이 높아 DB 계층에 우선 적용.</li>
+  <li><b>파라미터 그룹으로 문자셋·타임존 고정</b> — <code>utf8mb4</code> / <code>utf8mb4_0900_ai_ci</code>를 서버 레벨에서 강제해 환경별 정렬·인코딩 차이를 원천 차단.</li>
+  <li><b>DB 초기화는 1회성 스크립트로 코드화</b> — 데이터베이스·계정·권한 생성까지 스크립트에 포함, 스키마 자체는 애플리케이션의 Flyway가 담당하도록 역할을 분리.</li>
+</ul>
+
+<h4>환경별 차이 요약</h4>
+<div class="tw"><table>
+<thead><tr><th>항목</th><th>DEV (서울)</th><th>STG 서울 (구)</th><th>STG 미국 (신)</th></tr></thead>
+<tbody>
+<tr><td>VPC</td><td>Default VPC</td><td>Default VPC (DEV 공유)</td><td><b>전용 VPC (Public-only)</b></td></tr>
+<tr><td>DB</td><td>on-EC2 MySQL</td><td>on-EC2 MySQL</td><td><b>RDS MySQL 8.4</b></td></tr>
+<tr><td>Redis</td><td>on-EC2</td><td>on-EC2</td><td><b>ElastiCache 7.1</b></td></tr>
+<tr><td>NAT</td><td>없음</td><td>없음</td><td>없음 <small>(PROD에서 도입)</small></td></tr>
+<tr><td>SG 모델</td><td>초기 레거시 명명</td><td>역할 기반 명명</td><td><b>역할 기반 + SG 참조 체인</b></td></tr>
+<tr><td>스토리지 암호화</td><td>미적용</td><td>미적용</td><td><b>적용</b></td></tr>
+<tr><td>비밀번호 관리</td><td>설정 파일</td><td>설정 파일</td><td><b>Secrets Manager</b></td></tr>
+<tr><td>불필요 SG 규칙</td><td>잔존</td><td>제거</td><td>제거</td></tr>
+</tbody></table></div>
+
+<div class="note">
+  <span class="h">타임존 설계</span>
+  미국 서비스이므로 <b>저장은 UTC, 업무 기준은 America/Los_Angeles</b>로 분리했습니다.
+  일 경계·집계 대상일·크론 발화 시점이 모두 미국 현지 기준으로 동작해야 하는데,
+  이를 애플리케이션 설정(<code>저장 타임존</code> / <code>업무 타임존</code>)으로 명시적으로 나누어
+  개발(서울)과 운영(미국)이 같은 코드로 동작하도록 만들었습니다.
+</div>
+
+<h3 id="s4d">4-4. PROD — 2장의 표준 구성으로 이행</h3>
+<p>운영 환경은 <b>2장에서 정리한 EKS 표준 구성</b>을 그대로 적용할 예정이며, IaC로 완성해 검증까지 마친 상태입니다. 비용 때문에 상시 가동하지 않을 뿐, 약 20분 만에 재생성할 수 있습니다. 다만 세 회사에서 쓰던 구성을 그대로 두지 않고 아래 네 가지를 바꿨습니다.</p><div class="tw"><table>
+<thead><tr><th style="width:18%">항목</th><th style="width:34%">선택</th><th>이유</th></tr></thead>
+<tbody>
+<tr><td>관리 접근</td><td><b>Bastion 두지 않음</b> — CloudShell 또는 CIDR 제한 endpoint</td><td>상시 노출되는 서버 자체를 없애 관리 대상과 공격 표면을 동시에 줄인다</td></tr>
+<tr><td>워크로드 권한</td><td><b>IRSA</b> — ServiceAccount 단위 IAM Role</td><td>클러스터 어디에도 정적 Access Key를 두지 않는다</td></tr>
+<tr><td>DB 작업</td><td><b>Kubernetes Job</b></td><td>마이그레이션·시드·점검을 위해 상시 접근 경로를 만들지 않는다</td></tr>
+<tr><td>클러스터 수명</td><td>원클릭 Up / Down</td><td>런칭 전 단계에서 유휴 고정비를 최소화한다</td></tr>
+</tbody></table></div>
+
+<h4>바꾼 이유</h4>
+<ul class="kv">
+  <li><b>사람의 권한(IAM)과 워크로드의 권한(IRSA)을 분리</b> — Pod는 ServiceAccount에 연결된 IAM Role로 인증하며, <b>클러스터 어디에도 IAM Access Key를 두지 않습니다.</b></li>
+  <li><b>Bastion을 두지 않음</b> — 상시 노출되는 서버 자체를 없애고, EKS API는 <b>Public Endpoint + CIDR 제한</b> 또는 CloudShell로 접근. 관리 대상과 공격 표면을 동시에 줄이는 선택입니다.</li>
+  
+  
+  
+</ul>
+
+<div class="tw"><table>
+<thead><tr><th style="width:22%">항목</th><th style="width:39%">DEV 기본</th><th>운영(PROD) 확장</th></tr></thead>
+<tbody>
+<tr><td>EKS 엔드포인트</td><td>Public + CIDR 제한</td><td>Private + VPN</td></tr>
+<tr><td>NAT Gateway</td><td>단일 NAT (비용 절감)</td><td>AZ별 NAT (가용성)</td></tr>
+<tr><td>NodeGroup</td><td>단일 그룹</td><td>시스템 / 애플리케이션 노드풀 분리</td></tr>
+<tr><td>인스턴스</td><td>t3.medium 1~2대</td><td>서비스 특성별 최적화</td></tr>
+<tr><td>DB 접근</td><td>Kubernetes Job</td><td>Client VPN 추가</td></tr>
+</tbody></table></div>
+
+<h3 id="s4e">4-5. CDN — 단일 CloudFront로 10개 버킷 라우팅</h3>
+<figure class="fig">
+<svg viewBox="0 0 980 430" role="img" aria-label="CloudFront prefix 기반 S3 오리진 라우팅">
+  <use href="#i-client" x="40" y="150" width="44" height="44"/>
+  <text class="t" x="62" y="210" text-anchor="middle">클라이언트</text>
+
+  <rect class="callout" x="120" y="152" width="200" height="44" rx="6"/>
+  <text class="tm" x="220" y="180" text-anchor="middle">GET /{prefix}/{path}</text>
+  <path class="ln" d="M90 174 L116 174" marker-end="url(#ah)"/>
+  <path class="ln" d="M324 174 L372 174" marker-end="url(#ah)"/>
+
+  <use href="#i-cf" x="376" y="152" width="44" height="44"/>
+  <text class="t"  x="398" y="212" text-anchor="middle">CloudFront</text>
+  <text class="ts" x="398" y="226" text-anchor="middle">Distribution 1개</text>
+
+  <rect class="callout" x="330" y="252" width="290" height="72" rx="6"/>
+  <text class="t"  x="475" y="274" text-anchor="middle">CloudFront Function (viewer-request)</text>
+  <text class="tm" x="475" y="296" text-anchor="middle">/{prefix}/img.png → /img.png</text>
+  <text class="ts" x="475" y="314" text-anchor="middle">버킷 내부 구조와 외부 URL 규칙을 분리</text>
+  <path class="ln p d" d="M398 200 L398 248" marker-end="url(#ah-p)"/>
+
+  <text class="ts" x="475" y="146" text-anchor="middle">Cache Behavior  {prefix}/*  매칭</text>
+  <path class="ln" d="M424 174 L640 174" marker-end="url(#ah)"/>
+
+  <use href="#i-lock" x="646" y="156" width="34" height="34"/>
+  <text class="t" x="663" y="204" text-anchor="middle">OAC</text>
+  <text class="ts" x="663" y="218" text-anchor="middle">Block Public Access</text>
+
+  <rect class="area-dash" x="740" y="34" width="216" height="366" rx="10"/>
+  <text class="tz" x="758" y="54">S3 콘텐츠 버킷 (10종)</text>
+  <use href="#i-s3" x="764" y="70"  width="30" height="30"/><text class="t" x="806" y="90">lecture</text>
+  <use href="#i-s3" x="764" y="112" width="30" height="30"/><text class="t" x="806" y="132">chapter</text>
+  <use href="#i-s3" x="764" y="154" width="30" height="30"/><text class="t" x="806" y="174">question</text>
+  <use href="#i-s3" x="764" y="196" width="30" height="30"/><text class="t" x="806" y="216">quiz</text>
+  <use href="#i-s3" x="764" y="238" width="30" height="30"/><text class="t" x="806" y="258">profile</text>
+  <use href="#i-s3" x="764" y="280" width="30" height="30"/><text class="t" x="806" y="300">university</text>
+  <use href="#i-s3" x="764" y="322" width="30" height="30"/><text class="t" x="806" y="342">course · study · 외 4종</text>
+  <text class="ts" x="758" y="376">버킷별 Cache Behavior + OAC 1:1 매핑</text>
+
+  <path class="ln" d="M684 172 L758 100" marker-end="url(#ah)"/>
+  <path class="ln" d="M684 174 L758 174" marker-end="url(#ah)"/>
+  <path class="ln" d="M684 176 L758 254" marker-end="url(#ah)"/>
+  <path class="ln" d="M684 178 L758 330" marker-end="url(#ah)"/>
+</svg>
+<figcaption>단일 CloudFront 배포가 경로 prefix로 10개 S3 버킷을 라우팅. 배포·인증서·도메인을 늘리지 않으면서 콘텐츠 도메인별 버킷 분리를 달성.</figcaption>
+</figure><p>콘텐츠 종류별로 S3 버킷을 나누되, <b>CloudFront 배포는 하나만</b> 두었습니다.
+배포·인증서·도메인을 늘리지 않으면서 버킷을 분리하기 위한 구성입니다.</p>
+
+
+
+<ul class="kv">
+  <li><b>버킷별 Cache Behavior + OAC</b> — 강의 · 챕터 · 문항 · 퀴즈 · 프로필 · 대학 · 코스 · 학습 · 모듈 · 리소스 등 콘텐츠 도메인별로 버킷을 분리하고, 각 버킷은 <b>Origin Access Control로 CloudFront에서만 접근 가능</b>하게 잠금. 버킷 자체는 Block Public Access 상태입니다.</li>
+  <li><b>CloudFront Function으로 경로 변환</b> — 클라이언트는 <code>/{종류}/{파일}</code>로 요청하지만, S3에는 종류 prefix 없이 저장됩니다. viewer-request 함수가 prefix를 제거해 <b>버킷 내부 구조와 외부 URL 규칙을 분리</b>했습니다.</li>
+  <li><b>업로드는 Presigned URL</b> — 파일 서비스가 URL만 발급하고 실제 트래픽은 S3로 직접 흐르게 해, 애플리케이션 서버가 파일 대역폭을 부담하지 않습니다. 대량 등록은 엑셀 기반 벌크 발급으로 처리.</li>
+  <li><b>리전 간 재사용</b> — 미국 STG에서도 서울의 콘텐츠 버킷을 그대로 오리진으로 사용해 <b>버킷 이중 구축과 동기화 파이프라인을 만들지 않았습니다.</b></li>
+</ul>
+
+<h3 id="s4f">4-6. IaC 체계와 원클릭 Up/Down</h3>
+<p>도구를 하나로 통일하지 않고 <b>각 영역에서 가장 잘 맞는 도구를 조합</b>했습니다.</p>
+
+<div class="tw"><table>
+<thead><tr><th style="width:20%">도구</th><th style="width:34%">담당 영역</th><th>선택 이유</th></tr></thead>
+<tbody>
+<tr><td><b>CloudFormation</b></td><td>VPC · Subnet · SG · RDS · ElastiCache · EC2 · ALB · Route53 · CloudFront · S3</td><td>AWS 네이티브 자원의 생성·삭제를 스택 단위로 원자적 관리. 삭제 보호 정책을 자원별로 선언 가능</td></tr>
+<tr><td><b>eksctl</b></td><td>EKS 클러스터 · Managed NodeGroup · IRSA</td><td>EKS 특유의 반복 작업(OIDC 공급자, 서비스 계정 역할)을 선언형 설정 하나로 처리</td></tr>
+<tr><td><b>Helm</b></td><td>AWS Load Balancer Controller · metrics-server</td><td>애드온의 버전 관리와 값 오버라이드</td></tr>
+<tr><td><b>Bash</b></td><td>전체 오케스트레이션 · 사전 점검 · 출력값 연결</td><td>스택 간 출력값 자동 조회, 순서 보장, 확인 프롬프트</td></tr>
+</tbody></table></div>
+
+
+
+<h4>원클릭 Up / Down</h4>
+<div class="chain">
+  <span class="chip a">cluster-up.sh</span><span class="ar">→</span>
+  <span class="chip">EKS 생성</span><span class="ar">→</span>
+  <span class="chip">kubeconfig</span><span class="ar">→</span>
+  <span class="chip">Namespace</span><span class="ar">→</span>
+  <span class="chip">IRSA</span><span class="ar">→</span>
+  <span class="chip">ALB Controller</span><span class="ar">→</span>
+  <span class="chip">metrics-server</span>
+  <span class="ar" style="margin-left:6px">≈ 20분</span>
+</div>
+<div class="chain">
+  <span class="chip d">cluster-down.sh</span><span class="ar">→</span>
+  <span class="chip">Ingress 삭제</span><span class="ar">→</span>
+  <span class="chip">ALB Controller</span><span class="ar">→</span>
+  <span class="chip">IRSA</span><span class="ar">→</span>
+  <span class="chip">EKS 삭제</span>
+  <span class="ar" style="margin-left:6px">≈ 12분</span>
+</div>
+<p><small>네트워크 스택과 IAM 정책, ECR은 남겨 두기 때문에 재생성 시 동일한 구성이 그대로 복원됩니다.</small></p>
+
+<h3 id="s4g">4-7. 비용 설계</h3>
+<p>런칭 전 단계에서 인프라 고정비는 그 자체로 리스크입니다.
+<b>"필요할 때만 켜고, 꺼도 복구가 보장되는" 구조</b>를 만들어 유휴 비용을 최소화했습니다.</p>
+
+<div class="tw"><table>
+<thead><tr><th style="width:40%">상태</th><th style="width:20%" class="t-num">월 비용(추정)</th><th>구성</th></tr></thead>
+<tbody>
+<tr><td>EKS 클러스터 가동 + 데이터 계층</td><td class="t-num">~$240~290</td><td>EKS 컨트롤플레인 + 노드 + NAT + ALB + RDS + Redis</td></tr>
+<tr><td>EKS 클러스터 가동</td><td class="t-num">~$200~250</td><td>컨트롤플레인 $72 + 노드 + NAT + ALB</td></tr>
+<tr><td>단일 EC2 STG 구성</td><td class="t-num">~$87~92</td><td>EC2 t3.large + ALB + CloudFront/S3 + Route53</td></tr>
+<tr><td><b>클러스터 해제 (현재)</b></td><td class="t-num"><b>~$32</b></td><td>NAT Gateway만 유지 (네트워크 스택 보존)</td></tr>
+<tr><td>네트워크까지 해제</td><td class="t-num">~$0</td><td>VPC·서브넷은 무과금</td></tr>
+</tbody></table></div>
+
+<ul class="kv">
+  <li><b>클러스터 해제 시 월 $200대 → $32</b> — 네트워크·IAM 정책·ECR만 남기고 컴퓨팅을 내리는 방식. 재구축이 20분이므로 "필요할 때만" 켜는 운영이 실제로 가능합니다.</li>
+  <li><b>미국 STG에서 NAT 제거로 월 ~$32 절감</b> — Public-only VPC + SG 통제로 대체. DB 계층은 ARM(t4g) 인스턴스를 채택했습니다.</li>
+</ul>
+
+
+<!-- ============ 2. 엘오디게임즈 ============ -->
+
+
+<h2 id="s5" class="pb">5. 인프라 설계 원칙</h2>
+<p class="lead">네 곳의 환경을 거치며 일관되게 지켜 온 기준입니다.</p>
+
+<div class="tw"><table>
+<thead><tr><th style="width:24%">원칙</th><th style="width:38%">구체적 실천</th><th>적용 사례</th></tr></thead>
+<tbody>
+<tr>
+  <td><b>단계에 맞는 복잡도</b></td>
+  <td>런칭 전에는 단일 서버로 단순하게, 확장이 필요해지는 시점에 전환. 단 <b>전환 대상은 미리 코드로 완성</b>해 둔다</td>
+  <td>Chalk — 단일 EC2로 개발하면서 EKS는 IaC로 완성·검증 후 해제 보관</td>
+</tr>
+<tr>
+  <td><b>이름이 곧 구조도</b></td>
+  <td><code>{env}-{region}-{resource}-{system}-{purpose}-{az}</code> 규칙을 모든 자원에 적용</td>
+  <td>Chalk 전 환경 / 버닝갤럭시 VPC·서브넷·SG</td>
+</tr>
+<tr>
+  <td><b>CIDR이 아니라 SG 참조</b></td>
+  <td>ALB SG → App SG → DB SG 체인으로 연결. CIDR 하드코딩은 사람이 접근하는 경로에만</td>
+  <td>Chalk 미국 STG — 인스턴스 교체 시 규칙 수정 불필요</td>
+</tr>
+<tr>
+  <td><b>상시 노출 경로를 만들지 않는다</b></td>
+  <td>Bastion 제거, DB 직접 접속 대신 Job/CloudShell, 외부 노출은 로드밸런서 한 경로로 통일</td>
+  <td>Chalk EKS — Bastion 없이 Kubernetes Job으로 DB 작업</td>
+</tr>
+<tr>
+  <td><b>권한은 키가 아니라 역할로</b></td>
+  <td>워크로드 인증에 IRSA 사용, 정적 Access Key를 클러스터에 두지 않음. 비밀번호는 Secrets Manager</td>
+  <td>Chalk EKS(IRSA) / 미국 STG(Secrets Manager)</td>
+</tr>
+<tr>
+  <td><b>내릴 수 있어야 올린 것이다</b></td>
+  <td>모든 스택에 생성과 <b>역순 해제</b> 스크립트를 쌍으로 작성. 파괴적 작업은 이중 확인, 데이터 자원은 Retain</td>
+  <td>Chalk — <code>cluster-up/down</code>, <code>stack-up/down</code></td>
+</tr>
+<tr>
+  <td><b>비용은 설계 변수다</b></td>
+  <td>가용성이 필요 없는 환경에서는 NAT·Multi-AZ·관리형 서비스를 의도적으로 빼고, 그 트레이드오프를 문서에 남긴다</td>
+  <td>Chalk — 유휴 시 월 $32 / NAT 제거로 $32 절감</td>
+</tr>
+<tr>
+  <td><b>프로토콜에 맞는 계층 선택</b></td>
+  <td>HTTP는 L7(ALB), 비 HTTP는 L4(NLB). 무리하게 하나로 통일하지 않는다</td>
+  <td>버닝갤럭시 — MQ는 NLB, 웹 콘솔은 ALB</td>
+</tr>
+<tr>
+  <td><b>결정은 문서로 남긴다</b></td>
+  <td>변경 불가능한 제약(immutable 이름), 의도적으로 감수한 리스크, 환경 간 차이를 표로 정리해 보고서로 축적</td>
+  <td>Chalk — 자원 감사·네이밍 정리·타임존 전략 등 20여 건의 결정 기록</td>
+</tr>
+<tr>
+  <td><b>환경 간 차이를 코드 밖으로</b></td>
+  <td>동일 이미지가 로컬·DEV·STG·PROD에서 프로파일 교체만으로 동작하도록 유지</td>
+  <td>Chalk — 단일 EC2와 EKS에서 같은 이미지 사용</td>
+</tr>
+</tbody></table></div>
+
+<div class="foot">
+  <b>박근혁</b> · Backend Engineer<br>
+  본 문서의 모든 아키텍처는 본인이 직접 설계·구축·운영한 것이며, 식별 가능한 정보는 제거되었습니다.<br>
+  작성일 2026.07.24
+</div>
+
+</div>
