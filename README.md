@@ -1,9 +1,9 @@
 # 박근혁 — Backend Engineer 포트폴리오
 
-### 👉 **[포트폴리오 바로 보기 — endside82.github.io/portfolio](https://endside82.github.io/portfolio/)**
+## [포트폴리오 바로 보기 — endside82.github.io/portfolio](https://endside82.github.io/portfolio/)
 
 이 저장소는 위 링크로 배포되는 포트폴리오 문서의 소스입니다.
-**GitHub에서 파일을 열지 마시고, 위 링크를 눌러 웹 페이지로 보시는 것을 권합니다.**
+GitHub에서 파일을 하나씩 열지 마시고, 위 주소로 들어가 웹 페이지로 보시는 것을 권합니다.
 
 <br>
 
@@ -25,22 +25,6 @@
 
 - 회사·서비스를 특정할 수 있는 값(계정 ID·리소스 ID·공인 IP·도메인·자격증명 등)은 모두 제거하거나 치환했으며, 아키텍처 구조와 설계 의도는 실제와 동일합니다.
 - 문서에 실린 앱 화면은 로컬 시험 서버에 연결해 촬영한 실제 화면이며, 합성하지 않았습니다. 등장하는 모임·회원·사진은 소개를 위해 준비한 가상 예시입니다.
-
-<br>
-
-## 저장소 구조
-
-```
-docs/
-├── index.html                          # 문서 허브 (배포 진입점)
-├── portfolio-infra.html                # 인프라 아키텍처
-├── portfolio-design.html               # 백엔드 설계
-├── portfolio-project-holdem.html       # Wonder Holdem
-├── portfolio-project-community.html    # Community
-└── assets/                             # 문서에 사용한 화면 이미지
-```
-
-GitHub Pages가 `main` 브랜치의 `/docs` 폴더를 게시합니다. 각 문서는 외부 의존성 없는 단일 HTML 파일이며, 스타일은 파일 안에 포함되어 있습니다.
 
 ---
 
