@@ -79,6 +79,7 @@ ul.kv b{font-weight:760}
 .shots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:20px 0}
 .shots.three{grid-template-columns:repeat(3,minmax(0,1fr))}
 .shot{margin:0;border:1px solid var(--line);border-radius:15px;background:#f7f9f8;padding:12px;overflow:hidden;display:flex;flex-direction:column;align-items:center}
+.shot a{display:block;width:100%;max-width:360px}
 .shot img{display:block;width:100%;height:auto;border-radius:10px;background:transparent}
 .shot figcaption{align-self:stretch;font-size:12px;color:var(--muted);line-height:1.6;padding:10px 3px 1px}
 .shot figcaption b{color:var(--fg)}
@@ -139,6 +140,7 @@ ul.kv b{font-weight:760}
   table{table-layout:fixed;width:100%}
   th,td{white-space:normal;overflow-wrap:anywhere;word-break:keep-all;padding:5px 7px}
   .shot img{width:auto;max-width:100%;height:86mm;max-height:86mm;object-fit:contain}
+  .shot a{width:auto;max-width:100%}
   .shots.expanded .shot img{width:100%;height:auto;max-height:none}
   .shots{gap:8px;margin:14px 0;break-inside:avoid}
   .shots.three{gap:7px}
@@ -183,6 +185,7 @@ ul.kv b{font-weight:760}
     <span class="badge">Kotlin · Jetpack Compose</span>
     <span class="badge">Clean Architecture · MVVM</span>
     <span class="badge">2~7인 싱글플레이</span>
+    <span class="badge gold">24명 캐릭터 봇 · 토너먼트</span>
     <span class="badge">9개 설정 가능 아키타입</span>
     <span class="badge">12개 행동 조정 변수</span>
     <span class="badge">233개 AI 결정 시나리오</span>
@@ -206,7 +209,7 @@ ul.kv b{font-weight:760}
   <div class="stat"><div class="v">2~7인</div><div class="k">오프라인 싱글플레이</div></div>
   <div class="stat"><div class="v">9종 · 12개</div><div class="k">성격 유형 · 행동 조정 변수</div></div>
   <div class="stat"><div class="v">233/233</div><div class="k">AI 결정 매트릭스 · 2026.07.18</div></div>
-  <div class="stat"><div class="v">944</div><div class="k"><code>@Test</code> 선언</div></div>
+  <div class="stat"><div class="v">2,195</div><div class="k">릴리스 테스트 통과 · 2026.10.15</div></div>
 </div>
 
 <div class="tw"><table>
@@ -216,26 +219,28 @@ ul.kv b{font-weight:760}
 <tr><td><b>단독 수행 범위</b></td><td>제품 정의 · 화면/기능 기획 · UX · Android 앱 · 게임 엔진 · 봇 AI · 테스트 · 다국어 · 수익화 · Google Play 배포</td></tr>
 <tr><td><b>앱 기술</b></td><td>Kotlin · Jetpack Compose · Material 3 · Hilt · Coroutines/Flow · Navigation Compose · Room · DataStore</td></tr>
 <tr><td><b>제품화 기술</b></td><td>Google Play Billing · AdMob · Firebase Crashlytics/Analytics · R8/리소스 축소 · release signing · 개인정보처리방침</td></tr>
-<tr><td><b>코드 규모</b></td><td>메인 Kotlin 약 7.6만 LOC · 테스트 Kotlin 약 3.0만 LOC · 453개 <code>@Composable</code> 선언 · 117커밋</td></tr>
-<tr><td><b>현재 버전</b></td><td>한국 제외 해외 Google Play 공개 버전 v0.9.2 · 현재 소스 v0.9.3</td></tr>
+<tr><td><b>코드 규모</b></td><td>2026.07.27 집계: 메인 Kotlin 약 7.6만 LOC · 테스트 Kotlin 약 3.0만 LOC · 453개 <code>@Composable</code> 선언 · 117커밋</td></tr>
+<tr><td><b>현재 버전</b></td><td>v0.14.0 · versionCode 18 · 2026.10.15 Google Play 프로덕션 업로드 완료 (전체 출시 설정, 스토어 공개 반영 여부는 별도)</td></tr>
 </tbody>
 </table></div>
 
 <div class="shots">
   <figure class="shot">
-    <img src="assets/holdem/main-menu.png" alt="Wonder Holdem 실제 메인 메뉴">
+    <a href="assets/holdem/2026-10-15/main-menu.png"><img src="assets/holdem/2026-10-15/main-menu.png" alt="Wonder Holdem v0.14.0 실제 메인 메뉴" width="1080" height="2400"></a>
     <figcaption><b>제품의 전체 진입점.</b> 바로 플레이하는 기능뿐 아니라 봇 프로필, 통계, 시나리오 편집기, 레인지 뷰어, 설정까지 하나의 연습 제품으로 구성했습니다.</figcaption>
   </figure>
   <figure class="shot">
-    <img src="assets/holdem/game-multiway-flop.png" alt="Wonder Holdem 4인 멀티웨이 Flop 실제 게임 화면">
-    <figcaption><b>4인 Flop · 3-way 팟.</b> TAG의 가상 칩 450 Raise와 Fish의 450 Call 뒤, Hero의 트립스·승률 92%·Call 300·Raise 750을 실제 엔진 상태에서 함께 판단합니다.</figcaption>
+    <a href="assets/holdem/2026-10-15/game-table.png"><img src="assets/holdem/2026-10-15/game-table.png" alt="앨리스 등 캐릭터 봇 6명과 플레이하는 7인 프리플랍 테이블" width="1080" height="2400"></a>
+    <figcaption><b>캐릭터 봇 6명과 함께하는 7인 테이블.</b> 앨리스·레드 퀸·유니콘 등 각 인물의 초상화와 좌석 상태를 표시하고, 내 카드·팟·콜 금액·추천 액션을 실제 게임 흐름에서 함께 확인합니다.</figcaption>
   </figure>
 </div>
 
 <div class="note gold">
   <span class="h">스크린샷 기준</span>
-  <strong>2026.07.27 현재 소스를 Android API 36 에뮬레이터에서 직접 실행·조작</strong>했습니다.
-  게임 장면은 카드·스택·팟을 검증용 시나리오로 구성한 뒤 실제 엔진에 투입해 진행·렌더링했으며, 모든 이미지는 앱 콘텐츠 영역만 사용했습니다.
+  <strong>2026.10.15 · v0.14.0을 Android API 36 에뮬레이터에서 직접 실행한 최신 화면</strong>입니다.
+  메인 메뉴는 서명된 릴리스 빌드, 기능 화면은 프리미엄 기능을 활성화한 동일 버전 디버그 빌드로 촬영했습니다.
+  일반 게임·토너먼트는 실제 플레이 상태이며, 시나리오 화면은 앱의 Heads-Up Push/Fold 프리셋을 사용했습니다.
+  통계는 촬영 세션의 실제 값입니다. 원본 1080×2400 화면을 자르거나 합성하지 않았으며, 이미지를 누르면 원본을 볼 수 있습니다.
 </div>
 
 <h2 id="c2">2. 기획에서 Google Play까지 — 혼자 제품을 끝내는 범위</h2>
@@ -257,14 +262,30 @@ ul.kv b{font-weight:760}
   <li><b>출시 이후를 고려한 제품화</b> — 무료/PRO 기능 경계는 UI와 ViewModel에서 이중 가드하고, Billing의 단일 상태 원천, 광고, 크래시 수집, 분석, 9개 언어, 개인정보처리방침을 앱 구조에 포함했습니다.</li>
 </ul>
 
-<div class="shots">
+<div class="shots three">
   <figure class="shot">
-    <img src="assets/holdem/scenario-editor.png" alt="실제 시나리오 편집기 화면">
-    <figcaption><b>Scenario Editor.</b> Pre/Flop/Turn/River, 플레이어·봇, 홀 카드·보드 카드, 블라인드·팟·행동 이력을 편집하고 검증한 뒤 <em>Save &amp; Play</em>로 실제 엔진에 투입합니다.</figcaption>
+    <a href="assets/holdem/2026-10-15/scenario-editor.png"><img src="assets/holdem/2026-10-15/scenario-editor.png" alt="네이비와 금색 테두리를 적용한 시나리오 테이블 편집 화면" width="1080" height="2400" loading="lazy"></a>
+    <figcaption><b>Scenario Studio · 테이블 편집.</b> 상대와 Hero의 카드·스택, 커뮤니티 카드를 한 화면에서 편집하고 <em>Save &amp; Play</em>로 실제 엔진에 투입합니다.</figcaption>
   </figure>
   <figure class="shot">
-    <img src="assets/holdem/bot-profiles.png" alt="실제 봇 프로필 목록 화면">
-    <figcaption><b>Bot Profiles.</b> 내장 프리셋의 아키타입·난이도·Tightness·Aggression을 비교하고, 상세 능력치 확인과 사용자 프로필 생성을 한 흐름으로 연결했습니다.</figcaption>
+    <a href="assets/holdem/2026-10-15/range-viewer.png"><img src="assets/holdem/2026-10-15/range-viewer.png" alt="간결한 상단 메뉴와 핸드 빈도 격자를 갖춘 최신 레인지 뷰어" width="1080" height="2400" loading="lazy"></a>
+    <figcaption><b>Range Viewer.</b> 포지션·액션별 레인지와 169개 스타팅 핸드의 빈도를 비교합니다. 상단 제목을 줄여 분석 정보와 격자에 공간을 배분했습니다.</figcaption>
+  </figure>
+  <figure class="shot">
+    <a href="assets/holdem/2026-10-15/statistics.png"><img src="assets/holdem/2026-10-15/statistics.png" alt="클럽 배경과 금색 포인트를 적용한 최신 통계 화면" width="1080" height="2400" loading="lazy"></a>
+    <figcaption><b>Statistics.</b> 클럽 배경 아래 수익·핸드 수·승률·세션·플레이 스타일을 카드로 정리했습니다. 화면의 수치는 촬영용 계정의 실제 기록입니다.</figcaption>
+  </figure>
+</div>
+
+<h3>토너먼트로 이어지는 플레이 흐름</h3>
+<div class="shots">
+  <figure class="shot">
+    <a href="assets/holdem/2026-10-15/tournament-lobby.png"><img src="assets/holdem/2026-10-15/tournament-lobby.png" alt="정원과 살롱 배경을 사용하는 토너먼트 선택 화면" width="1080" height="2400" loading="lazy"></a>
+    <figcaption><b>Tournaments &amp; missions.</b> 각 무대의 배경 이미지와 참가 인원·테이블 수·시작 칩을 제시하고, 저장된 진행 상황을 이어서 플레이합니다.</figcaption>
+  </figure>
+  <figure class="shot">
+    <a href="assets/holdem/2026-10-15/tournament-game.png"><img src="assets/holdem/2026-10-15/tournament-game.png" alt="앨리스와 화이트 래빗, 도마우스가 참여한 4인 토너먼트 실제 화면" width="1080" height="2400" loading="lazy"></a>
+    <figcaption><b>The Lantern Garden · 실제 토너먼트.</b> 앨리스·화이트 래빗·도마우스와 대결하며 상단에서 레벨·블라인드·생존 인원을 확인합니다. 저장 후 복원까지 릴리스 빌드에서 검증했습니다.</figcaption>
   </figure>
 </div>
 
@@ -341,7 +362,7 @@ ul.kv b{font-weight:760}
 
 <div class="matrix">
   <div class="card"><div class="v">9</div><div class="t">설정 가능 아키타입</div><div class="d">TAG · LAG · NIT · Calling Station · Maniac · Tricky · Balanced · Observer · Actor</div></div>
-  <div class="card"><div class="v">12</div><div class="t">내장 캐릭터 프리셋</div><div class="d">난이도·성격·대표 능력치가 다른 프리셋을 싱글플레이 좌석에 배치</div></div>
+  <div class="card"><div class="v">24</div><div class="t">내장 캐릭터 프리셋</div><div class="d">인물 일러스트·개별 배경·금색 테두리로 표현한 캐릭터를 난이도·성격에 맞춰 싱글플레이 좌석에 배치</div></div>
   <div class="card"><div class="v">12</div><div class="t">행동 조정 변수</div><div class="d">앱 편집 UI 9개 + 내부 캘리브레이션 3개로 레인지·빈도·사이징·적응 강도 조절</div></div>
 </div>
 
@@ -356,12 +377,12 @@ ul.kv b{font-weight:760}
 
 <div class="shots">
   <figure class="shot">
-    <img src="assets/holdem/bot-profile-detail.png" alt="실제 봇 프로필 파라미터 편집 화면">
-    <figcaption><b>행동을 직접 설계하는 편집 UI.</b> Queen of Hearts 프리셋과 같은 핵심 수치인 Tightness 30·Aggression 90·Bluff 40·Risk 75로 사용자 프로필을 구성하는 실제 화면입니다.</figcaption>
+    <a href="assets/holdem/2026-10-15/bot-profiles.png"><img src="assets/holdem/2026-10-15/bot-profiles.png" alt="앨리스를 첫 번째로 표시하는 24명 캐릭터 봇 프로필 목록" width="1080" height="2400" loading="lazy"></a>
+    <figcaption><b>24명으로 확장한 Bot Profiles.</b> 앨리스를 시작으로 인물 초상화와 개별 배경을 배치했습니다. 성격·난이도·Tightness·Aggression을 비교하고 상세 능력치와 사용자 프로필 편집으로 이어집니다.</figcaption>
   </figure>
   <figure class="shot">
-    <img src="assets/holdem/bot-profile-advanced.png" alt="Queen of Hearts 실제 확장 능력치 화면">
-    <figcaption><b>내장 Queen of Hearts 프리셋의 확장 스탯.</b> 레이더 차트와 Poker Face 65·Acting 75·Insight 50·Deception 71·Adaptivity 40·Bet Sizing 90을 한 화면에서 확인합니다.</figcaption>
+    <a href="assets/holdem/2026-10-15/scenario-game.png"><img src="assets/holdem/2026-10-15/scenario-game.png" alt="Heads-Up Push/Fold 프리셋에서 Hero의 A 스페이드와 5 하트로 판단하는 실제 게임 화면" width="1080" height="2400" loading="lazy"></a>
+    <figcaption><b>편집한 상황을 실제 의사결정으로 연결.</b> Heads-Up Push/Fold 프리셋에서 Hero의 A♠5♥, 팟 150과 콜 50을 확인합니다. 편집기와 일반 플레이가 같은 엔진·액션 UI를 사용합니다.</figcaption>
   </figure>
 </div>
 
@@ -384,8 +405,8 @@ ul.kv b{font-weight:760}
 <tbody>
 <tr><td><b>결정 매트릭스</b></td><td>233 시나리오 × 300 seed = 69,900결정 · 233/233 PASS (2026.07.18)</td><td>경계 핸드, 가격 임계, 믹싱 비율, 사이징, 올인·강등·불변식</td></tr>
 <tr><td><b>행동 시뮬레이터</b></td><td>B3 기준선: 12개 프리셋 · 10,560핸드 · 82,944결정 · 이후 최종 소스 대표 6개 라인업 3,600핸드 재측정</td><td>VPIP/PFR/3bet/AF/WTSD/C-bet, 올인 1.16~3.06%, 의도하지 않은 액션 보정 0건, 반복 min-raise 0건을 측정</td></tr>
-<tr><td><b>테스트 자산</b></td><td>944개 <code>@Test</code> 선언 · Gradle test/스크린샷 기준 검증 성공 (2026.07.27)</td><td>베팅·팟·쇼다운·핸드 평가·전략·저장/복원 회귀</td></tr>
-<tr><td><b>시각 회귀</b></td><td>Compose 스크린샷 기준 이미지 29종</td><td>2~7인 테이블, 큰 글꼴, 다국어, 사이드팟, 각 스트리트의 잘림·겹침</td></tr>
+<tr><td><b>릴리스 테스트</b></td><td>app·domain-core·domain-model 합계 2,195개 통과 · 4개 건너뜀 · 실패 0 (2026.10.15)</td><td>베팅·팟·쇼다운·핸드 평가·전략·저장/복원 회귀</td></tr>
+<tr><td><b>화면 및 실행 검수</b></td><td>휴대전화·7인치·10인치·PC용 세로 화면 32장 검수 · 서명된 릴리스의 토너먼트 시작·저장·복원 확인 (2026.10.15)</td><td>좌석·보드·액션 패널의 잘림·겹침과 실제 게임 진행. PC용 화면은 Android 에뮬레이터 캡처이며 PC 호환성 인증과는 구분</td></tr>
 </tbody>
 </table></div>
 
@@ -419,7 +440,7 @@ ul.kv b{font-weight:760}
 
 <div class="foot">
   <b>박근혁</b> · Backend Engineer<br>
-  Google Play: <a href="https://play.google.com/store/apps/details?id=com.endside.holdem&amp;gl=US&amp;hl=en">Wonder Holdem</a> · 스크린샷: Android API 36 에뮬레이터 실제 실행 화면 · 작성일 2026.07.27
+  Google Play: <a href="https://play.google.com/store/apps/details?id=com.endside.holdem&amp;gl=US&amp;hl=en">Wonder Holdem</a> · 스크린샷: v0.14.0 · Android API 36 에뮬레이터 실제 실행 화면 · 화면 및 릴리스 정보 갱신 2026.10.15
 </div>
 
 </div>
